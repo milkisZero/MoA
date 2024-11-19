@@ -1,0 +1,17 @@
+const mongoose = require('mongoose');
+const { Schema } = mongoose.Schema;
+
+const clubSchema = new Schema({
+    name: { type: String, maxlength: 50 },
+    description: { type: String, maxlength: 500 },
+    members: { type: [{ type: Schema.Types.ObjectId, ref: 'User' }] },
+    admin: { type: [{ type: Schema.Types.ObjectId, ref: 'User' }] },
+    createdAt: { type: Date, default: Date.now },
+    location: { type: String },
+    phone: { type: String },
+    date: { type: String },
+    sns: { type: String },
+});
+
+const Club = mongoose.model('Club', clubSchema);
+module.exports = { Club };
