@@ -39,18 +39,18 @@ app.listen(PORT, () => {
 //     res.send('db test');
 // });
 
-const { Club } = require('../model/Club');
-const { User } = require('../model/User');
-const { Post } = require('../model/Post');
-const { Event } = require('../model/Event');
-const { Message } = require('../model/Message');
-const { MsgRoom } = require('../model/MsgRoom');
+const { Club } = require('./model/Club');
+const { Post } = require('./model/Post');
+const { User } = require('./model/User');
+const { Event } = require('./model/Event');
+const { Message } = require('./model/Message');
+const { MsgRoom } = require('./model/MsgRoom');
 
 // 회원가입
 const bcrypt = require('bcrypt'); // 암호화 라이브러리
 const saltRounds = 10; // 해쉬 난도
 
-app.post('/api/users/register', async (req, res) => {
+app.post('/api/user/register', async (req, res) => {
     try {
         const user = new User(req.body);
 
