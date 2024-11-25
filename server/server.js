@@ -98,7 +98,7 @@ app.post('/api/user/login', async (req, res) => {
 // 로그아웃
 
 // 전체 동아리 목록 (미리보기)
-app.get('/api/user/total_club', async (req, res) => {
+app.get('/api/total_club', async (req, res) => {
     try {
         const { page, limit } = req.query; // 페이지 번호, 개수
         // 정렬 기준 추가?
@@ -120,14 +120,34 @@ app.get('/api/user/total_club', async (req, res) => {
 // 동아리 검색
 
 // 동아리 정보 보기
-app.get('/api/user/club/:id', async (req, res) => {
+app.get('/api/club/:clubId', async (req, res) => {
     try {
-        const id = req.params.id;
-        const foundCulb = await Club.findById({ id });
+        const clubId = req.params.clubId;
+        const foundCulb = await Club.findById({ clubId });
 
         return res.status(200).json({
             success: true,
             foundCulb,
+        });
+    } catch (err) {
+        return res.status(400).json({ success: false, err });
+    }
+});
+
+// 동아리 전체 게시글 보기
+app.get('/api/club/:clubId/total_post', async (req, res) => {
+    try {
+        const clubId = req.params.clubId;
+        const { page, limit } = req.query;
+        let idx = (page - 1) * Number(limit);
+
+        const foundCulb = await Club.findById({ clubId });
+        const foundPostId = foundCulb.postIds.slice(idx, idx + Number(limit));
+        const posts = await Post.find({ _id: { $in: foundPostId } });
+
+        return res.status(200).json({
+            success: true,
+            posts,
         });
     } catch (err) {
         return res.status(400).json({ success: false, err });
