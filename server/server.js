@@ -95,9 +95,31 @@ app.post('/api/user/login', async (req, res) => {
     }
 });
 
+// 로그아웃
+
 // 전체 동아리 목록 (미리보기)
+app.get('/api/user/total_club', async (req, res) => {
+    try {
+        const { page, limit } = req.query; // 페이지 번호, 개수
+        // 정렬 기준 추가?
+
+        const club = Club.find()
+            .sort({ createdAt: -1 }) //  정렬 기준
+            .skip((page - 1) * limit) // 시작 지점
+            .limit(Number(limit)); // 가져올 개수
+
+        return res.status(200).json({
+            success: true,
+            club,
+        });
+    } catch (err) {
+        return res.status(400).json({ success: false, err });
+    }
+});
 
 // 동아리 검색
+
+// 동아리 정보 보기
 
 // 동아리 게시글보기
 
@@ -112,6 +134,8 @@ app.post('/api/user/login', async (req, res) => {
 // 동아리 가입 승인
 
 // 일정 등록(동아리)
+
+// 동아리 등록
 
 // 채팅 관련
 // 동아리방
