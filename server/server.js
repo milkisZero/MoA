@@ -216,6 +216,23 @@ app.get('/api/user/mypage/event', async (req, res) => {
 });
 
 // 마이페이지 - 동아리보기
+app.get('/api/user/mypage/club', async (req, res) => {
+    try {
+        const { userId, page, limit } = req.body;
+
+        const foundUser = await User.findById({ userId });
+        const foundClub = Club.find({ _id: { $in: foundUser.clubs } })
+            .skip((page - 1) * limit)
+            .limit(Number(limit));
+
+        return res.status(200).json({
+            success: true,
+            foundClub,
+        });
+    } catch (err) {
+        return res.status(400).json({ success: false, err });
+    }
+});
 
 // 동아리 가입 신청
 
