@@ -49,7 +49,6 @@ const { MsgRoom } = require('./model/MsgRoom');
 // 회원가입
 const bcrypt = require('bcrypt'); // 암호화 라이브러리
 const saltRounds = 10; // 해쉬 난도
-
 app.post('/api/user/register', async (req, res) => {
     try {
         const user = new User(req.body);
@@ -64,6 +63,56 @@ app.post('/api/user/register', async (req, res) => {
             saved,
         });
     } catch (err) {
-        return res.json({ success: false, err });
+        return res.status(400).json({ success: false, err });
     }
 });
+
+// 로그인
+const jwt = require('jsonwebtoken'); // 토큰 생성 라이브러리
+app.post('/api/user/login', async (req, res) => {
+    try {
+        const found = await User.findOne({ email: req.body.email });
+        if (!found) throw new Error('cannot find user');
+
+        const match = await bcrypt.compare(req.body.password, found.password);
+        if (!match) throw new Error('cannot match password');
+
+        const token = jwt.sign(found._id.toHexString(), 'secretToken');
+        const updated = await User.findOneAndUpdate(
+            { email: req.body.email },
+            { $set: { token: token } },
+            { new: true }
+        );
+
+        // 쿠키에 토큰 저장?
+
+        return res.status(200).json({
+            success: true,
+            updated,
+        });
+    } catch (err) {
+        return res.status(400).json({ success: false, err });
+    }
+});
+
+// 전체 동아리 목록 (미리보기)
+
+// 동아리 검색
+
+// 동아리 게시글보기
+
+// 동아리 일정보기
+
+// 마이페이지 - 일정보기
+
+// 마이페이지 - 동아리보기
+
+// 동아리 가입 신청
+
+// 동아리 가입 승인
+
+// 일정 등록(동아리)
+
+// 채팅 관련
+// 동아리방
+// 개인방
