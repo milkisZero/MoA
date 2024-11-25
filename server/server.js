@@ -203,7 +203,25 @@ app.post('api/club/approve', async (req, res) => {
         res.status(500);
     }
 })
+
 // 동아리 일정 등록
+app.post('/api/event', async(req, res) => {
+    try {
+        const newEvent = new Event({
+            clubId: req.body.id,
+            title: req.body.title,
+            description: req.body.description,
+            date: req.body.date,
+            location: req.body.location
+        })
+        
+        await newEvent.save();
+        res.status(200).json(newEvent);
+    } catch (e) {
+        console.log('error in /api/event : ', e);
+        res.status(500);
+    }
+})
 
 // 동아리 등록
 
