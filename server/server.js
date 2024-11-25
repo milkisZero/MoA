@@ -155,6 +155,19 @@ app.get('/api/club/:clubId/total_post', async (req, res) => {
 });
 
 // 동아리 게시글보기
+app.get('/api/club/:postId', async (req, res) => {
+    try {
+        const postId = req.params.id;
+        const foundPost = await Post.findById({ postId });
+
+        return res.status(200).json({
+            success: true,
+            foundPost,
+        });
+    } catch (err) {
+        return res.status(400).json({ success: false, err });
+    }
+});
 
 // 동아리 일정보기
 
