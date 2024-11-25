@@ -143,13 +143,112 @@ app.get('/api/user/club/:id', async (req, res) => {
 // 마이페이지 - 동아리보기
 
 // 동아리 가입 신청
+app.post('/api/club/proposer', async (req, res) => {
+    try {
+        const {userId, clubId} = req.body.query;
+        if (!userId) throw new Error('cannot find user');
+        if (!clubId) throw new Error('cannot find club');
 
-// 동아리 가입 승인
+        const wantUser = await User.findById(id);
+        const wantedClub = await Club.findById(id);
+        if (!wantUser) throw new Error('cannot find user');
+        if (!wantedClub) throw new Error('cannot find club');
 
-// 일정 등록(동아리)
+        if (!wantUser.waitingClubs.includes(clubId)) {
+            wantUser.waitingClubs.push(clubId);
+            await wantUser.save();
+        }
+
+        if (!wantedClub.proposers.includes(userId)) {
+            wantedClub.proposers.push(userId);
+            await wantedClub.save();
+        }
+
+        res.status(200).json(wantedClub);
+    } catch (e) {
+        console.log('error in /api/club/proposer : ', e);
+        res.status(500);
+    }
+})
+
+// 동아리 가입 (승인) 또는 (거절 및 취소)
+app.post('api/club/approve', async (req, res) => {
+    try {
+        const {userId, clubId, approve} = req.body.query;
+        if (!userId) throw new Error('cannot find user');
+        if (!clubId) throw new Error('cannot find club');
+
+        const wantUser = await User.findById(id);
+        const wantedClub = await Club.findById(id);
+        if (!wantUser) throw new Error('cannot find user');
+        if (!wantedClub) throw new Error('cannot find club');
+
+        if (wantUser.waitingClubs.includes(clubId)) {
+            wantUser.waitingClubs.delete(clubId);
+        }
+
+        if (wantedClub.proposers.includes(userId)) {
+            wantedClub.proposers.delete(userId);
+        }
+
+        if (approve) {
+            wantedClub.members.push(userId);
+        }
+
+        await wantUser.save();
+        await wantedClub.save();
+        res.status(200).json(wantedClub);
+    } catch (e) {
+        console.log('error in /api/club/approve : ', e);
+        res.status(500);
+
+    }
+})
+
+// 동아리 일정 등록
+app.post('/api/event', async(req, res) => {
+    try {
+        const newEvent = new Event({
+            clubId: req.body.id,
+            title: req.body.title,
+            description: req.body.description,
+            date: req.body.date,
+            location: req.body.location
+        })
+        
+        await newEvent.save();
+        res.status(200).json(newEvent);
+    } catch (e) {
+        console.log('error in /api/event : ', e);
+        res.status(500);
+    }
+})
 
 // 동아리 등록
-
+app.post('/api/club', async(req, res) => {
+    try {
+        const newClub = new Event({
+            name: req.body.id,
+            description: req.body.title,
+            members: [],
+            admin: req.body.admin,
+            proposers: [],
+            postIds: [],
+            events: [],
+            createdAt: req.body.createdAt,
+            location: req.body.location,
+            phone: req.body.phone,
+            date: req.body.date,
+            sns: req.body.sns
+        })
+        
+        await newClub.save();
+        res.status(200).json(newClub);
+    } catch (e) {
+        console.log('error in /api/event : ', e);
+        res.status(500);
+    }
+})
 // 채팅 관련
 // 동아리방
 // 개인방
