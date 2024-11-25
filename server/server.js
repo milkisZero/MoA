@@ -193,6 +193,27 @@ app.get('/api/club/:clubId/event', async (req, res) => {
 });
 
 // 마이페이지 - 일정보기
+app.get('/api/user/mypage/event', async (req, res) => {
+    try {
+        const { userId, year, month } = req.body;
+
+        const foundUser = await User.findById({ userId });
+        const foundEvents = await Event.find({
+            _id: { $in: foundUser.events },
+            date: {
+                $gte: new Date(`${year}-${month}-01`),
+                $lt: new Date(month === '12' ? `${year + '1'}-${month}-01` : `${year}-${month + '1'}-01`),
+            },
+        });
+
+        return res.status(200).json({
+            success: true,
+            foundEvents,
+        });
+    } catch (err) {
+        return res.status(400).json({ success: false, err });
+    }
+});
 
 // 마이페이지 - 동아리보기
 
