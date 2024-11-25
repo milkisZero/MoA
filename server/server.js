@@ -9,23 +9,8 @@ const PORT = 8080;
 app.use(express.json());
 app.use(cors());
 
-let db;
 const dburl =
-    '[DB_URL] new MongoClient(dburl)
-//     .connect()
-//     .then((client) => {
-//         db = client.db('forum');
-//         console.log('Successfully Connected DB');
-
-//         app.listen(PORT, function () {
-//             console.log(`MOA 서버 실행. Port : ${PORT}`);
-//         });
-//     })
-//     .catch((err) => {
-//         console.log('db 연결 실패');
-//     });
-
-async function connect() {
+    '[DB_URL] function connect() {
     await mongoose.connect(dburl, { useUnifiedTopology: true, useNewUrlParser: true });
     console.log('Successfully Connected DB');
 }
@@ -33,11 +18,6 @@ connect();
 app.listen(PORT, () => {
     console.log(`서버 실행. Port : ${PORT}`);
 });
-
-// app.get('/dbtest', (req, res) => {
-//     db.collection('post').insertOne({ title: 'test' });
-//     res.send('db test');
-// });
 
 const { Club } = require('./model/Club');
 const { Post } = require('./model/Post');
@@ -237,7 +217,7 @@ app.get('/api/user/mypage/club', async (req, res) => {
 // 동아리 가입 신청
 app.post('/api/club/proposer', async (req, res) => {
     try {
-        const {userId, clubId} = req.body.query;
+        const { userId, clubId } = req.body.query;
         if (!userId) throw new Error('cannot find user');
         if (!clubId) throw new Error('cannot find club');
 
@@ -261,12 +241,12 @@ app.post('/api/club/proposer', async (req, res) => {
         console.log('error in /api/club/proposer : ', e);
         res.status(500);
     }
-})
+});
 
 // 동아리 가입 (승인) 또는 (거절 및 취소)
 app.post('api/club/approve', async (req, res) => {
     try {
-        const {userId, clubId, approve} = req.body.query;
+        const { userId, clubId, approve } = req.body.query;
         if (!userId) throw new Error('cannot find user');
         if (!clubId) throw new Error('cannot find club');
 
@@ -294,29 +274,29 @@ app.post('api/club/approve', async (req, res) => {
         console.log('error in /api/club/approve : ', e);
         res.status(500);
     }
-})
+});
 
 // 동아리 일정 등록
-app.post('/api/event', async(req, res) => {
+app.post('/api/event', async (req, res) => {
     try {
         const newEvent = new Event({
             clubId: req.body.id,
             title: req.body.title,
             description: req.body.description,
             date: req.body.date,
-            location: req.body.location
-        })
-        
+            location: req.body.location,
+        });
+
         await newEvent.save();
         res.status(200).json(newEvent);
     } catch (e) {
         console.log('error in /api/event : ', e);
         res.status(500);
     }
-})
+});
 
 // 동아리 등록
-app.post('/api/club', async(req, res) => {
+app.post('/api/club', async (req, res) => {
     try {
         const newClub = new Event({
             name: req.body.id,
@@ -330,16 +310,16 @@ app.post('/api/club', async(req, res) => {
             location: req.body.location,
             phone: req.body.phone,
             date: req.body.date,
-            sns: req.body.sns
-        })
-        
+            sns: req.body.sns,
+        });
+
         await newClub.save();
         res.status(200).json(newClub);
     } catch (e) {
         console.log('error in /api/event : ', e);
         res.status(500);
     }
-})
+});
 
 // 채팅 관련
 // 동아리방
