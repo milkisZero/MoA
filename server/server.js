@@ -224,6 +224,30 @@ app.post('/api/event', async(req, res) => {
 })
 
 // 동아리 등록
+app.post('/api/club', async(req, res) => {
+    try {
+        const newClub = new Event({
+            name: req.body.id,
+            description: req.body.title,
+            members: [],
+            admin: req.body.admin,
+            proposers: [],
+            postIds: [],
+            events: [],
+            createdAt: req.body.createdAt,
+            location: req.body.location,
+            phone: req.body.phone,
+            date: req.body.date,
+            sns: req.body.sns
+        })
+        
+        await newClub.save();
+        res.status(200).json(newClub);
+    } catch (e) {
+        console.log('error in /api/event : ', e);
+        res.status(500);
+    }
+})
 
 // 채팅 관련
 // 동아리방
