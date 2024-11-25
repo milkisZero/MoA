@@ -98,7 +98,7 @@ app.post('/api/user/login', async (req, res) => {
 // 로그아웃
 
 // 전체 동아리 목록 (미리보기)
-app.get('/api/user/total_club', async (req, res) => {
+app.get('/api/total_club', async (req, res) => {
     try {
         const { page, limit } = req.query; // 페이지 번호, 개수
         // 정렬 기준 추가?
@@ -120,10 +120,10 @@ app.get('/api/user/total_club', async (req, res) => {
 // 동아리 검색
 
 // 동아리 정보 보기
-app.get('/api/user/club/:id', async (req, res) => {
+app.get('/api/club/:clubId', async (req, res) => {
     try {
-        const id = req.params.id;
-        const foundCulb = await Club.findById({ id });
+        const clubId = req.params.clubId;
+        const foundCulb = await Club.findById({ clubId });
 
         return res.status(200).json({
             success: true,
@@ -134,13 +134,105 @@ app.get('/api/user/club/:id', async (req, res) => {
     }
 });
 
+// 동아리 전체 게시글 보기
+app.get('/api/club/:clubId/total_post', async (req, res) => {
+    try {
+        const clubId = req.params.clubId;
+        const { page, limit } = req.query;
+        let idx = (page - 1) * Number(limit);
+
+        const foundCulb = await Club.findById({ clubId });
+        const foundPostId = foundCulb.postIds.slice(idx, idx + Number(limit));
+        const posts = await Post.find({ _id: { $in: foundPostId } });
+
+        return res.status(200).json({
+            success: true,
+            posts,
+        });
+    } catch (err) {
+        return res.status(400).json({ success: false, err });
+    }
+});
+
 // 동아리 게시글보기
+app.get('/api/club/:postId', async (req, res) => {
+    try {
+        const postId = req.params.id;
+        const foundPost = await Post.findById({ postId });
+
+        return res.status(200).json({
+            success: true,
+            foundPost,
+        });
+    } catch (err) {
+        return res.status(400).json({ success: false, err });
+    }
+});
 
 // 동아리 일정보기
+app.get('/api/club/:clubId/event', async (req, res) => {
+    try {
+        const clubId = req.params.clubId;
+        const { year, month } = req.query;
+
+        const foundEvents = await Event.find({
+            clubId: clubId,
+            date: {
+                $gte: new Date(`${year}-${month}-01`),
+                $lt: new Date(month === '12' ? `${year + '1'}-${month}-01` : `${year}-${month + '1'}-01`),
+            },
+        });
+
+        return res.status(200).json({
+            success: true,
+            foundEvents,
+        });
+    } catch (err) {
+        return res.status(400).json({ success: false, err });
+    }
+});
 
 // 마이페이지 - 일정보기
+app.get('/api/user/mypage/event', async (req, res) => {
+    try {
+        const { userId, year, month } = req.body;
+
+        const foundUser = await User.findById({ userId });
+        const foundEvents = await Event.find({
+            _id: { $in: foundUser.events },
+            date: {
+                $gte: new Date(`${year}-${month}-01`),
+                $lt: new Date(month === '12' ? `${year + '1'}-${month}-01` : `${year}-${month + '1'}-01`),
+            },
+        });
+
+        return res.status(200).json({
+            success: true,
+            foundEvents,
+        });
+    } catch (err) {
+        return res.status(400).json({ success: false, err });
+    }
+});
 
 // 마이페이지 - 동아리보기
+app.get('/api/user/mypage/club', async (req, res) => {
+    try {
+        const { userId, page, limit } = req.body;
+
+        const foundUser = await User.findById({ userId });
+        const foundClub = Club.find({ _id: { $in: foundUser.clubs } })
+            .skip((page - 1) * limit)
+            .limit(Number(limit));
+
+        return res.status(200).json({
+            success: true,
+            foundClub,
+        });
+    } catch (err) {
+        return res.status(400).json({ success: false, err });
+    }
+});
 
 // 동아리 가입 신청
 app.post('/api/club/proposer', async (req, res) => {

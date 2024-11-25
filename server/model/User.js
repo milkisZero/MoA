@@ -6,6 +6,7 @@ const userSchema = new Schema({
     email: { type: String, trim: true, unique: true },
     password: { type: String, minlength: 5 },
     clubs: { type: [{ type: Schema.Types.ObjectId, ref: 'Club' }] },
+    waitingClubs: { type: [{ type: Schema.Types.ObjectId, ref: 'Club' }] },
     events: { type: [{ type: Schema.Types.ObjectId, ref: 'Event' }] },
     msgRooms: { type: [{ type: Schema.Types.ObjectId, ref: 'msgRoom' }] },
     createdAt: { type: Date, default: Date.now },

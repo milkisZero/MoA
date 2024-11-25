@@ -6,6 +6,11 @@ const clubSchema = new Schema({
     description: { type: String, maxlength: 500 },
     members: { type: [{ type: Schema.Types.ObjectId, ref: 'User' }] },
     admin: { type: [{ type: Schema.Types.ObjectId, ref: 'User' }] },
+
+    proposers: { type: [{ type: Schema.Types.ObjectId, ref: 'User' }] },
+    postIds: { type: [{ type: Schema.Types.ObjectId, ref: 'Post' }] },
+    events: { type: [{ type: Schema.Types.ObjectId, ref: 'Event' }] },
+
     createdAt: { type: Date, default: Date.now },
     location: { type: String },
     phone: { type: String },
