@@ -120,6 +120,19 @@ app.get('/api/user/total_club', async (req, res) => {
 // 동아리 검색
 
 // 동아리 정보 보기
+app.get('/api/user/club/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const foundCulb = await Club.findById({ id });
+
+        return res.status(200).json({
+            success: true,
+            foundCulb,
+        });
+    } catch (err) {
+        return res.status(400).json({ success: false, err });
+    }
+});
 
 // 동아리 게시글보기
 
