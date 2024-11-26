@@ -78,6 +78,10 @@ header {
     padding: 0px 0px 20px 0px;
 }
 
+.list-section header{
+    max-width: 1000px;
+}
+
 .club-list {
     max-width: 1000px;
     margin: 0 auto;
