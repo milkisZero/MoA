@@ -1,0 +1,163 @@
+header {
+    color: black;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    margin: 0 auto;
+    width: 80%;
+}
+
+.main-section {
+    position: relative;
+    text-align: center;
+    color: white;
+    background-image: url('../assets/campus.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 450px;
+}
+
+.main-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 1;
+}
+
+.main-section h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    padding-top: 120px;
+    z-index: 2;
+    position: relative;
+}
+
+.main-section p {
+    font-size: 1.2rem;
+    margin: 1px;
+    z-index: 2;
+    position: relative;
+}
+
+.main-clubs-section {
+    display: flex;
+    justify-content: center;
+ }
+
+.main-clubs {
+    background-color: white;
+    width: 300px;
+    border-radius: 8px;
+    padding: 30px 20px 30px 20px;
+}
+
+.main-clubs img {
+    width: 300px;   
+    border-radius: 8px;
+}
+
+.main-clubs h3 {
+    text-align: left;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.main-clubs p {
+    text-align: left;
+    font-size: 1rem;
+    color: #555;
+}
+
+.list-section {
+    background-color: #f3f3f3;
+    padding: 0px 0px 20px 0px;
+}
+
+.list-section header{
+    max-width: 1000px;
+}
+
+.club-list {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.club-item {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.club-item img {
+    height:200px; 
+    width: 200px;
+    border-radius: 8px;
+    padding-right: 10px;
+}
+
+.club-item div   {
+    position: absolute;
+    margin: 0;
+    top: 0px;
+    left: 210px;
+}
+
+.club-item h3 {
+    margin: 0;
+    text-align: left;
+    font-size: 1rem;
+}
+
+.club-item p {
+    text-align: left;
+    color: #777;
+    font-size: 0.9rem;
+}
+
+.club-item button {
+    position: absolute;
+    background-color: white;
+    color: black;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    width: 200;
+    bottom: 0px;
+    left: 210px;
+ }
+
+.club-item button:hover {
+    color: white;
+    background-color: grey;
+}
+
+.Footer {
+    background-color: #333;
+    color: #ddd;
+    padding: 20px;
+    font-size: 0.9rem;
+    display: flex; 
+    justify-content: center;
+}
+
+.Footer div {
+    max-width: 500px;
+ }
+
+.Footer h4 {
+    text-align: left;
+}
+
+.Footer p {
+    text-align: left;
+    font-size: 0.8rem;
+    margin:0;
+}
