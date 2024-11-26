@@ -1,17 +1,21 @@
-const express = require('express');
-const path = require('path');
-const app = express();
-const cors = require('cors');
 const { MongoClient } = require('mongodb');
 const mongoose = require('mongoose');
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
+const yaml = require('yamljs');
+const { swaggerUi, specs } = require('./swagger.js');
+
+const app = express();
 const PORT = 8080;
 
 app.use(express.json());
 app.use(cors());
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 const dburl =
     '[DB_URL] function connect() {
-    await mongoose.connect(dburl, { useUnifiedTopology: true, useNewUrlParser: true });
+    await mongoose.connect(dburl);
     console.log('Successfully Connected DB');
 }
 connect();

@@ -1,0 +1,38 @@
+paths:
+  /api/total_club:
+    get:
+      summary: Get a list of clubs
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Club list retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClubListResponse"
+  /api/club/{clubId}:
+    get:
+      summary: Get club details
+      parameters:
+        - name: clubId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Club details retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClubDetailsResponse"

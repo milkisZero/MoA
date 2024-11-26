@@ -1,0 +1,27 @@
+paths:
+  /api/club/{clubId}/event:
+    get:
+      summary: Get events for a specific club
+      parameters:
+        - name: clubId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: year
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: month
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Event list retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventListResponse"
