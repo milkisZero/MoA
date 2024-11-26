@@ -102,8 +102,10 @@ header {
 }
 
 .club-item div   {
+    position: absolute;
     margin: 0;
-    padding-bottom: 50px;
+    top: 0px;
+    left: 210px;
 }
 
 .club-item h3 {
