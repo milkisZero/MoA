@@ -30,6 +30,7 @@ header {
 }
 
 .main-section h1 {
+    margin: 0;
     font-size: 2.5rem;
     padding-top: 120px;
     z-index: 2;
@@ -41,4 +42,34 @@ header {
     margin: 1px;
     z-index: 2;
     position: relative;
+}
+
+.main-clubs-section {
+    display: flex;
+    justify-content: center;
+ }
+
+.main-clubs {
+    background-color: white;
+    width: 300px;
+    height: 200px;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.main-clubs img {
+    width: 300px;   
+    border-radius: 8px;
+}
+
+.main-clubs h3 {
+    text-align: left;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.main-clubs p {
+    text-align: left;
+    font-size: 1rem;
+    color: #555;
 }
