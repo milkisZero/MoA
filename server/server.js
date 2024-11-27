@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config();
 
 const { swaggerUi, specs } = require('./swagger.js');
 const { S3Client } = require('@aws-sdk/client-s3');
@@ -11,23 +11,26 @@ const yaml = require('yamljs');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
-const session = require('express-session')
+const session = require('express-session');
 const MongoStore = require('connect-mongo');
 
 const app = express();
 const PORT = 8080;
-const dburl = '[DB_URL] origin: 'http://localhost:8080', credentials: true }));
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
-app.use(session({
-    resave : false,
-    saveUninitialized : false,
-    secret: '[SECRET]',
-    cookie : { maxAge : 1000 * 60 }, // 24시간 세션 유지
-    store: MongoStore.create({
-        mongoUrl : dburl,
-        dbName: 'test',
+const dburl =
+    '[DB_URL] origin: 'http://localhost:8080', credentials: true }));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+app.use(
+    session({
+        resave: false,
+        saveUninitialized: false,
+        secret: '[SECRET]',
+        cookie: { maxAge: 1000 * 60 }, // 24시간 세션 유지
+        store: MongoStore.create({
+            mongoUrl: dburl,
+            dbName: 'test',
+        }),
     })
-}))
+);
 
 async function connect() {
     await mongoose.connect(dburl);
@@ -46,29 +49,29 @@ const { Message } = require('./model/Message');
 const { MsgRoom } = require('./model/MsgRoom');
 
 const s3 = new S3Client({
-    region : 'ap-northeast-2',
-    credentials : {
-        accessKeyId : '[ACCESS_KEYID]',
-        secretAccessKey : '[SECRET_ACCESS_KEY]'
-    }
-})
+    region: 'ap-northeast-2',
+    credentials: {
+        accessKeyId: '[ACCESS_KEYID]',
+        secretAccessKey: '[SECRET_ACCESS_KEY]',
+    },
+});
 
 const upload = multer({
     storage: multerS3({
         s3: s3,
         bucket: 'moaprojects3',
         key: function (req, file, cb) {
-            cb(null, Date.now().toString())
-        }
-    })
-})
+            cb(null, Date.now().toString());
+        },
+    }),
+});
 
-app.get('/api/session/', (req, res, next) => {
+app.get('/api/session/', (req, res) => {
     if (!req.session || !req.session.userId) {
         return res.status(401).json({ success: false, message: 'Unauthorized' });
     }
-    next();
-})
+    return res.status(200).json();
+});
 
 // 회원가입
 const saltRounds = 10; // 해쉬 난도
@@ -84,7 +87,7 @@ app.post('/api/user/register', async (req, res) => {
         return res.status(200).json({
             success: true,
             saved,
-        }); 
+        });
     } catch (err) {
         console.log('/api/user/register post error: ', err);
         return res.status(400).json({ success: false, err });
@@ -104,7 +107,7 @@ app.post('/api/user/login', async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            found
+            found,
         });
     } catch (err) {
         console.log('/api/user/login post error: ', err);
@@ -114,7 +117,7 @@ app.post('/api/user/login', async (req, res) => {
 
 // 로그아웃
 app.post('/api/user/logout', (req, res) => {
-    req.session.destroy(err => {
+    req.session.destroy((err) => {
         if (err) {
             console.log('/api/user/logout error:', err);
             return res.status(500).json({
@@ -385,12 +388,12 @@ app.post('/api/club/:clubId/post', upload.single('img'), async (req, res) => {
             clubId: req.params.clubId,
             title: req.body.title,
             content: req.body.content,
-            img: req.file.location
-        })
+            img: req.file.location,
+        });
         await newPost.save();
         res.status(200).json(newPost);
     } catch (e) {
         console.log('error in /api/club/:clubId/post : ', e);
         res.status(500);
     }
-})
+});
