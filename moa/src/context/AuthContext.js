@@ -1,0 +1,75 @@
+import React, { createContext, useState, useEffect, useContext } from 'react';
+const URL = 'http://localhost:8080/api/';
+
+const AuthContext = createContext();
+export const useAuth = () => useContext(AuthContext);
+
+function AuthProvider({ children }) {
+    const [userAuth, setUserAuth] = useState(null);
+
+    const checkSession = async () => {
+        try {
+            const response = await fetch('/api/session', {
+                method: 'GET',
+                credentials: 'include', // 쿠키를 포함하여 요청
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setUserAuth(data.user);
+            } else {
+                setUserAuth(null);
+            }
+        } catch (error) {
+            console.error('세션 확인 중 오류:', error);
+            setUserAuth(null);
+        }
+    };
+
+    useEffect(() => {
+        checkSession();
+    }, []);
+
+    // 로그인
+    const userLogin = async (info) => {
+        try {
+            const response = await fetch(URL + 'user/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: info.email,
+                    password: info.password,
+                }),
+                credentials: 'include',
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setUserAuth(data.updated);
+                return data;
+            } else {
+                alert(response.status);
+            }
+        } catch (error) {
+            alert(error.message);
+        }
+    };
+
+    // 로그아웃
+    const userLogout = async () => {
+        try {
+            await fetch(URL + 'user/logout', {
+                method: 'POST',
+                credentials: 'include',
+            });
+            setUserAuth(null);
+        } catch (error) {
+            alert(error.message);
+        }
+    };
+
+    return <AuthContext.Provider value={{ userAuth, userLogin, userLogout }}>{children}</AuthContext.Provider>;
+}
+
+export default AuthProvider;

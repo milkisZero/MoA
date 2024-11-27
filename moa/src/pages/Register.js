@@ -20,11 +20,7 @@ function Register() {
             return;
         }
 
-        try {
-            await userRegister({ name, email, password });
-        } catch (error) {
-            alert(error.message);
-        }
+        await userRegister({ name, email, password });
     };
 
     return (

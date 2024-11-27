@@ -4,14 +4,21 @@ import { Link } from 'react-router-dom';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { useAuth } from '../context/AuthContext';
 
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const { userAuth, userLogin } = useAuth();
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
         console.log('로그인 정보:', { email, password });
+
+        await userLogin({ email, password });
+        if (!userAuth) {
+            alert('로그인에 실패했습니다');
+        }
     };
 
     return (
