@@ -25,9 +25,13 @@ function Main() {
 
 function MainClubs() {
     const list = [
-        { title: '동아리1', info: '내가 속한 동아리의 일정을 알아보세요내가 속한 동아리의 일정을 알아보세요' },
-        { title: '동아리2', info: '안녕하세요' },
-        { title: '동아리3', info: '안녕하세요' },
+        {
+            image: tmp,
+            title: '동아리1',
+            info: '내가 속한 동아리의 일정을 알아보세요내가 속한 동아리의 일정을 알아보세요',
+        },
+        { image: tmp, title: '동아리2', info: '안녕하세요' },
+        { image: tmp, title: '동아리3', info: '안녕하세요' },
     ];
 
     return (
@@ -41,12 +45,13 @@ function MainClubs() {
 
 function ListSection() {
     const list = [
-        { title: '동아리1', info: '내가 속한 동아리의 일정을 알아보세요' },
+        { image: tmp, title: '동아리1', info: '내가 속한 동아리의 일정을 알아보세요' },
         {
+            image: tmp,
             title: '동아리2',
             info: '안녕하세요안녕하세요안녕하안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요',
         },
-        { title: '동아리3', info: '안녕하세요' },
+        { image: tmp, title: '동아리3', info: '안녕하세요' },
     ];
 
     return (
