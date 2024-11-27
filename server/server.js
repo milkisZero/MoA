@@ -63,14 +63,12 @@ const upload = multer({
     })
 })
 
-const checkSession = (req, res, next) => {
+app.get('/api/session/', (req, res, next) => {
     if (!req.session || !req.session.userId) {
         return res.status(401).json({ success: false, message: 'Unauthorized' });
     }
     next();
-}
-
-// app.use(checkSession);
+})
 
 // 회원가입
 const saltRounds = 10; // 해쉬 난도
@@ -134,7 +132,7 @@ app.post('/api/user/logout', (req, res) => {
 });
 
 // 전체 동아리 목록 (미리보기)
-app.get('/api/total_club', async (req, res) => {
+app.get('/api/total_club', checkSession, async (req, res) => {
     try {
         const { page, limit } = req.query; // 페이지 번호, 개수
         // 정렬 기준 추가?
