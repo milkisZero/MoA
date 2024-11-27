@@ -28,11 +28,14 @@ import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Main from './pages/Main';
 import Total_club from './pages/Total_clubs';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 function App() {
     return (
         <BrowserRouter>
             <div className="App">
+                <ScrollToTop />
                 <Routes>
                     <Route path="/" element={<Main />}></Route>
                     <Route path="/TotalClub" element={<Total_club />}></Route>
@@ -40,6 +43,16 @@ function App() {
             </div>
         </BrowserRouter>
     );
+}
+
+function ScrollToTop() {
+    const { pathname } = useLocation();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [pathname]);
+
+    return null;
 }
 
 export default App;

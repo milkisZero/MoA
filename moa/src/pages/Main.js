@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../css/Pages.css';
 import tmp from '../assets/sample.png';
+import { Link } from 'react-router-dom';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -58,7 +59,9 @@ function ListSection() {
         <section className="list-section">
             <header>
                 <h3>이런 동아리는 어떠신가요</h3>
-                <h4>더보기</h4>
+                <h4 className="clickable">
+                    <Link to="/TotalClub">더보기</Link>
+                </h4>
             </header>
             <div className="club-list">
                 {list.map((item) => (

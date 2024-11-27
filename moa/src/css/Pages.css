@@ -161,3 +161,12 @@ header {
     font-size: 0.8rem;
     margin:0;
 }
+
+.clickable {
+    cursor: pointer;
+}
+
+.clickable a {
+    text-decoration: none;
+    color: inherit;
+}
