@@ -27,6 +27,7 @@
 import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Main from './pages/Main';
+import Total_club from './pages/Total_clubs';
 
 function App() {
     return (
@@ -34,6 +35,7 @@ function App() {
             <div className="App">
                 <Routes>
                     <Route path="/" element={<Main />}></Route>
+                    <Route path="/TotalClub" element={<Total_club />}></Route>
                 </Routes>
             </div>
         </BrowserRouter>
