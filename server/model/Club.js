@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const clubSchema = new Schema({
-    name:           { type: String, require: true, maxlength: 50 },
-    description:    { type: String, require: true, maxlength: 500 },
+    name:           { type: String, required: true, maxlength: 50 },
+    description:    { type: String, required: true, maxlength: 500 },
     members:        { type: [{ type: Schema.Types.ObjectId, ref: 'User' }] },
     admin:          { type: [{ type: Schema.Types.ObjectId, ref: 'User' }] },
 

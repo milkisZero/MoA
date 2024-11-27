@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-    name:           { type: String, require: true, maxlength: 50 },
-    email:          { type: String, require: true, trim: true, unique: true },
-    password:       { type: String, require: true, minlength: 5 },
+    name:           { type: String, required: true, maxlength: 50 },
+    email:          { type: String, required: true, trim: true, unique: true },
+    password:       { type: String, required: true, minlength: 5 },
     createdAt:      { type: Date, default: Date.now },
     profileImg:     { type: String },
     
