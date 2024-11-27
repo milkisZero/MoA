@@ -1,3 +1,5 @@
+require('dotenv').config() 
+
 const { MongoClient } = require('mongodb');
 const mongoose = require('mongoose');
 const express = require('express');
@@ -5,6 +7,26 @@ const cors = require('cors');
 const path = require('path');
 const yaml = require('yamljs');
 const { swaggerUi, specs } = require('./swagger.js');
+const { S3Client } = require('@aws-sdk/client-s3')
+const multer = require('multer')
+const multerS3 = require('multer-s3')
+const s3 = new S3Client({
+    region : 'ap-northeast-2',
+    credentials : {
+        accessKeyId : '[ACCESS_KEYID]',
+        secretAccessKey : '[SECRET_ACCESS_KEY]'
+    }
+})
+
+const upload = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: 'moaprojects3',
+        key: function (req, file, cb) {
+            cb(null, Date.now().toString())
+        }
+    })
+})
 
 const app = express();
 const PORT = 8080;
@@ -13,8 +35,7 @@ app.use(express.json());
 app.use(cors());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
-const dburl =
-    '[DB_URL] function connect() {
+const dburl = '[DB_URL] function connect() {
     await mongoose.connect(dburl);
     console.log('Successfully Connected DB');
 }
@@ -328,3 +349,19 @@ app.post('/api/club', async (req, res) => {
 // 채팅 관련
 // 동아리방
 // 개인방
+
+app.post('/api/club/:clubId/post', upload.single('img'), async (req, res) => {
+    try {
+        const newPost = new Post({
+            clubId: req.params.clubId,
+            title: req.body.title,
+            content: req.body.content,
+            img: req.file.location
+        })
+        await newPost.save();
+        res.status(200).json(newPost);
+    } catch (e) {
+        console.log('error in /api/club/:clubId/post : ', e);
+        res.status(500);
+    }
+})

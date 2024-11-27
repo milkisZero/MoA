@@ -2,20 +2,21 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const clubSchema = new Schema({
-    name: { type: String, maxlength: 50 },
-    description: { type: String, maxlength: 500 },
-    members: { type: [{ type: Schema.Types.ObjectId, ref: 'User' }] },
-    admin: { type: [{ type: Schema.Types.ObjectId, ref: 'User' }] },
+    name:           { type: String, require: true, maxlength: 50 },
+    description:    { type: String, require: true, maxlength: 500 },
+    members:        { type: [{ type: Schema.Types.ObjectId, ref: 'User' }] },
+    admin:          { type: [{ type: Schema.Types.ObjectId, ref: 'User' }] },
 
-    proposers: { type: [{ type: Schema.Types.ObjectId, ref: 'User' }] },
-    postIds: { type: [{ type: Schema.Types.ObjectId, ref: 'Post' }] },
-    events: { type: [{ type: Schema.Types.ObjectId, ref: 'Event' }] },
+    proposers:      { type: [{ type: Schema.Types.ObjectId, ref: 'User' }] },
+    postIds:        { type: [{ type: Schema.Types.ObjectId, ref: 'Post' }] },
+    events:         { type: [{ type: Schema.Types.ObjectId, ref: 'Event' }] },
 
-    createdAt: { type: Date, default: Date.now },
-    location: { type: String },
-    phone: { type: String },
-    date: { type: String },
-    sns: { type: String },
+    createdAt:      { type: Date, default: Date.now },
+    clubImg:        { type: String },
+    location:       { type: String },
+    phone:          { type: String },
+    date:           { type: String },
+    sns:            { type: String },
 });
 
 const Club = mongoose.model('Club', clubSchema);

@@ -2,14 +2,16 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-    name: { type: String, maxlength: 50 },
-    email: { type: String, trim: true, unique: true },
-    password: { type: String, minlength: 5 },
-    clubs: { type: [{ type: Schema.Types.ObjectId, ref: 'Club' }] },
-    waitingClubs: { type: [{ type: Schema.Types.ObjectId, ref: 'Club' }] },
-    events: { type: [{ type: Schema.Types.ObjectId, ref: 'Event' }] },
-    msgRooms: { type: [{ type: Schema.Types.ObjectId, ref: 'msgRoom' }] },
-    createdAt: { type: Date, default: Date.now },
+    name:           { type: String, require: true, maxlength: 50 },
+    email:          { type: String, require: true, trim: true, unique: true },
+    password:       { type: String, require: true, minlength: 5 },
+    createdAt:      { type: Date, default: Date.now },
+    profileImg:     { type: String },
+    
+    clubs:          { type: [{ type: Schema.Types.ObjectId, ref: 'Club' }] },
+    waitingClubs:   { type: [{ type: Schema.Types.ObjectId, ref: 'Club' }] },
+    events:         { type: [{ type: Schema.Types.ObjectId, ref: 'Event' }] },
+    msgRooms:       { type: [{ type: Schema.Types.ObjectId, ref: 'MsgRoom' }] },
 
     token: { type: String },
     tokenExp: { type: Number },
