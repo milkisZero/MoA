@@ -170,7 +170,7 @@ header {
 .clickable a {
     text-decoration: none;
     color: inherit;
-    margin-right: 20px;
+    margin: 10px;
 }
 
 

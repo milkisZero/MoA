@@ -8,7 +8,10 @@ function Header() {
 
     return (
         <header>
-            <span>아주대학교</span>
+            <span className="clickable">
+                <span>아주대학교</span>
+                <Link to="/">MOA</Link>
+            </span>
 
             {!userAuth ? (
                 <span className="clickable">

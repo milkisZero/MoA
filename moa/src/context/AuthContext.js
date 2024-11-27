@@ -1,4 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
+import { useLocation } from 'react-router-dom';
+
 const URL = 'http://localhost:8080/api/';
 
 const AuthContext = createContext();
@@ -28,7 +30,7 @@ function AuthProvider({ children }) {
 
     useEffect(() => {
         checkSession();
-    }, []);
+    }, [useLocation()]);
 
     // 로그인
     const userLogin = async (info) => {

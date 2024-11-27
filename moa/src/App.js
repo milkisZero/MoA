@@ -35,8 +35,8 @@ import AuthProvider from './context/AuthContext';
 
 function App() {
     return (
-        <AuthProvider>
-            <BrowserRouter>
+        <BrowserRouter>
+            <AuthProvider>
                 <div className="App">
                     <ScrollToTop />
                     <Routes>
@@ -46,8 +46,8 @@ function App() {
                         <Route path="/Register" element={<Register />}></Route>
                     </Routes>
                 </div>
-            </BrowserRouter>
-        </AuthProvider>
+            </AuthProvider>
+        </BrowserRouter>
     );
 }
 
