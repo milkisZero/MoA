@@ -1,15 +1,50 @@
-require('dotenv').config() 
+require('dotenv').config()
 
+const { swaggerUi, specs } = require('./swagger.js');
+const { S3Client } = require('@aws-sdk/client-s3');
 const { MongoClient } = require('mongodb');
 const mongoose = require('mongoose');
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const yaml = require('yamljs');
-const { swaggerUi, specs } = require('./swagger.js');
-const { S3Client } = require('@aws-sdk/client-s3')
-const multer = require('multer')
-const multerS3 = require('multer-s3')
+const bcrypt = require('bcrypt');
+const multer = require('multer');
+const multerS3 = require('multer-s3');
+const session = require('express-session')
+const MongoStore = require('connect-mongo');
+
+const app = express();
+const PORT = 8080;
+const dburl = '[DB_URL] origin: 'http://localhost:8080', credentials: true }));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+app.use(session({
+    resave : false,
+    saveUninitialized : false,
+    secret: '[SECRET]',
+    cookie : { maxAge : 1000 * 60 }, // 24시간 세션 유지
+    store: MongoStore.create({
+        mongoUrl : dburl,
+        dbName: 'test',
+    })
+}))
+
+async function connect() {
+    await mongoose.connect(dburl);
+    console.log('Successfully Connected DB');
+}
+connect();
+app.listen(PORT, () => {
+    console.log(`서버 실행. Port : ${PORT}`);
+});
+
+const { Club } = require('./model/Club');
+const { Post } = require('./model/Post');
+const { User } = require('./model/User');
+const { Event } = require('./model/Event');
+const { Message } = require('./model/Message');
+const { MsgRoom } = require('./model/MsgRoom');
+
 const s3 = new S3Client({
     region : 'ap-northeast-2',
     credentials : {
@@ -28,31 +63,16 @@ const upload = multer({
     })
 })
 
-const app = express();
-const PORT = 8080;
-
-app.use(express.json());
-app.use(cors());
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
-
-const dburl = '[DB_URL] function connect() {
-    await mongoose.connect(dburl);
-    console.log('Successfully Connected DB');
+const checkSession = (req, res, next) => {
+    if (!req.session || !req.session.userId) {
+        return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+    next();
 }
-connect();
-app.listen(PORT, () => {
-    console.log(`서버 실행. Port : ${PORT}`);
-});
 
-const { Club } = require('./model/Club');
-const { Post } = require('./model/Post');
-const { User } = require('./model/User');
-const { Event } = require('./model/Event');
-const { Message } = require('./model/Message');
-const { MsgRoom } = require('./model/MsgRoom');
+// app.use(checkSession);
 
 // 회원가입
-const bcrypt = require('bcrypt'); // 암호화 라이브러리
 const saltRounds = 10; // 해쉬 난도
 app.post('/api/user/register', async (req, res) => {
     try {
@@ -66,14 +86,14 @@ app.post('/api/user/register', async (req, res) => {
         return res.status(200).json({
             success: true,
             saved,
-        });
+        }); 
     } catch (err) {
+        console.log('/api/user/register post error: ', err);
         return res.status(400).json({ success: false, err });
     }
 });
 
 // 로그인
-const jwt = require('jsonwebtoken'); // 토큰 생성 라이브러리
 app.post('/api/user/login', async (req, res) => {
     try {
         const found = await User.findOne({ email: req.body.email });
@@ -82,25 +102,36 @@ app.post('/api/user/login', async (req, res) => {
         const match = await bcrypt.compare(req.body.password, found.password);
         if (!match) throw new Error('cannot match password');
 
-        const token = jwt.sign(found._id.toHexString(), 'secretToken');
-        const updated = await User.findOneAndUpdate(
-            { email: req.body.email },
-            { $set: { token: token } },
-            { new: true }
-        );
-
-        // 쿠키에 토큰 저장?
+        req.session.userId = found._id;
 
         return res.status(200).json({
             success: true,
-            updated,
+            found
         });
     } catch (err) {
+        console.log('/api/user/login post error: ', err);
         return res.status(400).json({ success: false, err });
     }
 });
 
 // 로그아웃
+app.post('/api/user/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            console.log('/api/user/logout error:', err);
+            return res.status(500).json({
+                success: false,
+                message: 'Logout Failed',
+            });
+        }
+
+        res.clearCookie('connect.sid', { path: '/' });
+        res.status(200).json({
+            success: true,
+            message: 'Logout Successful',
+        });
+    });
+});
 
 // 전체 동아리 목록 (미리보기)
 app.get('/api/total_club', async (req, res) => {
@@ -246,8 +277,8 @@ app.post('/api/club/proposer', async (req, res) => {
         if (!userId) throw new Error('cannot find user');
         if (!clubId) throw new Error('cannot find club');
 
-        const wantUser = await User.findById(id);
-        const wantedClub = await Club.findById(id);
+        const wantUser = await User.findById(userId);
+        const wantedClub = await Club.findById(clubId);
         if (!wantUser) throw new Error('cannot find user');
         if (!wantedClub) throw new Error('cannot find club');
 
@@ -275,8 +306,8 @@ app.post('api/club/approve', async (req, res) => {
         if (!userId) throw new Error('cannot find user');
         if (!clubId) throw new Error('cannot find club');
 
-        const wantUser = await User.findById(id);
-        const wantedClub = await Club.findById(id);
+        const wantUser = await User.findById(userId);
+        const wantedClub = await Club.findById(clubId);
         if (!wantUser) throw new Error('cannot find user');
         if (!wantedClub) throw new Error('cannot find club');
 

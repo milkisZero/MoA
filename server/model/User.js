@@ -12,9 +12,6 @@ const userSchema = new Schema({
     waitingClubs:   { type: [{ type: Schema.Types.ObjectId, ref: 'Club' }] },
     events:         { type: [{ type: Schema.Types.ObjectId, ref: 'Event' }] },
     msgRooms:       { type: [{ type: Schema.Types.ObjectId, ref: 'MsgRoom' }] },
-
-    token: { type: String },
-    tokenExp: { type: Number },
 });
 
 const User = mongoose.model('User', userSchema);
