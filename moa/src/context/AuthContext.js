@@ -11,7 +11,7 @@ function AuthProvider({ children }) {
 
     const checkSession = async () => {
         try {
-            const response = await fetch('/api/session', {
+            const response = await fetch(URL + 'session', {
                 method: 'GET',
                 credentials: 'include', // 쿠키를 포함하여 요청
             });
@@ -30,7 +30,7 @@ function AuthProvider({ children }) {
 
     useEffect(() => {
         checkSession();
-    }, [useLocation()]);
+    }, []);
 
     // 로그인
     const userLogin = async (info) => {
@@ -44,9 +44,10 @@ function AuthProvider({ children }) {
                     email: info.email,
                     password: info.password,
                 }),
-                credentials: 'include',
             });
             if (response.ok) {
+                alert(response.error);
+
                 const data = await response.json();
                 setUserAuth(data.updated);
                 return data;
@@ -54,6 +55,7 @@ function AuthProvider({ children }) {
                 alert(response.status);
             }
         } catch (error) {
+            console.error('로그인 오류:', error);
             alert(error.message);
         }
     };
