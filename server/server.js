@@ -17,14 +17,18 @@ const MongoStore = require('connect-mongo');
 const app = express();
 const PORT = 8080;
 const dburl =
-    '[DB_URL] origin: 'http://localhost:8080', credentials: true }));
+    '[DB_URL] origin: 'http://localhost:3000', credentials: true }));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.use(
     session({
         resave: false,
         saveUninitialized: false,
         secret: '[SECRET]',
-        cookie: { maxAge: 1000 * 60 }, // 24시간 세션 유지
+        cookie: {
+            httpOnly: true,
+            sameSite: 'none',
+            maxAge: 1000 * 60,
+        }, // 24시간 세션 유지
         store: MongoStore.create({
             mongoUrl: dburl,
             dbName: 'test',
@@ -135,7 +139,7 @@ app.post('/api/user/logout', (req, res) => {
 });
 
 // 전체 동아리 목록 (미리보기)
-app.get('/api/total_club', checkSession, async (req, res) => {
+app.get('/api/total_club', async (req, res) => {
     try {
         const { page, limit } = req.query; // 페이지 번호, 개수
         // 정렬 기준 추가?
