@@ -30,6 +30,7 @@ import Main from './pages/Main';
 import Total_club from './pages/Total_clubs';
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import Login from './pages/Login';
 
 function App() {
     return (
@@ -39,6 +40,7 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Main />}></Route>
                     <Route path="/TotalClub" element={<Total_club />}></Route>
+                    <Route path="/Login" element={<Login />}></Route>
                 </Routes>
             </div>
         </BrowserRouter>

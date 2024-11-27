@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import '../css/Pages.css';
-import tmp from '../assets/sample.png';
+import { Link } from 'react-router-dom';
 
 function Header() {
     return (
         <header>
             <span>아주대학교</span>
-            <span>로그인</span>
+            <span className="clickable">
+                <Link to="/Login">로그인</Link>
+            </span>
         </header>
     );
 }
