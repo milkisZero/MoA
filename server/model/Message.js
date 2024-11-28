@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const msgSchema = new Schema({
-    clubId:     { type: Schema.Types.ObjectId, ref: 'Club' },
+    msgRoomId:     { type: Schema.Types.ObjectId, ref: 'MsgRoom' },
     senderId:   { type: Schema.Types.ObjectId, ref: 'User' },
     content:    { type: String, maxlength: 500 },
     timestamp:  { type: Date, default: Date.now },

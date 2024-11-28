@@ -13,6 +13,16 @@ const multer = require('multer');
 const multerS3 = require('multer-s3');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
+const { createServer } = require('http')
+const { Server } = require('socket.io')
+const server = createServer(app)
+const io = new Server(server, {
+    cors: {
+        origin: 'http://localhost:3000',
+        methods: ['GET', 'POST'],
+        credentials: true,
+    },
+});
 
 const app = express();
 const PORT = 8080;
@@ -26,7 +36,7 @@ app.use(
         secret: '[SECRET]',
         cookie: {
             httpOnly: true,
-            sameSite: 'none',
+            sameSite: 'Strict',
             maxAge: 1000 * 60,
         }, // 24시간 세션 유지
         store: MongoStore.create({
@@ -41,7 +51,7 @@ async function connect() {
     console.log('Successfully Connected DB');
 }
 connect();
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`서버 실행. Port : ${PORT}`);
 });
 
@@ -305,7 +315,7 @@ app.post('/api/club/proposer', async (req, res) => {
 });
 
 // 동아리 가입 (승인) 또는 (거절 및 취소)
-app.post('api/club/approve', async (req, res) => {
+app.post('/api/club/approve', async (req, res) => {
     try {
         const { userId, clubId, approve } = req.body.query;
         if (!userId) throw new Error('cannot find user');
@@ -382,10 +392,6 @@ app.post('/api/club', async (req, res) => {
     }
 });
 
-// 채팅 관련
-// 동아리방
-// 개인방
-
 app.post('/api/club/:clubId/post', upload.single('img'), async (req, res) => {
     try {
         const newPost = new Post({
@@ -401,3 +407,66 @@ app.post('/api/club/:clubId/post', upload.single('img'), async (req, res) => {
         res.status(500);
     }
 });
+
+// 채팅방 생성
+app.post('/api/msgRoom', async (req, res) => {
+    try {
+        const { name, members } = req.body;
+        const newMsgRoom = new MsgRoom = {
+            name: name,
+            members: members,
+            messages: []
+        }
+
+        await newMsgRoom.save();
+        res.send(200).json(newMsgRoom);
+    } catch (e) {
+        console.log('/api/msgRoom post error: ', e);
+        res.send(400);
+    }
+})
+
+// 실시간 채팅(socket)
+io.on('connection', (socket) => {
+    console.log('connected websocket:', socket.id);
+
+    // 채팅방 입장
+    socket.on('joinRoom', ({ msgRoomId }) => {
+        socket.join(msgRoomId);
+        console.log(`Socket ${socket.id} joined room: ${msgRoomId}`);
+    })
+
+    // 메세지 broadcast
+    socket.on('sendMsg', async ({msgRoomId, senderId, content}) => {
+        try {
+            const newMsg = new Message( {
+                msgRoomId,
+                senderId,
+                content
+            });
+            await newMsg.save();
+            
+            await MsgRoom.findByIdAndUpate(
+                msgRoomId,
+                { $push: { mesage: newMsg._id }},
+            );
+
+            socket.to(msgRoomId).emit('receiveMsg', {
+                msgRoomId,
+                senderId,
+                content,
+                timestamp: newMsg.timestamp
+            });
+
+            console.log(`Message sent to ${msgRoomId}: ${content}`);
+        } catch (e) {
+            console.error('Message send error:', e);
+            socket.emit('errorMessage', { error: 'Failed to send message.' });
+        }
+    })
+
+    // 채팅방 퇴장
+    socket.on('disconnect', () => {
+        console.log('WebSocket disconnected:', socket.id);
+    });
+})
