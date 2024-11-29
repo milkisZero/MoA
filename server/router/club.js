@@ -158,64 +158,70 @@ router.delete('/:clubId', async (req, res) => {
 })
 
 // 동아리 가입 신청
-router.post('/proposer', async (req, res) => {
+router.post('/:clubId/proposer', async (req, res) => {
     try {
-        const { userId, clubId } = req.body;
-        if (!userId) throw new Error('cannot find user');
-        if (!clubId) throw new Error('cannot find club');
+        const userId = req.body.userId;
+        const clubId = req.params.clubId;
+        
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ message: 'User cannot found'});
+        
+        const club = await Club.findById(clubId);
+        if (!club) return res.status(404).json({ message: 'Club cannot found'});
 
-        const wantUser = await User.findById(userId);
-        const wantedClub = await Club.findById(clubId);
-        if (!wantUser) throw new Error('cannot find user');
-        if (!wantedClub) throw new Error('cannot find club');
-
-        if (!wantUser.waitingClubs.includes(clubId)) {
-            wantUser.waitingClubs.push(clubId);
-            await wantUser.save();
+        if (!user.waitingClubs.includes(clubId)) {
+            user.waitingClubs.push(clubId);
+            await user.save();
         }
 
-        if (!wantedClub.proposers.includes(userId)) {
-            wantedClub.proposers.push(userId);
-            await wantedClub.save();
+        if (!club.proposers.includes(userId)) {
+            club.proposers.push(userId);
+            await club.save();
         }
 
-        res.status(200).json(wantedClub);
+        res.status(200).json({
+            message: "Successfully proposered",
+            user,
+            club
+        });
     } catch (e) {
-        console.log('error in /proposer : ', e);
-        res.status(500);
+        console.log('post error in /club/:clubId/proposer: ', e);
+        return res.status(500).json({ message: 'Server post error in /club/:clubId/proposer' });
     }
 });
 
 // 동아리 가입 (승인) 또는 (거절 및 취소)
-router.post('/approve', async (req, res) => {
+router.post('/:clubId/approve', async (req, res) => {
     try {
-        const { userId, clubId, approve } = req.body;
-        if (!userId) throw new Error('cannot find user');
-        if (!clubId) throw new Error('cannot find club');
+        const { userId, approve } = req.body;
+        const clubId = req.params.clubId;
 
-        const wantUser = await User.findById(userId);
-        const wantedClub = await Club.findById(clubId);
-        if (!wantUser) throw new Error('cannot find user');
-        if (!wantedClub) throw new Error('cannot find club');
-
-        if (wantUser.waitingClubs.includes(clubId)) {
-            wantUser.waitingClubs.delete(clubId);
-        }
-
-        if (wantedClub.proposers.includes(userId)) {
-            wantedClub.proposers.delete(userId);
-        }
-
-        if (approve) {
-            wantedClub.members.push(userId);
-        }
-
-        await wantUser.save();
-        await wantedClub.save();
-        res.status(200).json(wantedClub);
+        const user = await User.findById(userId);
+        const club = await Club.findById(clubId);
+        if (!user) return res.status(404).json({ message: 'User cannot found'});
+        if (!club) return res.status(404).json({ message: 'Club cannot found'});
+        
+        // 이거 indexOf 왜 안됨??????????? event.js의 delete는 되는데?????????
+        const userIdx = user.waitingClubs.indexOf(userId);
+        const clubIdx = club.proposers.indexOf(clubId);
+        // console.log(userIdx, clubIdx);
+        if (userIdx > -1) user.waitingClubs.splice(userIdx, 1);
+        if (clubIdx > -1) club.proposers.splice(clubIdx, 1);
+        
+        if (approve) 
+            club.members.push(userId);
+        
+        await user.save();
+        await club.save();
+        
+        res.status(200).json({
+            message: approve ? "Successfully approved" : "Successfully rejected",
+            user,
+            club
+        });
     } catch (e) {
-        console.log('error in /approve : ', e);
-        res.status(500);
+        console.log('post error in /club/:clubId/approve: ', e);
+        return res.status(500).json({ message: 'Server post error in /club/:clubId/approve' });
     }
 });
 
