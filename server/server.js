@@ -42,6 +42,7 @@ const { MsgRoom } = require('./model/MsgRoom');
 
 const userRoutes = require('./router/user');
 const clubRoutes = require('./router/club');
+const postRoutes = require('./router/post');
 const eventRoutes = require('./router/event');
 const msgRoomRoutes = require('./router/msgRoom');
 
@@ -120,6 +121,7 @@ app.get('/api/session/', (req, res) => {
 
 app.use('/api/user', userRoutes);
 app.use('/api/club', clubRoutes);
+app.use('/api/post', postRoutes);
 app.use('/api/event', eventRoutes);
 app.use('/api/msgRoom', msgRoomRoutes);
 
