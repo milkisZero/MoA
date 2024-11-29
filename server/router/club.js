@@ -157,29 +157,6 @@ router.delete('/:clubId', async (req, res) => {
     }
 })
 
-// 동아리 일정보기
-router.get('/:clubId/event', async (req, res) => {
-    try {
-        const clubId = req.params.clubId;
-        const { year, month } = req.query;
-
-        const foundEvents = await Event.find({
-            clubId: clubId,
-            date: {
-                $gte: new Date(`${year}-${month}-01`),
-                $lt: new Date(month === '12' ? `${year + '1'}-${month}-01` : `${year}-${month + '1'}-01`),
-            },
-        });
-
-        return res.status(200).json({
-            success: true,
-            foundEvents,
-        });
-    } catch (err) {
-        return res.status(400).json({ success: false, err });
-    }
-});
-
 // 동아리 가입 신청
 router.post('/proposer', async (req, res) => {
     try {

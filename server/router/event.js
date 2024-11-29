@@ -9,22 +9,134 @@ const { Message } = require('../model/Message');
 const router = express.Router();
 
 // 동아리 일정 등록
-router.post('/', async (req, res) => {
+router.post('/:clubId', async (req, res) => {
     try {
-        const { clubId, title, description, date, location } = req.body;
+        const { userId, title, description, date, location } = req.body;
+        
+        const club = await Club.findById(req.params.clubId);
+        if (!club)
+            return res.status(404).json({ message: 'Club not found' });
+
+        if (!club.admin.includes(userId))
+            return res.status(403).json({ message: 'BeomBu cannot post event'});
+
         const newEvent = new Event({
-            clubId: clubId,
+            clubId: req.params.clubId,
             title: title,
             description: description,
             date: date,
             location: location,
         });
-
         await newEvent.save();
-        res.status(200).json(newEvent);
+        
+        club.events.push(newEvent._id);
+        await club.save();
+
+        res.status(200).json({
+            message: 'Event successfully created',
+            newEvent
+        });
     } catch (e) {
-        console.log('error in /api/event : ', e);
-        res.status(500);
+        console.log('post error in /event/:clubId: ', e);
+        return res.status(500).json({ message: 'Server post error in /event/:clubId' });
+    }
+});
+
+// 동아리 한달 일정보기
+router.get('/:clubId', async (req, res) => {
+    try {
+        const clubId = req.params.clubId;
+        const { year, month } = req.query;
+
+        const foundEvents = await Event.find({
+            clubId: clubId,
+            date: {
+                $gte: new Date(`${year}-${month}-01`),
+                $lt: new Date(month === '12' ? `${parseInt(year) + 1}-${month}-01` : `${year}-${parseInt(month) + 1}-01`),
+            },
+        });
+
+        return res.status(200).json({
+            message: 'Events successfully found',
+            foundEvents
+        });
+    } catch (e) {
+        console.log('get error in /event/:clubId: ', e);
+        return res.status(500).json({ message: 'Server get error in /event/:clubId' });
+    }
+});
+
+// 동아리 일정 수정
+router.put('/:clubId/:eventId', async (req, res) => {
+    try {
+        const { userId, title, description, date, location } = req.body;
+        if (!userId)
+            return res.status(404).json({ message: 'userId not enclosed'});
+        
+        const club = await Club.findById(req.params.clubId);
+        if (!club)
+            return res.status(404).json({ message: 'Club not found' });
+
+        if (!club.admin.includes(userId))
+            return res.status(403).json({ message: 'BeomBu cannot modify event'});
+
+        const updatedData = {
+            title: title,
+            description: description,
+            date: date,
+            location: location
+        }
+
+        const updatedEvent = await Event.findByIdAndUpdate(
+            req.params.eventId,
+            updatedData,
+            { new: true },
+        );
+
+        if (!updatedEvent)
+            return res.status(404).json({ message: 'Event not found' });
+
+        return res.status(200).json({
+            message: 'Successfully update a event',
+            updatedEvent,
+        });
+    } catch (e) {
+        console.log('put error in /event/:clubId: ', e);
+        return res.status(500).json({ message: 'Server put error in /event/:clubId' });
+    }
+});
+
+// 동아리 일정 삭제
+router.delete('/:clubId/:eventId', async (req, res) => {
+    try {
+        const userId = req.body.userId;
+        if (!userId)
+            return res.status(404).json({ message: 'userId not enclosed'});
+        
+        const club = await Club.findById(req.params.clubId);
+        if (!club)
+            return res.status(404).json({ message: 'Club not found' });
+
+        if (!club.admin.includes(userId))
+            return res.status(403).json({ message: 'BeomBu cannot delete event'});
+
+        const deletedEvent = await Event.findByIdAndDelete(req.params.eventId);
+        if (!deletedEvent)
+            return res.status(404).json({ message: 'Event not found' });
+
+        const idx = club.events.indexOf(req.params.eventId);
+        if (idx > -1) {
+            club.events.splice(idx, 1);
+            await club.save();
+        }
+
+        return res.status(200).json({
+            message: 'Event successfully delete',
+            deletedEvent
+        });
+    } catch (e) {
+        console.log('delete error in /event/:clubId: ', e);
+        return res.status(500).json({ message: 'Server delete error in /event/:clubId' });
     }
 });
 
