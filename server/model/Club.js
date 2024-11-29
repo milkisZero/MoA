@@ -15,7 +15,6 @@ const clubSchema = new Schema({
     clubImg:        { type: String },
     location:       { type: String },
     phone:          { type: String },
-    date:           { type: String },
     sns:            { type: String },
 });
 
