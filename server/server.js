@@ -1,20 +1,17 @@
 require('dotenv').config();
 
 const { swaggerUi, specs } = require('./swagger.js');
-const { S3Client } = require('@aws-sdk/client-s3');
 const { MongoClient } = require('mongodb');
 const mongoose = require('mongoose');
 const express = require('express');
 const cors = require('cors');
-const multer = require('multer');
-const multerS3 = require('multer-s3');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
-const server = createServer(app);
 
 const app = express();
+const server = createServer(app);
 const PORT = 8080;
 const dburl =
     '[DB_URL] origin: 'http://localhost:3000', credentials: true }));
@@ -27,7 +24,7 @@ app.use(
         cookie: {
             httpOnly: true,
             sameSite: 'Strict',
-            maxAge: 1000 * 60,
+            maxAge: 1000 * 60 * 60 * 24,
         }, // 24시간 세션 유지
         store: MongoStore.create({
             mongoUrl: dburl,
@@ -60,24 +57,6 @@ async function connect() {
         console.log('connect error : ', e);
     }
 }
-
-const s3 = new S3Client({
-    region: 'ap-northeast-2',
-    credentials: {
-        accessKeyId: '[ACCESS_KEYID]',
-        secretAccessKey: '[SECRET_ACCESS_KEY]',
-    },
-});
-
-const upload = multer({
-    storage: multerS3({
-        s3: s3,
-        bucket: 'moaprojects3',
-        key: function (req, file, cb) {
-            cb(null, Date.now().toString());
-        },
-    }),
-});
 
 const io = new Server(server, {
     cors: {
@@ -145,5 +124,3 @@ app.use('/api/event', eventRoutes);
 app.use('/api/msgRoom', msgRoomRoutes);
 
 connect();
-
-module.exports = { upload };

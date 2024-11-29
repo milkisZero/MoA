@@ -1,13 +1,34 @@
 const express = require('express');
+const multer = require('multer');
+const multerS3 = require('multer-s3');
+const { S3Client } = require('@aws-sdk/client-s3');
+
 const { User } = require('../model/User'); 
 const { Event } = require('../model/Event');
 const { Club } = require('../model/Club');
 const { Post } = require('../model/Post');
 const { MsgRoom } = require('../model/MsgRoom');
 const { Message } = require('../model/Message');
-const { upload } = require('../server');
 
 const router = express.Router();
+
+const s3 = new S3Client({
+    region: 'ap-northeast-2',
+    credentials: {
+        accessKeyId: '[ACCESS_KEYID]',
+        secretAccessKey: '[SECRET_ACCESS_KEY]',
+    },
+});
+
+const upload = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: 'moaprojects3',
+        key: function (req, file, cb) {
+            cb(null, Date.now().toString());
+        },
+    }),
+});
 
 // 동아리 등록
 router.post('/', upload.single('img'), async (req, res) => {
@@ -25,10 +46,10 @@ router.post('/', upload.single('img'), async (req, res) => {
             sns: sns,
         });
 
-        const newMsgRoom = new MsgRoom = {
+        const newMsgRoom = new MsgRoom({
             name: name,
             members: members,
-        }
+        });
 
         await newClub.save();
         await newMsgRoom.save();
@@ -97,7 +118,7 @@ router.get('/:clubId/total_post', async (req, res) => {
 // 동아리 게시글보기
 router.get('/:postId', async (req, res) => {
     try {
-        const postId = req.params.id;
+        const postId = req.params.postId;
         const foundPost = await Post.findById({ postId });
 
         return res.status(200).json({
@@ -135,7 +156,7 @@ router.get('/:clubId/event', async (req, res) => {
 // 동아리 가입 신청
 router.post('/proposer', async (req, res) => {
     try {
-        const { userId, clubId } = req.body.query;
+        const { userId, clubId } = req.body;
         if (!userId) throw new Error('cannot find user');
         if (!clubId) throw new Error('cannot find club');
 
@@ -164,7 +185,7 @@ router.post('/proposer', async (req, res) => {
 // 동아리 가입 (승인) 또는 (거절 및 취소)
 router.post('/approve', async (req, res) => {
     try {
-        const { userId, clubId, approve } = req.body.query;
+        const { userId, clubId, approve } = req.body;
         if (!userId) throw new Error('cannot find user');
         if (!clubId) throw new Error('cannot find club');
 

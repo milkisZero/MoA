@@ -11,12 +11,13 @@ const router = express.Router();
 // 동아리 일정 등록
 router.post('/', async (req, res) => {
     try {
+        const { clubId, title, description, date, location } = req.body;
         const newEvent = new Event({
-            clubId: req.body.id,
-            title: req.body.title,
-            description: req.body.description,
-            date: req.body.date,
-            location: req.body.location,
+            clubId: clubId,
+            title: title,
+            description: description,
+            date: date,
+            location: location,
         });
 
         await newEvent.save();

@@ -12,11 +12,11 @@ const router = express.Router();
 router.post('/', async (req, res) => {
     try {
         const { name, members } = req.body;
-        const newMsgRoom = new MsgRoom = {
+        const newMsgRoom = new MsgRoom({
             name: name,
             members: members,
             messages: []
-        }
+        })
 
         await newMsgRoom.save();
         res.send(200).json(newMsgRoom);

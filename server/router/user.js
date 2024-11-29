@@ -17,12 +17,12 @@ router.post('/register', async (req, res) => {
 
         // 암호화
         const salt = await bcrypt.genSalt(saltRounds);
-        password = await bcrypt.hash(password, salt);
+        const hashed = await bcrypt.hash(password, salt);
 
         const user = new User({
             name,
             email,
-            password,
+            password: hashed,
         });
 
         const saved = await user.save();
