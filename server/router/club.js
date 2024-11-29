@@ -93,8 +93,8 @@ router.get('/total_club', async (req, res) => {
             message: `조회수 ${(page-1) * limit + 1}위 부터 ${limit}개 list`,
             club,
         });
-    } catch (err) {
-        console.log('get error in /club/total_club: ', err);
+    } catch (e) {
+        console.log('get error in /club/total_club: ', e);
         return res.status(500).json({ message: 'Server get error in /club/total_club' });
     }
 });
@@ -111,8 +111,8 @@ router.get('/:clubId', async (req, res) => {
             message: `find club`,
             foundCulb,
         });
-    } catch (err) {
-        console.log('get error in /club/:clubId: ', err);
+    } catch (e) {
+        console.log('get error in /club/:clubId: ', e);
         return res.status(500).json({ message: 'Server get error in /club/:clubId' });
     }
 });
@@ -145,8 +145,126 @@ router.put('/:clubId', upload.single('img'), async (req, res) => {
             updatedClub,
         });
     } catch (e) {
-        console.log('put error in /club/:clubId: ', err);
+        console.log('put error in /club/:clubId: ', e);
         return res.status(500).json({ message: 'Server put error in /club/:clubId' });
+    }
+});
+
+// 동아리 멤버 추가
+router.put('/members/:clubId', async (req, res) => {
+    try {
+        const clubId = req.params.clubId;
+        const { members } = req.body;
+        const addMembers = members;
+    
+        const club = await Club.findById(clubId);
+        if (!club)
+            return res.status(404).json({ message: 'Club not found' });
+    
+        const newMembers = addMembers.filter(member => !club.members.includes(member));
+        club.members.push(...newMembers);
+        await club.save();
+    
+        const updatedMembers = newMembers.map(async (userId) => {
+            const user = await User.findById(userId);
+    
+            if (user && !user.clubs.includes(clubId)) {
+                user.clubs.push(clubId);
+                await user.save();
+            }
+        });
+        await Promise.all(updatedMembers);
+
+        return res.status(200).json({
+            message: 'Members updated successfully',
+            updatedClub: club,
+        });
+    } catch (e) {
+        console.log('put error in /club/members/:clubId: ', e);
+        return res.status(500).json({ message: 'Server put error in /club/members/:clubId' });
+    }
+});
+
+// 동아리 멤버 삭제
+router.delete('/members/:clubId', async (req, res) => {
+    try {
+        const clubId = req.params.clubId;
+        const { members } = req.body;
+        const deleteMembers = members;
+    
+        const club = await Club.findById(clubId);
+        if (!club)
+            return res.status(404).json({ message: 'Club not found' });
+        
+        club.members = club.members.filter(member => !deleteMembers.includes(member.toString()));
+        await club.save();
+
+        const updatedMembers = deleteMembers.map(async (userId) => {
+            const user = await User.findById(userId);
+
+            const idx = user.clubs.indexOf(clubId);
+            if (idx > -1) {
+                user.clubs.splice(idx, 1);
+                await user.save();
+            }
+        });
+        await Promise.all(updatedMembers);
+
+        return res.status(200).json({
+            message: 'Members removed successfully',
+            updatedClub: club,
+        });
+    } catch (e) {
+        console.log('delete error in /club/members/:clubId: ', e);
+        return res.status(500).json({ message: 'Server delete error in /club/members/:clubId' });
+    }
+});
+
+// 관리자 추가
+router.put('/admin/:clubId', async (req, res) => {
+    try {
+        const clubId = req.params.clubId;
+        const { admin } = req.body;
+        
+        const club = await Club.findById(clubId);
+        if (!club)
+            return res.status(404).json({ message: 'Club not found' });
+
+        const newAdmins = admin.filter(admin => !club.admin.includes(admin));
+        club.admin.push(...newAdmins);
+        await club.save();
+
+        return res.status(200).json({
+            message: 'Club admin updated Successfully',
+            updatedClub: club
+        });
+    } catch (e) {
+        console.log('put error in /club/admin/:clubId: ', e);
+        return res.status(500).json({ message: 'Server put error in /club/admin/:clubId' });
+    }
+});
+
+// 관리자 삭제
+router.delete('/admin/:clubId', async (req, res) => {
+    try {
+        const clubId = req.params.clubId;
+        const { admin } = req.body;
+        const deleteAdmin = admin;
+        
+        const club = await Club.findById(clubId);
+        if (!club)
+            return res.status(404).json({ message: 'Club not found' });
+
+        club.admin = club.admin.filter(admin => !deleteAdmin.includes(admin.toString()));
+        await club.save();
+
+        return res.status(200).json({
+            message: 'Club admin delete successfully',
+            updatedClub: club
+        });
+    } catch (e) {
+        console.log('delete error in /club/admin/:clubId: ', e);
+        return res.status(500).json({ message: 'Server delete error in /club/admin/:clubId' });
     }
 });
 
@@ -169,10 +287,10 @@ router.delete('/:clubId', async (req, res) => {
 
         return res.status(200).json({
             message: 'Club successfully deleted',
-            club
+            deletedClub: club
         });
     } catch (e) {
-        console.log('delete error in /club/:clubId: ', err);
+        console.log('delete error in /club/:clubId: ', e);
         return res.status(500).json({ message: 'Server delete error in /club/:clubId' });
     }
 });
