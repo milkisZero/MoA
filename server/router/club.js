@@ -53,6 +53,18 @@ router.post('/', upload.single('img'), async (req, res) => {
         await newClub.save();
         await newMsgRoom.save();
 
+        const clubId = newClub._id;
+        const updatedMembers = members.map(async (userId) => {
+            const user = await User.findById(userId);
+
+            if (user && !user.clubs.includes(clubId)) {
+                user.clubs.push(clubId);
+                await user.save();
+            }
+        });
+
+        await Promise.all(updatedMembers);
+
         res.status(200).json({
             message: 'Club and Clubchatroom created successfully',
             newClub,
@@ -69,12 +81,12 @@ router.post('/', upload.single('img'), async (req, res) => {
 // 전체 동아리 목록 (미리보기)
 router.get('/total_club', async (req, res) => {
     try {
-        const { page, limit } = req.query; // 페이지 번호, 개수
-        // 정렬 기준 추가?
+        const { page, limit } = req.query;  // 페이지 번호, 개수
+
         const club = await Club.find()
-            .sort({ createdAt: -1 }) //  정렬 기준
-            .skip((page - 1) * limit) // 시작 지점
-            .limit(Number(limit)); // 가져올 개수
+            .sort({ createdAt: -1 })        // 최신순 정렬
+            .skip((page - 1) * limit)       // 시작 지점
+            .limit(Number(limit));          // 가져올 개수
         if (!club) return res.status(404).json({ message: 'cannot found club list' });
 
         return res.status(200).json({
@@ -105,16 +117,14 @@ router.get('/:clubId', async (req, res) => {
     }
 });
 
-// 동아리 세부정보 update
+// 동아리 세부정보 update (member 편집 제외)
 router.put('/:clubId', upload.single('img'), async (req, res) => {
     try {
-        const { name, description, members, admin, clubImg, location, phone, sns } = req.body;
+        const { name, description, clubImg, location, phone, sns } = req.body;
         
         const updatedData = {
             name: name,
             description: description,
-            members: members,
-            admin: admin,
             clubImg: clubImg,
             location: location,
             phone: phone,
@@ -133,19 +143,29 @@ router.put('/:clubId', upload.single('img'), async (req, res) => {
         res.status(200).json({
             message: 'Club successfully updated',
             updatedClub,
-        })
-
+        });
     } catch (e) {
         console.log('put error in /club/:clubId: ', err);
         return res.status(500).json({ message: 'Server put error in /club/:clubId' });
     }
-})
+});
 
 // 동아리 삭제
 router.delete('/:clubId', async (req, res) => {
     try {
         const club = await Club.findByIdAndDelete(req.params.clubId);
         if (!club) return res.status(404).json({ message: 'cannot found Club'});
+
+        const clubId = club._id;
+        const deletedMemebers = club.members.map(async (userId) => {
+            const user = await User.findById(userId);
+    
+            if (user && !user.clubs.includes(clubId)) {
+                user.clubs.push(clubId);
+                await user.save();
+            }
+        });
+        await Promise.all(deletedMemebers);
 
         return res.status(200).json({
             message: 'Club successfully deleted',
@@ -155,10 +175,10 @@ router.delete('/:clubId', async (req, res) => {
         console.log('delete error in /club/:clubId: ', err);
         return res.status(500).json({ message: 'Server delete error in /club/:clubId' });
     }
-})
+});
 
 // 동아리 가입 신청
-router.post('/:clubId/proposer', async (req, res) => {
+router.post('/proposer/:clubId', async (req, res) => {
     try {
         const userId = req.body.userId;
         const clubId = req.params.clubId;
@@ -185,14 +205,15 @@ router.post('/:clubId/proposer', async (req, res) => {
             club
         });
     } catch (e) {
-        console.log('post error in /club/:clubId/proposer: ', e);
-        return res.status(500).json({ message: 'Server post error in /club/:clubId/proposer' });
+        console.log('post error in /club/proposer/:clubId: ', e);
+        return res.status(500).json({ message: 'Server post error in /club/proposer/:clubId' });
     }
 });
 
 // 동아리 가입 (승인) 또는 (거절 및 취소)
-router.post('/:clubId/approve', async (req, res) => {
+router.post('/approve/:clubId', async (req, res) => {
     try {
+        //approve는 boolean
         const { userId, approve } = req.body;
         const clubId = req.params.clubId;
 
@@ -201,15 +222,16 @@ router.post('/:clubId/approve', async (req, res) => {
         if (!user) return res.status(404).json({ message: 'User cannot found'});
         if (!club) return res.status(404).json({ message: 'Club cannot found'});
         
-        // 이거 indexOf 왜 안됨??????????? event.js의 delete는 되는데?????????
-        const userIdx = user.waitingClubs.indexOf(userId);
-        const clubIdx = club.proposers.indexOf(clubId);
-        // console.log(userIdx, clubIdx);
+        const userIdx = user.waitingClubs.indexOf(clubId);
         if (userIdx > -1) user.waitingClubs.splice(userIdx, 1);
+
+        const clubIdx = club.proposers.indexOf(userId);
         if (clubIdx > -1) club.proposers.splice(clubIdx, 1);
         
-        if (approve) 
+        if (approve) {
+            user.clubs.push(clubId);
             club.members.push(userId);
+        }
         
         await user.save();
         await club.save();
@@ -220,8 +242,8 @@ router.post('/:clubId/approve', async (req, res) => {
             club
         });
     } catch (e) {
-        console.log('post error in /club/:clubId/approve: ', e);
-        return res.status(500).json({ message: 'Server post error in /club/:clubId/approve' });
+        console.log('post error in /club/approve/:clubId: ', e);
+        return res.status(500).json({ message: 'Server post error in /club/approve/:clubId' });
     }
 });
 

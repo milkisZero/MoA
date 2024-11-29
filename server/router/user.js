@@ -25,99 +25,99 @@ router.post('/register', async (req, res) => {
             password: hashed,
         });
 
-        const saved = await user.save();
+        const newUser = await user.save();
         return res.status(200).json({
-            success: true,
-            saved,
+            message: "Succesfully register",
+            newUser,
         });
-    } catch (err) {
-        console.log('error in /user/register: ', err);
-        return res.status(400).json({ success: false, err });
+    } catch (e) {
+        console.log('post error in /user/register: ', e);
+        return res.status(500).json({ message: 'User create Faild. Server post error in /user/register' });
     }
 });
 
 // 로그인
 router.post('/login', async (req, res) => {
     try {
-        const found = await User.findOne({ email: req.body.email });
-        if (!found) throw new Error('cannot find user');
+        const { email, password } = req.body;
 
-        const match = await bcrypt.compare(req.body.password, found.password);
-        if (!match) throw new Error('cannot match password');
+        const user = await User.findOne({ email: email });
+        if (!user) return res.status(404).json({ message: 'User cannot found'});
+
+        const match = await bcrypt.compare(password, user.password);
+        if (!match) return res.status(403).json({ message: 'Password not matched'});
 
         req.session.userId = found._id;
 
         return res.status(200).json({
-            success: true,
-            found,
+            message: "Login successfully",
+            user,
         });
-    } catch (err) {
-        console.log('error in /user/login: ', err);
-        return res.status(400).json({ success: false, err });
+    } catch (e) {
+        console.log('post error in /user/login: ', e);
+        return res.status(500).json({ message: 'Login failed. Server post error in /user/login' });
     }
 });
 
 // 로그아웃
 router.post('/logout', (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            console.log('error in /user/logout:', err);
-            return res.status(500).json({
-                success: false,
-                message: 'Logout Failed',
-            });
+    req.session.destroy((e) => {
+        if (e) {
+            console.log('post error in /user/logout: ', e);
+            return res.status(500).json({ message: 'Logout Failed. Server post error in /user/logout' });
         }
 
         res.clearCookie('connect.sid', { path: '/' });
-        res.status(200).json({
-            success: true,
-            message: 'Logout Successful',
-        });
+        res.status(200).json({ message: 'Logout Successfully' });
     });
 });
 
-
 // 마이페이지 - 일정보기
-router.get('/mypage/event', async (req, res) => {
+router.get('/event/:userId', async (req, res) => {
     try {
-        const { userId, year, month } = req.body;
+        const { year, month } = req.query;
 
-        const foundUser = await User.findById({ userId });
+        const user = await User.findById(req.params.userId);
+        if (!user) return res.status(404).json({ message: 'User cannot found'});
+
+        const startDate = new Date(`${year}-${month}-01`);
+        const endDate = month === '12'
+            ? new Date(`${parseInt(year) + 1}-01-01`)
+            : new Date(`${year}-${parseInt(month) + 1}-01`);
+
         const foundEvents = await Event.find({
-            _id: { $in: foundUser.events },
+            clubId: { $in: user.clubs },
             date: {
-                $gte: new Date(`${year}-${month}-01`),
-                $lt: new Date(month === '12' ? `${year + '1'}-${month}-01` : `${year}-${month + '1'}-01`),
+                $gte: startDate,
+                $lt: endDate,
             },
         });
 
         return res.status(200).json({
-            success: true,
+            message: "Successfully get mypage club event list",
             foundEvents,
         });
     } catch (err) {
-        console.log('error in /mypage/event: ', err);
-        return res.status(400).json({ success: false, err });
+        console.log('get error in /user/event/:userId: ', e);
+        return res.status(500).json({ message: 'Server get error in /user/event/:userId' });
     }
 });
 
 // 마이페이지 - 동아리보기
-router.get('/mypage/club', async (req, res) => {
+router.get('/club/:userId', async (req, res) => {
     try {
-        const { userId, page, limit } = req.body;
+        const user = await User.findById(req.params.userId);
+        if (!user) return res.status(404).json({ message: 'User cannot found'});
 
-        const foundUser = await User.findById({ userId });
-        const foundClub = Club.find({ _id: { $in: foundUser.clubs } })
-            .skip((page - 1) * limit)
-            .limit(Number(limit));
+        const clubs = user.clubs;
 
         return res.status(200).json({
-            success: true,
-            foundClub,
+            message: "Successfully get mypage club list",
+            clubs,
         });
-    } catch (err) {
-        console.log('error in /mypage/club: ', err);
-        return res.status(400).json({ success: false, err });
+    } catch (e) {
+        console.log('get error in /user/club/:userId: ', e);
+        return res.status(500).json({ message: 'Server get error in /user/club/:userId' });
     }
 });
 
