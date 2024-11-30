@@ -25,4 +25,17 @@ async function userRegister(info) {
     }
 }
 
-export { userRegister };
+async function getPage({ roomId, msgId }) {
+    try {
+        msgId = !msgId ? '' : msgId;
+        const response = await fetch(URL + `msgRoom/${roomId}` + `?msgId=${msgId}`);
+        if (response.ok) {
+            const data = await response.json();
+            return data.messages;
+        }
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+export { userRegister, getPage };
