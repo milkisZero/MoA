@@ -32,30 +32,32 @@ router.post('/', async (req, res) => {
 // 채팅방 채팅 불러오기(페이지네이션)
 router.get('/:msgRoomId', async (req, res) => {
     try {
-        const { page, limit } = req.query;
-        const pageNum = parseInt(page, 10);
-        const limitNum = parseInt(limit, 10);
+        const { msgId } = req.query;
+        const limit = 10;
 
         const msgRoom = await MsgRoom.findById(req.params.msgRoomId);
         if (!msgRoom)
             return res.status(404).json({ message: 'MsgRoom cannot found' });
+        
+        let startIdx, endIdx;
+        if (!msgId)
+            endIdx = msgRoom.messages.length;
+        else
+            endIdx = msgRoom.messages.indexOf(msgId);
 
-        const totalMessages = msgRoom.messages.length;
-        let startIdx = totalMessages - pageNum * limitNum;
-        let endIdx = totalMessages - (pageNum - 1) * limitNum;
+        startIdx = endIdx - limit;
+
         if (startIdx < 0) startIdx = 0;
         if (endIdx < 0) endIdx = 0;
 
-        const length = endIdx - startIdx;
-        const slicedMsg = msgRoom.messages.slice(startIdx, endIdx);
+        const slicedMsg = msgRoom.messages.slice(startIdx, endIdx).reverse();
         const messages = await Promise.all(
             slicedMsg.map((msgId) => Message.findById(msgId))
         );
 
         res.status(200).json({
             message: 'Succefully get messages',
-            messages,
-            count: length
+            messages
         });
     } catch (e) {
         console.log('get error in /msgRoom/msgRoomId:', e);
