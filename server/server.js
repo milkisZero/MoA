@@ -87,12 +87,12 @@ io.on('connection', (socket) => {
             });
             await newMsg.save();
             
-            await MsgRoom.findByIdAndUpate(
+            await MsgRoom.findByIdAndUpdate(
                 msgRoomId,
-                { $push: { mesage: newMsg._id }},
+                { $push: { messages: newMsg._id }},
             );
 
-            socket.to(msgRoomId).emit('receiveMsg', {
+            socket.emit('receiveMsg', {
                 msgRoomId,
                 senderId,
                 content,

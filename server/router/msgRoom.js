@@ -26,4 +26,9 @@ router.post('/', async (req, res) => {
     }
 })
 
+// 채팅방 이름 변경
+router.put('/msgRoomId', async (req, res) => {
+
+})
+
 module.exports = router;
