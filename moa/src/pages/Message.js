@@ -13,10 +13,10 @@ function Message() {
     const [sendMsg, setSendMsg] = useState('');
     const [totalMsg, setTotalMsg] = useState([]);
     const [page, setPage] = useState(0);
-    const [socket, setSocket] = useState(null);
     const [totalUser, setTotalUser] = useState([]);
     const roomId = '67495c33ac807b6a451308d6';
-    const senderId = '6746ee516f9b770b3f7771bf';
+    const userId = '6746ee516f9b770b3f7771bf';
+    const [socket, setSocket] = useState(null);
 
     const handleObserver = (entries) => {
         const target = entries[0];
@@ -42,24 +42,29 @@ function Message() {
     }, [page]);
 
     useEffect(() => {
-        const newSocket = io('http://localhost:8080');
+        const newSocket = io('http://localhost:8080'); // 서버 주소
         setSocket(newSocket);
-        newSocket.on('receiveMsg', (senderId, content) => {
-            setTotalMsg((prev) => [...prev, { msg: content, userInfo: senderId }]);
-            setTotalUser((prev) => (!prev.includes(senderId) ? [...prev, senderId] : prev));
+
+        newSocket.emit('joinRoom', { msgRoomId: roomId });
+
+        newSocket.on('receiveMsg', ({ msgRoomId, senderId, content, timestamp }) => {
+            if (msgRoomId === roomId) {
+                setTotalMsg((prev) => [{ senderId, content, timestamp }, ...prev]);
+            }
+            setTotalUser((prev) => (prev.includes(senderId) ? prev : [...prev, senderId]));
         });
 
         return () => {
             newSocket.disconnect();
         };
-    }, []);
+    }, [roomId]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (sendMsg.trim()) {
             socket.emit('sendMsg', {
-                roomId,
-                senderId: senderId,
+                msgRoomId: roomId,
+                senderId: userId,
                 content: sendMsg,
             });
             setSendMsg('');
@@ -74,17 +79,19 @@ function Message() {
 
                 <div className="msg-info">
                     <div className="user-list">
-                        {totalUser.map((index, prev) => (
-                            <UserBox index={index} userInfo={prev} />
+                        {totalUser.map((prev, index) => (
+                            <UserBox key={index} senderId={prev} />
                         ))}
                     </div>
                     <div className="msg-screen">
-                        {totalMsg.map((msg, userId, index) => (
+                        {totalMsg.map((msg, index) => (
                             <div key={index}>
-                                <div className="msg-message">
-                                    <UserBox index={index} userInfo={userId} />
-                                    <p>{msg}</p>
-                                </div>
+                                <MessageBox
+                                    key={index}
+                                    senderId={msg.senderId}
+                                    content={msg.content}
+                                    timestamp={msg.timestamp}
+                                />
                             </div>
                         ))}
                         <div id="observer"></div>
@@ -102,11 +109,22 @@ function Message() {
     );
 }
 
-function UserBox({ index, userInfo }) {
+function UserBox({ senderId }) {
     return (
-        <div className="user-box" key={index}>
+        <div className="user-box">
             <FontAwesomeIcon icon={faUserCircle} size="2x" />
-            <div className="user-info">유저:{userInfo}</div>
+            <div className="user-info">{senderId}</div>
+        </div>
+    );
+}
+
+function MessageBox({ senderId, content, timestamp }) {
+    const time = new Date(timestamp).toLocaleTimeString();
+    return (
+        <div className="msg-message">
+            <UserBox senderId={senderId} />
+            <p>{content}</p>
+            <p>{time}</p>
         </div>
     );
 }
