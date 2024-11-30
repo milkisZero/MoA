@@ -45,6 +45,7 @@ const clubRoutes = require('./router/club');
 const postRoutes = require('./router/post');
 const eventRoutes = require('./router/event');
 const msgRoomRoutes = require('./router/msgRoom');
+const messageRoutes = require('./router/message');
 
 async function connect() {
     try {
@@ -118,5 +119,6 @@ app.use('/api/club', clubRoutes);
 app.use('/api/post', postRoutes);
 app.use('/api/event', eventRoutes);
 app.use('/api/msgRoom', msgRoomRoutes);
+app.use('/api/msg', messageRoutes);
 
 connect();
