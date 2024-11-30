@@ -16,13 +16,12 @@ function Message() {
     const userId = '6746ee516f9b770b3f7771bf';
     const [socket, setSocket] = useState(null);
     const [page, setPage] = useState(0);
-    const pageLimit = 10;
+    const [isFetching, setIsFetching] = useState(false); // 데이터가 로딩 중인지 체크
 
     const handleObserver = (entries) => {
         const target = entries[0];
-        if (target.isIntersecting) {
+        if (target.isIntersecting && !isFetching) {
             setPage((prevPage) => prevPage + 1);
-            console.log(page);
         }
     };
 
@@ -35,17 +34,30 @@ function Message() {
         if (observerTarget) {
             observer.observe(observerTarget);
         }
+
+        return () => {
+            if (observerTarget) {
+                observer.unobserve(observerTarget);
+            }
+        };
     }, []);
 
     const fetchData = async () => {
-        const lastMsgId = totalMsg.length > 0 ? totalMsg[totalMsg.length - 1].msgId : null;
-        const data = await getPage({ roomId, page, pageLimit, lastMsgId });
+        if (isFetching) return; // 이미 데이터를 가져오고 있으면 다시 시도하지 않음
+        setIsFetching(true);
+
+        const lastMsgId = totalMsg.length > 0 ? totalMsg[totalMsg.length - 1].msgId : '';
+        const data = await getPage({ roomId, lastMsgId });
         setTotalMsg((prev) => [...prev, ...data]);
+
         const newUserIds = data.map((item) => item.senderId);
         setTotalUser((prev) => [...new Set([...prev, ...newUserIds])]);
+
+        setIsFetching(false);
     };
 
     useEffect(() => {
+        console.log(page);
         if (page > 0) fetchData();
     }, [page]);
 
