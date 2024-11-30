@@ -80,7 +80,7 @@ io.on('connection', (socket) => {
     // 메세지 broadcast
     socket.on('sendMsg', async ({msgRoomId, senderId, content}) => {
         try {
-            const newMsg = new Message( {
+            const newMsg = new Message({
                 msgRoomId,
                 senderId,
                 content
@@ -92,16 +92,10 @@ io.on('connection', (socket) => {
                 { $push: { messages: newMsg._id }},
             );
 
-            socket.emit('receiveMsg', {
-                msgRoomId,
-                senderId,
-                content,
-                timestamp: newMsg.timestamp
-            });
-
+            socket.emit('receiveMsg', newMsg);
             console.log(`Message sent to ${msgRoomId}: ${content}`);
         } catch (e) {
-            console.error('Message send error:', e);
+            console.log('Message send error:', e);
             socket.emit('errorMessage', { error: 'Failed to send message.' });
         }
     })
