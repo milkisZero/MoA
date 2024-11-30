@@ -19,7 +19,7 @@ router.post('/', async (req, res) => {
         })
 
         await newMsgRoom.save();
-        res.send(200).json({
+        res.status(200).json({
             message: 'newMsgRoom created successfully',
             newMsgRoom
         });
@@ -65,12 +65,42 @@ router.get('/:msgRoomId', async (req, res) => {
 
 // 채팅방 이름 변경
 router.put('/:msgRoomId', async (req, res) => {
+    try {
+        const { name } = req.body;
+        const updatedMsgRoom = await MsgRoom.findByIdAndUpdate(
+            req.params.msgRoomId,
+            { name: name },
+            { new: true }
+        )
+        if (!updatedMsgRoom)
+            return res.status(404).json({ message: 'MsgRoom not found' });
 
+        res.status(200).json({
+            message: 'MsgRoom name updated successfully',
+            updatedMsgRoom
+        });
+    } catch (e) {
+        console.log('put error in /msgRoom/msgRoomId:', e);
+        res.status(500).json({ message: 'put error in /msgRoom/msgRoomId' });
+    }
 });
 
 // 채팅방 삭제
-router.delete('/:msgRoodId', async (req, res) => {
-    
+router.delete('/:msgRoomId', async (req, res) => {
+    try {
+        const msgRoom = await MsgRoom.findById(req.params.msgRoomId);
+        if (!msgRoom)
+            return res.status(404).json({ message: 'MsgRoom cannot found' });
+
+        const messageId = msgRoom.messages;
+        await Promise.all(messageId.map((msgId) => Message.findByIdAndDelete(msgId)));
+        await MsgRoom.findByIdAndDelete(req.params.msgRoomId);
+
+        res.status(200).json({ message: 'MsgRoom and Messages all deleted successfully' });
+    } catch (e) {
+        console.log('delete error in /msgRoom/msgRoomId:', e);
+        res.status(500).json({ message: 'delete error in /msgRoom/msgRoomId' });
+    }
 });
 
 module.exports = router;
