@@ -383,3 +383,103 @@ header {
     color: #000;
     margin-bottom: 20px;
 }
+
+.msg-section {
+    height: 650px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.msg-info {
+    width: 80%;
+    height: 70%;
+    display: flex;
+    justify-content: center;
+ }
+
+.user-list {
+    background-color:lightgray ;
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+    height: 100%;
+    overflow-y: auto;
+    padding: 0px 20px 0px 0px;
+    border: none;
+    /* 스크롤바 숨기기 */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width:none;
+    /* Firefox */
+    padding-left: 20px;
+ }
+
+.user-box {
+    display: flex;
+    direction: row;
+    padding: 10px 0% 10px 0%;
+}
+
+.user-info{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 10px;
+}
+
+.user-list::-webkit-scrollbar {
+    display: none;
+    /* Chrome , Safari , Opera */
+}
+
+.msg-screen {
+    display: flex;
+    flex-direction: column-reverse;
+    width: 80%;
+    height: 100%;
+    overflow-y:auto ;
+    padding: 10px;
+    border: none;
+}
+
+.msg-input{
+    width: 100%;
+    height: 20%;
+    display: flex;
+    justify-content: center;
+    font-size: 30px;
+    border: none;
+    padding-top: 2%;
+}
+
+.msg-input input{
+   width: 50%;
+}
+
+.send-button {
+    width: 5%;
+    background-color: lightgray;
+    color: white;
+    border: none;
+    cursor: pointer;
+ }
+
+ input, button {
+    height: 40%;
+    box-sizing: border-box;
+    border-radius: 5px;
+ }
+
+.send-button:hover {
+    background-color: grey;
+}
+
+.msg-message {
+    color: black    ;
+    /* border:2px solid black; */
+    margin: 10px;
+    padding-left: 20px;
+ }
+

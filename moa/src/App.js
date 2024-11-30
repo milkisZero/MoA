@@ -32,6 +32,7 @@ import Register from './pages/Register';
 import { useLocation } from 'react-router-dom';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import AuthProvider from './context/AuthContext';
+import Message from './pages/Message';
 
 function App() {
     return (
@@ -44,6 +45,7 @@ function App() {
                         <Route path="/TotalClub" element={<Total_club />}></Route>
                         <Route path="/Login" element={<Login />}></Route>
                         <Route path="/Register" element={<Register />}></Route>
+                        <Route path="/Message" element={<Message />}></Route>
                     </Routes>
                 </div>
             </AuthProvider>
