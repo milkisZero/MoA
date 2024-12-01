@@ -35,6 +35,7 @@ import AuthProvider from './context/AuthContext';
 import Message from './pages/Message';
 import MakeClub from './pages/MakeClub';
 import MyPage from './pages/MyPage';
+import Pictures from './pages/Pictures';
 
 function App() {
     return (
@@ -50,6 +51,7 @@ function App() {
                         <Route path="/Message" element={<Message />}></Route>
                         <Route path="/MakeClub" element={<MakeClub />}></Route>
                         <Route path="/MyPage" element={<MyPage />}></Route>
+                        <Route path="/Pictures" element={<Pictures />}></Route>
                     </Routes>
                 </div>
             </AuthProvider>

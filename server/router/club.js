@@ -31,13 +31,17 @@ const upload = multer({
 });
 
 // 동아리 등록
-router.post('/', async (req, res) => {
+router.post('/', upload.single('img'), async (req, res) => {
     try {
-        const { name, description, members, admin, location, phone, sns } = req.body;
-        // const clubImg = req.file.location;
-        console.log(req.body);  
-        const clubImg = req.body.clubImg;
+        const { name, description, location, phone, sns } = req.body;
+        const clubImg = req.file ? req.file.location : null;
 
+        let members = [];
+        if (req.body.members) members = req.body.members;
+
+        let admin = [];
+        if (req.body.admin) admin = req.body.admin;
+        
         const newClub = new Club({
             name: name,
             description: description,
@@ -58,17 +62,18 @@ router.post('/', async (req, res) => {
         await newMsgRoom.save();
 
         const clubId = newClub._id;
-        const updatedMembers = members.map(async (userId) => {
-            const user = await User.findById(userId);
-
-            if (user && !user.clubs.includes(clubId)) {
-                user.clubs.push(clubId);
-                await user.save();
-            }
-        });
-
-        await Promise.all(updatedMembers);
-
+        if (members) {
+            const updatedMembers = members.map(async (userId) => {
+                const user = await User.findById(userId);
+    
+                if (user && !user.clubs.includes(clubId)) {
+                    user.clubs.push(clubId);
+                    await user.save();
+                }
+            });
+            await Promise.all(updatedMembers);
+        }
+        
         res.status(200).json({
             message: 'Club and Clubchatroom created successfully',
             newClub,
