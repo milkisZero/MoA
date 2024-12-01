@@ -34,6 +34,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import AuthProvider from './context/AuthContext';
 import Message from './pages/Message';
 import MakeClub from './pages/MakeClub';
+import Pictures from './pages/Pictures';
 
 function App() {
     return (
@@ -48,6 +49,7 @@ function App() {
                         <Route path="/Register" element={<Register />}></Route>
                         <Route path="/Message" element={<Message />}></Route>
                         <Route path="/MakeClub" element={<MakeClub />}></Route>
+                        <Route path="/Pictures" element={<Pictures />}></Route>
                     </Routes>
                 </div>
             </AuthProvider>

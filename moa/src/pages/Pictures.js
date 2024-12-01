@@ -11,8 +11,8 @@ function Pictures() {
         location: '',
         phone: '',
         sns: '',
-        admin: '',
-        members: [],
+        admin: [],
+        members: ['6746ee516f9b770b3f7771bf', '6746ff849cb890fe9e123acc'],
     });
     const [image, setImage] = useState(null);
 
@@ -29,15 +29,19 @@ function Pictures() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(clubData);
         const formData = new FormData();
         Object.keys(clubData).forEach((key) => {
-            formData.append(key, clubData[key]);
+            if (Array.isArray(clubData[key])) {
+                clubData[key].forEach((item) => {
+                    formData.append(key, item); // 배열의 각 항목을 개별적으로 추가
+                    });
+            } else {
+                formData.append(key, clubData[key]); // 배열이 아닌 일반 값은 그대로 추가
+            }
         });
         if (image) {
             formData.append('img', image);
         }
-        console.log(formData);
 
         try {
             const response = await fetch('http://localhost:8080/api/club', {
@@ -104,7 +108,7 @@ function Pictures() {
                         type="file"
                         onChange={handleFileChange}
                         accept="image/*"
-                        required
+                        // required
                     />
                     <button type="submit">Create Club</button>
                 </form>

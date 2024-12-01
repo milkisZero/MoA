@@ -46,6 +46,7 @@ function AuthProvider({ children }) {
                     email: info.email,
                     password: info.password,
                 }),
+                credentials: 'include',
             });
             if (response.ok) {
                 const data = await response.json();
