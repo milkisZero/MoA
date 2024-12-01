@@ -27,7 +27,9 @@ async function userRegister(info) {
 
 async function getPage({ roomId, msgId }) {
     try {
+        console.log(msgId);
         msgId = !msgId ? '' : msgId;
+        console.log(msgId);
         const response = await fetch(URL + `msgRoom/${roomId}` + `?msgId=${msgId}`);
         if (response.ok) {
             const data = await response.json();

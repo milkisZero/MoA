@@ -20,13 +20,12 @@ function Message() {
 
     const handleObserver = (entries) => {
         const target = entries[0];
-        if (target.isIntersecting && !isFetching) {
+        if (target.isIntersecting && isFetching === false) {
             setPage((prevPage) => prevPage + 1);
         }
     };
 
     useEffect(() => {
-        console.log(page);
         const observer = new IntersectionObserver(handleObserver, {
             threshold: 0,
         });
@@ -36,18 +35,20 @@ function Message() {
         }
 
         return () => {
-            if (observerTarget) {
-                observer.unobserve(observerTarget);
-            }
+            observer.disconnect(); // 기존 관찰자 해제
         };
     }, []);
 
     const fetchData = async () => {
-        if (isFetching) return; // 이미 데이터를 가져오고 있으면 다시 시도하지 않음
+        if (isFetching === true) return; // 이미 데이터를 가져오고 있으면 다시 시도하지 않음
         setIsFetching(true);
 
-        const lastMsgId = totalMsg.length > 0 ? totalMsg[totalMsg.length - 1].msgId : '';
-        const data = await getPage({ roomId, lastMsgId });
+        const msgId = totalMsg.length > 0 ? totalMsg[totalMsg.length - 1]._id : '';
+        const data = await getPage({ roomId, msgId });
+
+        if (totalMsg.length > 0) console.log(totalMsg[totalMsg.length - 1]._id);
+
+        // 0번이 젤 나중
         setTotalMsg((prev) => [...prev, ...data]);
 
         const newUserIds = data.map((item) => item.senderId);
@@ -115,7 +116,7 @@ function Message() {
                                 />
                             </div>
                         ))}
-                        <div id="observer"></div>
+                        <div id="observer">dddd</div>
                     </div>
                 </div>
                 <form onSubmit={handleSubmit} className="msg-input">
