@@ -31,9 +31,13 @@ const upload = multer({
 });
 
 // 동아리 등록
-router.post('/', upload.single('img'), async (req, res) => {
+router.post('/', async (req, res) => {
     try {
-        const { name, description, members, admin, clubImg, location, phone, sns } = req.body;
+        const { name, description, members, admin, location, phone, sns } = req.body;
+        // const clubImg = req.file.location;
+        console.log(req.body);  
+        const clubImg = req.body.clubImg;
+
         const newClub = new Club({
             name: name,
             description: description,

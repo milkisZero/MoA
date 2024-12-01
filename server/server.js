@@ -25,6 +25,7 @@ app.use(
             httpOnly: true,
             sameSite: 'Strict',
             maxAge: 1000 * 60 * 60 * 24,
+            secure: false,
         }, // 24시간 세션 유지
         store: MongoStore.create({
             mongoUrl: dburl,
@@ -107,11 +108,15 @@ io.on('connection', (socket) => {
     });
 })
 
-app.get('/api/session/', (req, res) => {
+app.get('/api/session/', async (req, res) => {
     if (!req.session || !req.session.userId) {
         return res.status(401).json({ success: false, message: 'Unauthorized' });
     }
-    return res.status(200).json();
+    const user = await User.findById(req.session.userId);
+    return res.status(200).json({
+        message: 'Successfully user found',
+        user
+    });
 });
 
 app.use('/api/user', userRoutes);
