@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../css/Pages.css';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -10,10 +10,12 @@ function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { userAuth, userLogin } = useAuth();
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
         await userLogin({ email, password });
+        navigate('/');
     };
 
     return (

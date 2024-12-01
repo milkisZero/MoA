@@ -519,3 +519,21 @@ header {
  .msg-message p {
      margin: 0px;
  }
+
+.page-Move  {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size:x-large;
+}
+
+.page-Move div{
+    padding: 1%;
+}
+
+.page-Move div:hover {
+    color: white;
+    background-color: grey;
+    cursor: pointer;
+}

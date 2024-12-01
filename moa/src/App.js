@@ -26,7 +26,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Main from './pages/Main';
-import Total_club from './pages/Total_clubs';
+import TotalClubs from './pages/TotalClubs';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import { useLocation } from 'react-router-dom';
@@ -34,6 +34,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import AuthProvider from './context/AuthContext';
 import Message from './pages/Message';
 import MakeClub from './pages/MakeClub';
+import MyPage from './pages/MyPage';
 
 function App() {
     return (
@@ -43,11 +44,12 @@ function App() {
                     <ScrollToTop />
                     <Routes>
                         <Route path="/" element={<Main />}></Route>
-                        <Route path="/TotalClub" element={<Total_club />}></Route>
+                        <Route path="/TotalClubs" element={<TotalClubs />}></Route>
                         <Route path="/Login" element={<Login />}></Route>
                         <Route path="/Register" element={<Register />}></Route>
                         <Route path="/Message" element={<Message />}></Route>
                         <Route path="/MakeClub" element={<MakeClub />}></Route>
+                        <Route path="/MyPage" element={<MyPage />}></Route>
                     </Routes>
                 </div>
             </AuthProvider>

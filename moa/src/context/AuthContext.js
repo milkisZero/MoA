@@ -29,10 +29,11 @@ function AuthProvider({ children }) {
         }
     };
 
+    const { pathname } = useLocation();
     useEffect(() => {
         console.log('세션 체크');
         checkSession();
-    }, []);
+    }, [pathname]);
 
     // 로그인
     const userLogin = async (info) => {
@@ -46,6 +47,7 @@ function AuthProvider({ children }) {
                     email: info.email,
                     password: info.password,
                 }),
+                credentials: 'include',
             });
             if (response.ok) {
                 const data = await response.json();

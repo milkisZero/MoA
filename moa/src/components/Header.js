@@ -4,7 +4,12 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function Header() {
-    const { userAuth } = useAuth();
+    const { userAuth, userLogout } = useAuth();
+
+    const handleLogout = async (e) => {
+        e.preventDefault();
+        await userLogout();
+    };
 
     return (
         <header>
@@ -20,9 +25,13 @@ function Header() {
                 </span>
             ) : (
                 <span className="clickable">
-                    <Link to="">{userAuth.name}</Link>
-                    <Link to="/Login">마이페이지</Link>
-                    <Link to="/Register ">로그아웃</Link>
+                    <Link to="" style={{ cursor: 'auto' }}>
+                        {userAuth.name}
+                    </Link>
+                    <Link to="/MyPage">마이페이지</Link>
+                    <Link to="/" onClick={handleLogout}>
+                        로그아웃
+                    </Link>
                 </span>
             )}
         </header>
