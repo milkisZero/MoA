@@ -2,8 +2,9 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const msgSchema = new Schema({
-    msgRoomId:     { type: Schema.Types.ObjectId, ref: 'MsgRoom' },
+    senderName: { type: String },
     senderId:   { type: Schema.Types.ObjectId, ref: 'User' },
+    msgRoomId:  { type: Schema.Types.ObjectId, ref: 'MsgRoom' },
     content:    { type: String, maxlength: 500 },
     timestamp:  { type: Date, default: Date.now },
 });

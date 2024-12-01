@@ -29,6 +29,24 @@ router.post('/', async (req, res) => {
     }
 });
 
+// 채팅방 유저 불러오기
+router.get('/users/:msgRoomId', async (req, res) => {
+    try {
+        const msgRoomId = req.params.msgRoomId;
+        const msgRoom = await MsgRoom.findById(msgRoomId).populate('members', 'name');
+
+        if (!msgRoom) return res.status(404).json({ message: 'Chat room not found' });
+        
+        res.status(200).json({
+            message: 'Users retrieved successfully',
+            members: msgRoom.members,
+        });
+    } catch (e) {
+        console.log('get error in /msgRoom/user/msgRoomId:', e);
+        res.status(500).json({ message: 'get error in /msgRoom/users/msgRoomId' });
+    }
+});
+
 // 채팅방 채팅 불러오기(페이지네이션)
 router.get('/:msgRoomId', async (req, res) => {
     try {

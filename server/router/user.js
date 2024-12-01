@@ -106,7 +106,7 @@ router.get('/event/:userId', async (req, res) => {
 // 마이페이지 - 동아리보기
 router.get('/club/:userId', async (req, res) => {
     try {
-        const user = await User.findById(req.params.userId);
+        const user = await User.findById(req.params.userId).populate('clubs');
         if (!user) return res.status(404).json({ message: 'User cannot found'});
 
         const clubs = user.clubs;

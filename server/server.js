@@ -80,11 +80,12 @@ io.on('connection', (socket) => {
     })
 
     // 메세지 broadcast
-    socket.on('sendMsg', async ({msgRoomId, senderId, content}) => {
+    socket.on('sendMsg', async ({ senderName, senderId, msgRoomId, content}) => {
         try {
             const newMsg = new Message({
-                msgRoomId,
+                senderName,
                 senderId,
+                msgRoomId,
                 content
             });
             await newMsg.save();
