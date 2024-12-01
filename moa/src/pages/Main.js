@@ -7,6 +7,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ClubItem from '../components/ClubItem';
 import ItemCompo from '../components/ItemCompo';
+import { getClubInfo } from '../api';
 
 function Main() {
     return (
@@ -37,14 +38,27 @@ function MainClubs() {
 
     return (
         <div className="main-clubs-section">
-            {list.map((item) => (
-                <ItemCompo item={item}></ItemCompo>
+            {list.map((item, index) => (
+                <ItemCompo key={index} item={item}></ItemCompo>
             ))}
         </div>
     );
 }
 
 function ListSection() {
+    const [clubList, setclubList] = useState([]);
+    const page = 1;
+    const limit = 5;
+
+    const fetchData = async () => {
+        const data = await getClubInfo({ page, limit });
+        setclubList(data);
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
     const list = [
         { image: tmp, title: '동아리1', info: '내가 속한 동아리의 일정을 알아보세요' },
         {
@@ -64,8 +78,8 @@ function ListSection() {
                 </h4>
             </header>
             <div className="club-list">
-                {list.map((item) => (
-                    <ClubItem club={item}></ClubItem>
+                {clubList.map((item, index) => (
+                    <ClubItem key={index} club={item}></ClubItem>
                 ))}
             </div>
         </section>

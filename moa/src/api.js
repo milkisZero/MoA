@@ -27,9 +27,7 @@ async function userRegister(info) {
 
 async function getPage({ roomId, msgId }) {
     try {
-        console.log(msgId);
         msgId = !msgId ? '' : msgId;
-        console.log(msgId);
         const response = await fetch(URL + `msgRoom/${roomId}` + `?msgId=${msgId}`);
         if (response.ok) {
             const data = await response.json();
@@ -40,4 +38,43 @@ async function getPage({ roomId, msgId }) {
     }
 }
 
-export { userRegister, getPage };
+async function getClubInfo({ page, limit }) {
+    try {
+        const response = await fetch(URL + 'club/total_club' + `?page=${page}` + `&limit=${limit}`);
+        if (response.ok) {
+            const data = await response.json();
+            return data.club;
+        }
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+async function addClub({ name, description, clubImg, location, phone, sns, userId }) {
+    try {
+        const response = await fetch(URL + 'club/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: name,
+                description: description,
+                members: userId,
+                admin: userId,
+                clubImg: null,
+                location: location,
+                phone: phone,
+                sns: sns,
+            }),
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data.newClub;
+        }
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+export { userRegister, getPage, getClubInfo, addClub };

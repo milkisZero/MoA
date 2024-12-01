@@ -13,12 +13,7 @@ function Login() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        console.log('로그인 정보:', { email, password });
-
         await userLogin({ email, password });
-        if (!userAuth) {
-            alert('로그인에 실패했습니다');
-        }
     };
 
     return (
