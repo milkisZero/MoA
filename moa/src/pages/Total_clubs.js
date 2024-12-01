@@ -33,8 +33,8 @@ function ListSection() {
                 <h3>전체 동아리 목록</h3>
             </header>
             <div className="club-list">
-                {list.map((item) => (
-                    <ClubItem club={item}></ClubItem>
+                {list.map((item, index) => (
+                    <ClubItem key={index} club={item}></ClubItem>
                 ))}
             </div>
         </section>

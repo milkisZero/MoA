@@ -20,6 +20,7 @@ function AuthProvider({ children }) {
                 const data = await response.json();
                 setUserAuth(data.user);
             } else {
+                console.log('세션 해제');
                 setUserAuth(null);
             }
         } catch (error) {
@@ -29,6 +30,7 @@ function AuthProvider({ children }) {
     };
 
     useEffect(() => {
+        console.log('세션 체크');
         checkSession();
     }, []);
 
@@ -46,10 +48,8 @@ function AuthProvider({ children }) {
                 }),
             });
             if (response.ok) {
-                alert(response.error);
-
                 const data = await response.json();
-                setUserAuth(data.updated);
+                setUserAuth(data.user);
                 return data;
             } else {
                 alert(response.status);
@@ -72,6 +72,16 @@ function AuthProvider({ children }) {
             alert(error.message);
         }
     };
+
+    useEffect(() => {
+        console.log(userAuth);
+
+        if (userAuth) {
+            console.log('로그인 되었습니다:', userAuth);
+        } else {
+            console.log('로그아웃 되었습니다');
+        }
+    }, [userAuth]);
 
     return <AuthContext.Provider value={{ userAuth, userLogin, userLogout }}>{children}</AuthContext.Provider>;
 }
