@@ -12,13 +12,24 @@ function MakeClub() {
     const [location, setLocation] = useState('');
     const [phone, setPhone] = useState('');
     const [sns, setSns] = useState('');
-    const [clubImg, setclubImg] = useState('');
+    const [clubImg, setClubImg] = useState('');
     const { userAuth } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const userId = userAuth._id;
-        const data = await addClub({ name, description, clubImg, location, phone, sns, userId });
+
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('description', description);
+        formData.append('location', location);
+        formData.append('phone', phone);
+        formData.append('sns', sns);
+        formData.append('members', userId);
+        formData.append('admin', userId);
+        formData.append('img', clubImg);
+
+        const data = await addClub(formData);
     };
 
     return (
@@ -28,6 +39,7 @@ function MakeClub() {
                 <div className="register-container">
                     <h2>신규 동아리 등록</h2>
                     <form onSubmit={handleSubmit} className="register-inside">
+                        <input type="file" onChange={(e) => setClubImg(e.target.files[0])} accept="image/*" />
                         <input
                             type="text"
                             placeholder="동아리 이름"

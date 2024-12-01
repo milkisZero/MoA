@@ -50,23 +50,11 @@ async function getClubInfo({ page, limit }) {
     }
 }
 
-async function addClub({ name, description, clubImg, location, phone, sns, userId }) {
+async function addClub(formData) {
     try {
         const response = await fetch(URL + 'club/', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                name: name,
-                description: description,
-                members: userId,
-                admin: userId,
-                clubImg: null,
-                location: location,
-                phone: phone,
-                sns: sns,
-            }),
+            body: formData,
         });
         if (response.ok) {
             const data = await response.json();

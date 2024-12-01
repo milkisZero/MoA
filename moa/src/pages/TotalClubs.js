@@ -20,18 +20,30 @@ function TotalClubs() {
 
 function ListSection() {
     const [clubList, setclubList] = useState([]);
-    const page = 1;
+    const [page, setPage] = useState(1);
+    const [pageNumbers, setPageNumbers] = useState([1, 2, 3, 4, 5]);
     const limit = 5;
-    const pageNumbers = [1, 2, 3, 4, 5];
 
     const fetchData = async () => {
         const data = await getClubInfo({ page, limit });
-        setclubList(data);
+        if (data.length > 0) setclubList(data);
     };
 
     useEffect(() => {
+        console.log(page);
         fetchData();
-    }, []);
+    }, [page]);
+
+    const movePageNum = (num) => {
+        setPage(Number(num));
+    };
+
+    const changePageNum = (num) => {
+        if (pageNumbers[0] + num > 0) {
+            setPageNumbers(pageNumbers.map((item) => item + num));
+            setPage(pageNumbers[0] + num);
+        }
+    };
 
     return (
         <section className="list-section">
@@ -47,11 +59,13 @@ function ListSection() {
                 ))}
             </div>
             <div className="page-Move">
-                <div>{'<'}</div>
+                <div onClick={() => changePageNum(-5)}>{'<'}</div>
                 {pageNumbers.map((item, index) => (
-                    <div key={index}>{item}</div>
+                    <div key={index} onClick={() => movePageNum(item)}>
+                        {item}
+                    </div>
                 ))}
-                <div>{'>'}</div>
+                <div onClick={() => changePageNum(5)}>{'>'}</div>
             </div>
         </section>
     );
