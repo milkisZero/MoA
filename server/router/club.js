@@ -61,7 +61,7 @@ router.post('/', upload.single('img'), async (req, res) => {
             user.clubs.push(clubId);
             await user.save();
         }
-        
+
         res.status(200).json({
             message: 'Club and Clubchatroom created successfully',
             newClub,
