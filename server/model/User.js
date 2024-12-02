@@ -10,7 +10,6 @@ const userSchema = new Schema({
     
     clubs:          { type: [{ type: Schema.Types.ObjectId, ref: 'Club' }] },
     waitingClubs:   { type: [{ type: Schema.Types.ObjectId, ref: 'Club' }] },
-    events:         { type: [{ type: Schema.Types.ObjectId, ref: 'Event' }] },
     msgRooms:       { type: [{ type: Schema.Types.ObjectId, ref: 'MsgRoom' }] },
 });
 

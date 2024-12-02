@@ -5,14 +5,12 @@ import "../css/Pages.css";
 function ClubItem({ club }) {
   return (
     <div className="club-item">
-      <img src={club.image} alt={`${club.title} 이미지`} />
+      <img src={club.clubImg}></img>
       <div>
-        <h3>{club.title}</h3>
-        <p>{club.info}</p>
+        <h3>{club.name}</h3>
+        <p>{club.description}</p>
       </div>
-      <button className="clickable">
-        <Link to="/DetailClub">동아리 이동하기</Link>
-      </button>
+      <button>동아리 이동하기</button>
     </div>
   );
 }

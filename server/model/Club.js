@@ -12,10 +12,10 @@ const clubSchema = new Schema({
     events:         { type: [{ type: Schema.Types.ObjectId, ref: 'Event' }] },
 
     createdAt:      { type: Date, default: Date.now },
+    msgRoomId:      { type: String },
     clubImg:        { type: String },
     location:       { type: String },
     phone:          { type: String },
-    date:           { type: String },
     sns:            { type: String },
 });
 

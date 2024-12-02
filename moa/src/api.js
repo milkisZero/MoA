@@ -25,4 +25,44 @@ async function userRegister(info) {
     }
 }
 
-export { userRegister };
+async function getPage({ roomId, msgId }) {
+    try {
+        msgId = !msgId ? '' : msgId;
+        const response = await fetch(URL + `msgRoom/${roomId}` + `?msgId=${msgId}`);
+        if (response.ok) {
+            const data = await response.json();
+            return data.messages;
+        }
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+async function getClubInfo({ page, limit }) {
+    try {
+        const response = await fetch(URL + 'club/total_club' + `?page=${page}` + `&limit=${limit}`);
+        if (response.ok) {
+            const data = await response.json();
+            return data.club;
+        }
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+async function addClub(formData) {
+    try {
+        const response = await fetch(URL + 'club/', {
+            method: 'POST',
+            body: formData,
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data.newClub;
+        }
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+export { userRegister, getPage, getClubInfo, addClub };

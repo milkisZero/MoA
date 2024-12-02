@@ -35,6 +35,7 @@ function Register() {
                             placeholder="이름"
                             value={name}
                             onChange={(e) => setUsername(e.target.value)}
+                            maxLength="50"
                             required
                         />
                         <input
@@ -49,6 +50,7 @@ function Register() {
                             placeholder="비밀번호"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            minLength="5"
                             required
                         />
                         <input
@@ -56,6 +58,7 @@ function Register() {
                             placeholder="비밀번호 확인"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
+                            minLength="5"
                             required
                         />
                         <button type="submit">회원가입</button>
