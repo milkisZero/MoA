@@ -24,41 +24,43 @@
 
 // export default App;
 
-import React, { useState, useEffect } from 'react';
-import Main from './pages/Main';
-import Total_club from './pages/Total_clubs';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import { useLocation } from 'react-router-dom';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import AuthProvider from './context/AuthContext';
+import React, { useState, useEffect } from "react";
+import Main from "./pages/Main";
+import Total_club from "./pages/Total_clubs";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Detail_clubs from "./pages/DetailClubs/DetailClubs";
+import { useLocation } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import AuthProvider from "./context/AuthContext";
 
 function App() {
-    return (
-        <BrowserRouter>
-            <AuthProvider>
-                <div className="App">
-                    <ScrollToTop />
-                    <Routes>
-                        <Route path="/" element={<Main />}></Route>
-                        <Route path="/TotalClub" element={<Total_club />}></Route>
-                        <Route path="/Login" element={<Login />}></Route>
-                        <Route path="/Register" element={<Register />}></Route>
-                    </Routes>
-                </div>
-            </AuthProvider>
-        </BrowserRouter>
-    );
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <div className="App">
+          <ScrollToTop />
+          <Routes>
+            <Route path="/" element={<Main />}></Route>
+            <Route path="/TotalClub" element={<Total_club />}></Route>
+            <Route path="/Login" element={<Login />}></Route>
+            <Route path="/Register" element={<Register />}></Route>
+            <Route path="/DetailClub" element={<Detail_clubs />} />
+          </Routes>
+        </div>
+      </AuthProvider>
+    </BrowserRouter>
+  );
 }
 
 function ScrollToTop() {
-    const { pathname } = useLocation();
+  const { pathname } = useLocation();
 
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, [pathname]);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
-    return null;
+  return null;
 }
 
 export default App;
