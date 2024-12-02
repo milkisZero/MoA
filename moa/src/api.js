@@ -174,8 +174,6 @@ export async function getMonthEvent({ clubId, year, month }) {
 
 export async function addEvent({ clubId, userId, title, description, date, location }) {
     try {
-        console.log(userId);
-
         const response = await fetch(URL + `event/${clubId}`, {
             method: 'POST',
             headers: {

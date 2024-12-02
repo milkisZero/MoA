@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import Modal from 'react-modal';
 
-const EventPopup = ({ clubId, onSubmit, onClose }) => {
+const EventModal = ({ clubId, onSubmit }) => {
     const [formData, setFormData] = useState({
         clubId,
         title: '',
@@ -8,6 +9,9 @@ const EventPopup = ({ clubId, onSubmit, onClose }) => {
         date: '',
         location: '',
     });
+    const [isOpen, setIsOpen] = useState(false);
+    const handlePopupOpen = () => setIsOpen(true);
+    const handlePopupClose = () => setIsOpen(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -16,12 +20,28 @@ const EventPopup = ({ clubId, onSubmit, onClose }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit(formData); // 부모 컴포넌트에 데이터 전달
+        onSubmit(formData);
     };
 
     return (
-        <div className="popup">
-            <div className="popup-content">
+        <div>
+            <button onClick={handlePopupOpen}>새 일정 작성</button>
+            <Modal
+                appElement={document.getElementById('root')}
+                isOpen={isOpen}
+                onRequestClose={handlePopupClose}
+                style={{
+                    overlay: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    },
+                    content: {
+                        width: '400px',
+                        margin: 'auto',
+                        padding: '20px',
+                        borderRadius: '10px',
+                    },
+                }}
+            >
                 <h2>일정 작성</h2>
                 <form onSubmit={handleSubmit}>
                     <label>
@@ -54,13 +74,13 @@ const EventPopup = ({ clubId, onSubmit, onClose }) => {
                         <input type="text" name="location" value={formData.location} onChange={handleChange} />
                     </label>
                     <button type="submit">저장</button>
-                    <button type="button" onClick={onClose}>
+                    <button type="button" onClick={handlePopupClose}>
                         취소
                     </button>
                 </form>
-            </div>
+            </Modal>
         </div>
     );
 };
 
-export default EventPopup;
+export default EventModal;

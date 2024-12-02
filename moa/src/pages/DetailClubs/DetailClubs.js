@@ -5,8 +5,9 @@ import Footer from '../../components/Footer';
 import { useParams } from 'react-router-dom';
 import { addEvent, getClubDetail, getMonthEvent, getTotalPost } from '../../api';
 import { useState, useEffect } from 'react';
-import EventPopup from '../../components/EventPopup ';
 import { useAuth } from '../../context/AuthContext';
+// import DatePicker from '../../components/DatePicker/DatePicker';
+import EventModal from '../../components/EventModal.js';
 
 // 재사용 가능한 컴포넌트: 정보 섹션
 const InfoSection = ({ title, content, isLink }) => (
@@ -32,7 +33,6 @@ const Detail_club = () => {
     const now = new Date();
     const year = now.getFullYear();
     const month = now.getMonth() + 1; //
-    const [isEventPopup, setIsEventPopup] = useState(false);
     const { userAuth } = useAuth();
     const [isFetching, setIsFetching] = useState(false);
 
@@ -49,8 +49,6 @@ const Detail_club = () => {
         return time;
     };
 
-    const handlePopupOpen = () => setIsEventPopup(true);
-    const handlePopupClose = () => setIsEventPopup(false);
     const handleFormSubmit = async (event) => {
         if (!userAuth) {
             alert('회원이 아닙니다');
@@ -65,14 +63,16 @@ const Detail_club = () => {
             date: event.date,
             location: event.location,
         });
-        if (data) setIsFetching(true);
-        //  handlePopupClose();
+        if (data) {
+            setIsFetching(true);
+        } else {
+            alert('작성에 실패했습니다');
+        }
     };
 
     const fetchData = async () => {
         const club_data = await getClubDetail({ clubId });
         setClubDetails(club_data);
-        console.log(club_data);
 
         const event_data = await getMonthEvent({ clubId, year, month });
         setEvents(event_data);
@@ -151,15 +151,14 @@ const Detail_club = () => {
                 </div>
             </section> */}
 
+            {/* <DatePicker></DatePicker> */}
+
             {/* 활동 일정 */}
             <section>
                 <h2 className={styles.sectionTitle}>동아리 활동 일정</h2>
-                <div>
-                    <button onClick={handlePopupOpen}>새 일정 작성</button>
-                    {isEventPopup && (
-                        <EventPopup clubId={clubId} onSubmit={handleFormSubmit} onClose={handlePopupClose} />
-                    )}
-                </div>
+
+                <EventModal clubId={clubId} onSubmit={handleFormSubmit}></EventModal>
+
                 <div className={styles.calendarSection}>
                     {events.map((activity) => (
                         <div key={activity._id} className={styles.eventBox}>
@@ -182,7 +181,7 @@ const Detail_club = () => {
                 <h2 className={styles.sectionTitle}>동아리 자유게시판</h2>
                 <div className={styles.boardGrid}>
                     {posts.map((post) => (
-                        <div key={post.id} className={styles.boardItem}>
+                        <div key={post._id} className={styles.boardItem}>
                             <img src={post.postImgs} alt={post.title} className={styles.boardImage} />
                             <h4 className={styles.boardTitle}>{post.title}</h4>
                             <p className={styles.boardContent}>{post.content}</p>
