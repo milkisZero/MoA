@@ -18,10 +18,10 @@ export async function userRegister(info) {
             const data = await response.json();
             return data.newUser;
         } else {
-            alert(response.status);
+            console.log(response.status);
         }
     } catch (error) {
-        alert(error.message);
+        console.log(error.message);
     }
 }
 
@@ -34,7 +34,7 @@ export async function getPage({ roomId, msgId }) {
             return data.messages;
         }
     } catch (error) {
-        alert(error.message);
+        console.log(error.message);
     }
 }
 
@@ -46,7 +46,7 @@ export async function getClubPage({ page, limit }) {
             return data.club;
         }
     } catch (error) {
-        alert(error.message);
+        console.log(error.message);
     }
 }
 
@@ -61,7 +61,7 @@ export async function addClub(formData) {
             return data.newClub;
         }
     } catch (error) {
-        alert(error.message);
+        console.log(error.message);
     }
 }
 
@@ -73,7 +73,7 @@ export async function getClubDetail({ clubId }) {
             return data.foundClub;
         }
     } catch (error) {
-        alert(error.message);
+        console.log(error.message);
     }
 }
 
@@ -88,19 +88,19 @@ export async function updateClubInfo({ formData, clubId }) {
             return data;
         }
     } catch (error) {
-        alert(error.message);
+        console.log(error.message);
     }
 }
 
 export async function getTotalPost({ clubId, page, limit }) {
     try {
-        const response = await fetch(URL + `post/${clubId}/` + `?page=${page}` + `&limit=${limit}`);
+        const response = await fetch(URL + `post/${clubId}/total_post` + `?page=${page}` + `&limit=${limit}`);
         if (response.ok) {
             const data = await response.json();
             return data.posts;
         }
     } catch (error) {
-        alert(error.message);
+        console.log(error.message);
     }
 }
 
@@ -112,7 +112,7 @@ export async function getPost({ postId }) {
             return data.foundPost;
         }
     } catch (error) {
-        alert(error.message);
+        console.log(error.message);
     }
 }
 
@@ -127,7 +127,7 @@ export async function addPost({ formData, clubId }) {
             return data;
         }
     } catch (error) {
-        alert(error.message);
+        console.log(error.message);
     }
 }
 
@@ -141,7 +141,7 @@ export async function deletePost({ postId }) {
             return data;
         }
     } catch (error) {
-        alert(error.message);
+        console.log(error.message);
     }
 }
 
@@ -156,7 +156,7 @@ export async function updatedPost({ formData, postId }) {
             return data;
         }
     } catch (error) {
-        alert(error.message);
+        console.log(error.message);
     }
 }
 
@@ -165,31 +165,38 @@ export async function getMonthEvent({ clubId, year, month }) {
         const response = await fetch(URL + `event/${clubId}/` + `?year=${year}` + `&month=${month}`);
         if (response.ok) {
             const data = await response.json();
-            return data.fonudEvents;
+            return data.foundEvents;
         }
     } catch (error) {
-        alert(error.message);
+        console.log(error.message);
     }
 }
 
 export async function addEvent({ clubId, userId, title, description, date, location }) {
     try {
+        console.log(userId);
+
         const response = await fetch(URL + `event/${clubId}`, {
             method: 'POST',
-            body: {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
                 userId,
                 title,
                 description,
                 date,
                 location,
-            },
+            }),
         });
         if (response.ok) {
             const data = await response.json();
-            return data;
+            return data.newEvent;
+        } else {
+            console.log(response);
         }
     } catch (error) {
-        alert(error.message);
+        console.log(error.message);
     }
 }
 
@@ -210,7 +217,7 @@ export async function updateEvnet({ clubId, evnetId, userId, title, description,
             return data;
         }
     } catch (error) {
-        alert(error.message);
+        console.log(error.message);
     }
 }
 
@@ -224,7 +231,7 @@ export async function deleteEvnet({ clubId, evnetId }) {
             return data;
         }
     } catch (error) {
-        alert(error.message);
+        console.log(error.message);
     }
 }
 
@@ -236,7 +243,7 @@ export async function getMyClubs({ userId }) {
             return data.clubs;
         }
     } catch (error) {
-        alert(error.message);
+        console.log(error.message);
     }
 }
 
@@ -245,10 +252,10 @@ export async function getMyEvents({ userId }) {
         const response = await fetch(URL + `user/event/${userId}/`);
         if (response.ok) {
             const data = await response.json();
-            return data.fonudEvents;
+            return data.foundEvents;
         }
     } catch (error) {
-        alert(error.message);
+        console.log(error.message);
     }
 }
 
@@ -265,7 +272,7 @@ export async function proposeClub({ clubId, userId }) {
             return data;
         }
     } catch (error) {
-        alert(error.message);
+        console.log(error.message);
     }
 }
 
@@ -284,7 +291,7 @@ export async function approveClub({ clubId, userId, approve }) {
             return data;
         }
     } catch (error) {
-        alert(error.message);
+        console.log(error.message);
     }
 }
 
@@ -299,7 +306,7 @@ export async function deleteClub({ clubId }) {
             return data;
         }
     } catch (error) {
-        alert(error.message);
+        console.log(error.message);
     }
 }
 

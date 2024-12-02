@@ -53,7 +53,7 @@ function App() {
                         <Route path="/MakeClub" element={<MakeClub />}></Route>
                         <Route path="/MyPage" element={<MyPage />}></Route>
                         <Route path="/Pictures" element={<Pictures />}></Route>
-                        {/* <Route path="/Detail_club" element={<Detail_club />}></Route> */}
+                        <Route path="/Detail_club/:clubId" element={<Detail_club />} />
                     </Routes>
                 </div>
             </AuthProvider>

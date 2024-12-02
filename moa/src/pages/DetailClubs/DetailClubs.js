@@ -2,6 +2,11 @@ import React from 'react';
 import styles from './DetailClubs.module.css';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import { useParams } from 'react-router-dom';
+import { addEvent, getClubDetail, getMonthEvent, getTotalPost } from '../../api';
+import { useState, useEffect } from 'react';
+import EventPopup from '../../components/EventPopup ';
+import { useAuth } from '../../context/AuthContext';
 
 // 재사용 가능한 컴포넌트: 정보 섹션
 const InfoSection = ({ title, content, isLink }) => (
@@ -18,35 +23,84 @@ const InfoSection = ({ title, content, isLink }) => (
 );
 
 const Detail_club = () => {
-    const clubDetails = {
-        name: '동아리명',
-        description: '동아리 한 줄 소개',
-        location: '성호관 207호',
-        contact: 'Tel: 010-0000-0000',
-        sns: 'https://www.instagram.com',
-        activities: [
-            {
-                id: 1,
-                title: '2학기 정기 리액트 스터디',
-                place: '성호관 207호',
-                time: '17:00 ~ 19:00',
-            },
-        ],
-        boardPosts: [
-            {
-                id: 1,
-                title: '게시판 제목 1',
-                content: '게시판 내용입니다. 2줄을 넘으면 ...',
-                image: '/path/to/post-image-1.jpg',
-            },
-            {
-                id: 2,
-                title: '게시판 제목 2',
-                content: '게시판 내용입니다. 2줄을 넘으면 ...',
-                image: '/path/to/post-image-2.jpg',
-            },
-        ],
+    const { clubId } = useParams();
+    const [clubDetails, setClubDetails] = useState({});
+    const [events, setEvents] = useState([]);
+    const [posts, setPosts] = useState([]);
+    const page = 1;
+    const limit = 5;
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1; //
+    const [isEventPopup, setIsEventPopup] = useState(false);
+    const { userAuth } = useAuth();
+    const [isFetching, setIsFetching] = useState(false);
+
+    const handlePopupOpen = () => setIsEventPopup(true);
+    const handlePopupClose = () => setIsEventPopup(false);
+    const handleFormSubmit = async (event) => {
+        if (!userAuth) {
+            alert('회원이 아닙니다');
+            return;
+        }
+
+        const data = await addEvent({
+            clubId,
+            userId: userAuth._id,
+            title: event.title,
+            description: event.description,
+            date: event.date,
+            location: event.location,
+        });
+        if (data) setIsFetching(true);
+        //  handlePopupClose();
     };
+
+    const fetchData = async () => {
+        const club_data = await getClubDetail({ clubId });
+        setClubDetails(club_data);
+        console.log(club_data);
+
+        const event_data = await getMonthEvent({ clubId, year, month });
+        setEvents(event_data);
+        const post_data = await getTotalPost({ clubId, page, limit });
+        setPosts(post_data);
+    };
+
+    useEffect(() => {
+        fetchData();
+        setIsFetching(false);
+    }, [isFetching]);
+
+    // const clubDetails = {
+    //     name: '동아리명',
+    //     description: '동아리 한 줄 소개',
+    //     location: '성호관 207호',
+    //     contact: 'Tel: 010-0000-0000',
+    //     sns: 'https://www.instagram.com',
+    //     activities: [
+    //         {
+    //             id: 1,
+    //             title: '2학기 정기 리액트 스터디',
+    //             place: '성호관 207호',
+    //             time: '17:00 ~ 19:00',
+    //         },
+    //     ],
+    //     boardPosts: [
+    //         {
+    //             id: 1,
+    //             title: '게시판 제목 1',
+    //             content: '게시판 내용입니다. 2줄을 넘으면 ...',
+    //             image: '/path/to/post-image-1.jpg',
+    //         },
+    //         {
+    //             id: 2,
+    //             title: '게시판 제목 2',
+    //             content: '게시판 내용입니다. 2줄을 넘으면 ...',
+    //             image: '/path/to/post-image-2.jpg',
+    //         },
+    //     ],
+    // };
 
     return (
         <div className={styles.container}>
@@ -55,14 +109,14 @@ const Detail_club = () => {
             {/* 동아리 헤더 */}
             <div className={styles.header}>
                 <div className={styles.leftSection}>
-                    <img src="/path/to/club-image.jpg" alt={`${clubDetails.name} 사진`} className={styles.clubImage} />
+                    <img src={clubDetails.clubImg} alt={`${clubDetails.name} 사진`} className={styles.clubImage} />
                 </div>
                 <div className={styles.rightSection}>
                     <h1 className={styles.clubName}>{clubDetails.name}</h1>
                     <p className={styles.clubDescription}>{clubDetails.description}</p>
 
                     <InfoSection title="동아리 위치" content={clubDetails.location} />
-                    <InfoSection title="회장 연락처" content={clubDetails.contact} />
+                    <InfoSection title="회장 연락처" content={clubDetails.phone} />
                     <InfoSection title="SNS" content={clubDetails.sns} isLink />
 
                     <button className={styles.joinButton}>동아리 가입 신청하기</button>
@@ -70,7 +124,7 @@ const Detail_club = () => {
             </div>
 
             {/* 주요 활동 사진 */}
-            <section>
+            {/* <section>
                 <h2 className={styles.sectionTitle}>동아리 주요 활동 사진</h2>
                 <div className={styles.photoSection}>
                     {[1, 2, 3, 4].map((id) => (
@@ -82,22 +136,28 @@ const Detail_club = () => {
                         />
                     ))}
                 </div>
-            </section>
+            </section> */}
 
             {/* 활동 일정 */}
             <section>
                 <h2 className={styles.sectionTitle}>동아리 활동 일정</h2>
+                <div>
+                    <button onClick={handlePopupOpen}>새 일정 작성</button>
+                    {isEventPopup && (
+                        <EventPopup clubId={clubId} onSubmit={handleFormSubmit} onClose={handlePopupClose} />
+                    )}
+                </div>
                 <div className={styles.calendarSection}>
-                    {clubDetails.activities.map((activity) => (
-                        <div key={activity.id} className={styles.eventBox}>
+                    {events.map((activity) => (
+                        <div key={activity._id} className={styles.eventBox}>
                             <div>
                                 <p>목요일</p>
                                 <p>14</p>
                             </div>
                             <div>
                                 <h3>{activity.title}</h3>
-                                <p>장소: {activity.place}</p>
-                                <p>시간: {activity.time}</p>
+                                <p>장소: {activity.location}</p>
+                                <p>시간: {new Date(activity.date).toLocaleTimeString()}</p>
                             </div>
                         </div>
                     ))}
@@ -108,9 +168,9 @@ const Detail_club = () => {
             <section>
                 <h2 className={styles.sectionTitle}>동아리 자유게시판</h2>
                 <div className={styles.boardGrid}>
-                    {clubDetails.boardPosts.map((post) => (
+                    {posts.map((post) => (
                         <div key={post.id} className={styles.boardItem}>
-                            <img src={post.image} alt={post.title} className={styles.boardImage} />
+                            <img src={post.postImgs} alt={post.title} className={styles.boardImage} />
                             <h4 className={styles.boardTitle}>{post.title}</h4>
                             <p className={styles.boardContent}>{post.content}</p>
                         </div>

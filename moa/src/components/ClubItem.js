@@ -1,8 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import '../css/Pages.css';
+import Detail_club from '../pages/DetailClubs/DetailClubs';
+import { useNavigate } from 'react-router-dom';
 
 function ClubItem({ club, button_text }) {
+    const navigate = useNavigate();
+
+    const goDetailPage = () => {
+        navigate(`/Detail_club/${club._id}`);
+    };
+
     return (
         <div className="club-item">
             <img src={club.clubImg}></img>
@@ -10,7 +18,7 @@ function ClubItem({ club, button_text }) {
                 <h3>{club.name}</h3>
                 <p>{club.description}</p>
             </div>
-            <button>{button_text}</button>
+            <button onClick={() => goDetailPage()}>{button_text}</button>
         </div>
     );
 }
