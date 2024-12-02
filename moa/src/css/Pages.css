@@ -544,7 +544,7 @@ header {
     align-items: center;
     padding: 2% 2%;
     gap: 15px;
-    width: 90%;
+    width: 60%;
     background: #ffffff;
     box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.25);
     border-radius: 20px;
@@ -581,13 +581,22 @@ header {
     justify-content: center; */
 }
 
-#mypage-msg {
-    background-color: #777;
-    height: 70% !important;
-    /* width: 2% !important; */
+#mypage_msg  {
+    height: 500px;
+    overflow-y: auto;
 }
 
-#mypage-msg Img {
-    height: 50px !important;
-    /* width: 2% !important; */
+#mypage_msg .club-item{
+    /* background-color: red; */
+}
+
+#mypage_msg Img {
+    height: 100px !important;
+    width: 100px !important;
+}
+
+#mypage_msg button {
+    position:relative;
+    left: 70%;
+    bottom: 50%;
 }

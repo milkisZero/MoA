@@ -79,7 +79,7 @@ function ListSection() {
             </header>
             <div className="club-list">
                 {clubList.map((item, index) => (
-                    <ClubItem key={index} club={item}></ClubItem>
+                    <ClubItem key={index} club={item} button_text={'동아리 이동하기'}></ClubItem>
                 ))}
             </div>
         </section>

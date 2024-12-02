@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../css/Pages.css';
 
-function ClubItem({ club }) {
+function ClubItem({ club, button_text }) {
     return (
         <div className="club-item">
             <img src={club.clubImg}></img>
@@ -9,7 +9,7 @@ function ClubItem({ club }) {
                 <h3>{club.name}</h3>
                 <p>{club.description}</p>
             </div>
-            <button>동아리 이동하기</button>
+            <button>{button_text}</button>
         </div>
     );
 }
