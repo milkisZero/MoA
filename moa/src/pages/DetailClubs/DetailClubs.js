@@ -36,6 +36,19 @@ const Detail_club = () => {
     const { userAuth } = useAuth();
     const [isFetching, setIsFetching] = useState(false);
 
+    const getDayOfWeek = (date) => {
+        const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+        return days[date.getDay()];
+    };
+    const getTime = (date) => {
+        const time = date.toLocaleTimeString('ko-KR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+        });
+        return time;
+    };
+
     const handlePopupOpen = () => setIsEventPopup(true);
     const handlePopupClose = () => setIsEventPopup(false);
     const handleFormSubmit = async (event) => {
@@ -151,13 +164,13 @@ const Detail_club = () => {
                     {events.map((activity) => (
                         <div key={activity._id} className={styles.eventBox}>
                             <div>
-                                <p>목요일</p>
-                                <p>14</p>
+                                <p>{getDayOfWeek(new Date(activity.date))}</p>
+                                <p>{getTime(new Date(activity.date))}</p>
                             </div>
                             <div>
-                                <h3>{activity.title}</h3>
+                                <h3>제목: {activity.title}</h3>
                                 <p>장소: {activity.location}</p>
-                                <p>시간: {new Date(activity.date).toLocaleTimeString()}</p>
+                                <p>날짜: {new Date(activity.date).toLocaleDateString()}</p>
                             </div>
                         </div>
                     ))}

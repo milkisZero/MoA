@@ -47,7 +47,7 @@ const EventPopup = ({ clubId, onSubmit, onClose }) => {
                     </label>
                     <label>
                         날짜:
-                        <input type="date" name="date" value={formData.date} onChange={handleChange} />
+                        <input type="datetime-local" name="date" value={formData.date} onChange={handleChange} />
                     </label>
                     <label>
                         위치:
