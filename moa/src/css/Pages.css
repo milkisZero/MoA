@@ -333,7 +333,7 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: 0px 0px 20px 0px;
     width: 100%;
  }
 
@@ -536,4 +536,58 @@ header {
     color: white;
     background-color: grey;
     cursor: pointer;
+}
+
+.mypage-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 2% 2%;
+    gap: 15px;
+    width: 90%;
+    background: #ffffff;
+    box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.25);
+    border-radius: 20px;
+    overflow-x: auto;
+}
+
+.mypage-container ItemCompo{
+    width: 10%;
+    border-radius: 20px;
+}
+
+.mypage-container Img {
+    width: 80%;
+    border-radius: 100px;
+}
+
+.mypage-container .main-clubs {
+    height: 20%;
+    width: 20%;
+    border-radius: 100px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;margin: 0px;
+}
+
+.mypage-clubs  {
+    /* display: flex;
+    flex-wrap: wrap;
+     align-items: center;
+       width: 90%;
+    justify-content: center; */
+}
+
+#mypage-msg {
+    background-color: #777;
+    height: 70% !important;
+    /* width: 2% !important; */
+}
+
+#mypage-msg Img {
+    height: 50px !important;
+    /* width: 2% !important; */
 }

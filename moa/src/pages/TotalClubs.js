@@ -26,7 +26,10 @@ function ListSection() {
 
     const fetchData = async () => {
         const data = await getClubInfo({ page, limit });
-        if (data.length > 0) setclubList(data);
+        if (data.length > 0) {
+            setclubList(data);
+            window.scrollTo(0, 0);
+        }
     };
 
     useEffect(() => {

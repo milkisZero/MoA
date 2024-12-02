@@ -4,7 +4,7 @@ import '../css/Pages.css';
 function ClubItem({ club }) {
     return (
         <div className="club-item">
-            <img src={club.image}></img>
+            <img src={club.clubImg}></img>
             <div>
                 <h3>{club.name}</h3>
                 <p>{club.description}</p>

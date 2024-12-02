@@ -17,6 +17,10 @@ function MakeClub() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!userAuth) {
+            alert('로그인이 필요합니다');
+            return;
+        }
         const userId = userAuth._id;
 
         const formData = new FormData();

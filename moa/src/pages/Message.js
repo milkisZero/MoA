@@ -7,16 +7,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane, faUserCircle } from '@fortawesome/free-solid-svg-icons'; // 필요한 아이콘 가져오기
 import { io } from 'socket.io-client';
 import { getPage } from '../api';
+import { useAuth } from '../context/AuthContext';
 
 function Message() {
     const [sendMsg, setSendMsg] = useState('');
     const [totalMsg, setTotalMsg] = useState([]);
     const [totalUser, setTotalUser] = useState([]);
     const roomId = '67495c33ac807b6a451308d6';
-    const userId = '6746ee516f9b770b3f7771bf';
     const [socket, setSocket] = useState(null);
     const [page, setPage] = useState(0);
     const [isFetching, setIsFetching] = useState(false); // 데이터가 로딩 중인지 체크
+    const { userAuth } = useAuth();
+
+    const userId = userAuth ? userAuth._id : null;
+    const userName = userAuth ? userAuth.name : null;
 
     const handleObserver = (entries) => {
         const target = entries[0];
@@ -46,19 +50,19 @@ function Message() {
         const msgId = totalMsg.length > 0 ? totalMsg[totalMsg.length - 1]._id : '';
         const data = await getPage({ roomId, msgId });
 
-        if (totalMsg.length > 0) console.log(totalMsg[totalMsg.length - 1]._id);
+        // if (totalMsg.length > 0) console.log(totalMsg[totalMsg.length - 1]._id);
 
         // 0번이 젤 나중
         setTotalMsg((prev) => [...prev, ...data]);
 
-        const newUserIds = data.map((item) => item.senderId);
-        setTotalUser((prev) => [...new Set([...prev, ...newUserIds])]);
+        const newUserName = data.map((item) => item.senderName);
+        setTotalUser((prev) => [...new Set([...prev, ...newUserName])]);
 
         setIsFetching(false);
     };
 
     useEffect(() => {
-        console.log(page);
+        // console.log(page);
         if (page > 0) fetchData();
     }, [page]);
 
@@ -72,7 +76,7 @@ function Message() {
             if (newMsg.msgRoomId === roomId) {
                 setTotalMsg((prev) => [newMsg, ...prev]);
             }
-            setTotalUser((prev) => (prev.includes(newMsg.senderId) ? prev : [...prev, newMsg.senderId]));
+            setTotalUser((prev) => (prev.includes(newMsg.senderName) ? prev : [...prev, newMsg.senderName]));
         });
 
         return () => {
@@ -88,6 +92,7 @@ function Message() {
                 msgRoomId: roomId,
                 senderId: userId,
                 content: sendMsg,
+                senderName: userName,
             });
             setSendMsg('');
         }
@@ -102,7 +107,7 @@ function Message() {
                 <div className="msg-info">
                     <div className="user-list">
                         {totalUser.map((prev, index) => (
-                            <UserBox key={index} senderId={prev} />
+                            <UserBox key={index} senderName={prev} />
                         ))}
                     </div>
                     <div className="msg-screen">
@@ -110,7 +115,7 @@ function Message() {
                             <div key={index}>
                                 <MessageBox
                                     key={index}
-                                    senderId={msg.senderId}
+                                    senderName={msg.senderName}
                                     content={msg.content}
                                     timestamp={msg.timestamp}
                                 />
@@ -131,20 +136,20 @@ function Message() {
     );
 }
 
-function UserBox({ senderId }) {
+function UserBox({ senderName }) {
     return (
         <div className="user-box">
             <FontAwesomeIcon icon={faUserCircle} size="2x" />
-            <div className="user-info">{senderId}</div>
+            <div className="user-info">{senderName}</div>
         </div>
     );
 }
 
-function MessageBox({ senderId, content, timestamp }) {
+function MessageBox({ senderName, content, timestamp }) {
     const time = new Date(timestamp).toLocaleTimeString();
     return (
         <div className="msg-message">
-            <UserBox senderId={senderId} />
+            <UserBox senderName={senderName} />
             <p>{content}</p>
             <p>{time}</p>
         </div>
