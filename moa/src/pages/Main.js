@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import '../css/Pages.css';
-import tmp from '../assets/sample.png';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import "../css/Pages.css";
+import tmp from "../assets/sample.png";
+import { Link } from "react-router-dom";
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -10,31 +10,27 @@ import ItemCompo from '../components/ItemCompo';
 import { getClubInfo } from '../api';
 
 function Main() {
-    return (
-        <div>
-            <Header />
-            <section className="main-section">
-                <h1>동아리를 위한 공간</h1>
-                <p>한 눈에 알아보는 동아리의 정보와</p>
-                <p>내가 속한 동아리의 일정을 알아보세요</p>
-            </section>
-            <MainClubs />
-            <ListSection />
-            <Footer />
-        </div>
-    );
+  return (
+    <div>
+      <Header />
+      <section className="main-section" />
+      <MainClubs />
+      <ListSection />
+      <Footer />
+    </div>
+  );
 }
 
 function MainClubs() {
-    const list = [
-        {
-            image: tmp,
-            title: '동아리1',
-            info: '내가 속한 동아리의 일정을 알아보세요내가 속한 동아리의 일정을 알아보세요',
-        },
-        { image: tmp, title: '동아리2', info: '안녕하세요' },
-        { image: tmp, title: '동아리3', info: '안녕하세요' },
-    ];
+  const list = [
+    {
+      image: tmp,
+      title: "동아리1",
+      info: "내가 속한 동아리의 일정을 알아보세요내가 속한 동아리의 일정을 알아보세요",
+    },
+    { image: tmp, title: "동아리2", info: "안녕하세요" },
+    { image: tmp, title: "동아리3", info: "안녕하세요" },
+  ];
 
     return (
         <div className="main-clubs-section">
