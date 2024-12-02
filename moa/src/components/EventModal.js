@@ -1,17 +1,23 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 
-const EventModal = ({ clubId, onSubmit }) => {
+const EventModal = ({ isType, clubId, eventId, onSubmit, preData }) => {
+    const toLocalTime = (utcDate) => {
+        const date = new Date(utcDate);
+        date.setHours(date.getHours() + 9);
+        return date.toISOString().slice(0, 16);
+    };
     const [formData, setFormData] = useState({
         clubId,
-        title: '',
-        description: '',
-        date: '',
-        location: '',
+        title: isType === 'create' ? '' : preData.title,
+        description: isType === 'create' ? '' : preData.description,
+        date: isType === 'create' ? '' : toLocalTime(preData.date),
+        location: isType === 'create' ? '' : preData.location,
+        eventId: isType === 'create' ? '' : eventId,
     });
     const [isOpen, setIsOpen] = useState(false);
-    const handlePopupOpen = () => setIsOpen(true);
-    const handlePopupClose = () => setIsOpen(false);
+    const handleOpen = () => setIsOpen(true);
+    const handleClose = () => setIsOpen(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -21,15 +27,16 @@ const EventModal = ({ clubId, onSubmit }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         onSubmit(formData);
+        handleClose();
     };
 
     return (
         <div>
-            <button onClick={handlePopupOpen}>새 일정 작성</button>
+            <button onClick={handleOpen}>{isType === 'create' ? '새 일정' : '수정'}</button>
             <Modal
                 appElement={document.getElementById('root')}
                 isOpen={isOpen}
-                onRequestClose={handlePopupClose}
+                onRequestClose={handleClose}
                 style={{
                     overlay: {
                         backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -42,7 +49,7 @@ const EventModal = ({ clubId, onSubmit }) => {
                     },
                 }}
             >
-                <h2>일정 작성</h2>
+                <h2>{isType === 'create' ? '일정 작성' : '일정 수정'}</h2>
                 <form onSubmit={handleSubmit}>
                     <label>
                         제목:
@@ -74,7 +81,7 @@ const EventModal = ({ clubId, onSubmit }) => {
                         <input type="text" name="location" value={formData.location} onChange={handleChange} />
                     </label>
                     <button type="submit">저장</button>
-                    <button type="button" onClick={handlePopupClose}>
+                    <button type="button" onClick={handleClose}>
                         취소
                     </button>
                 </form>

@@ -135,6 +135,9 @@ export async function deletePost({ postId }) {
     try {
         const response = await fetch(URL + `post/${postId}`, {
             method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
         });
         if (response.ok) {
             const data = await response.json();
@@ -198,36 +201,48 @@ export async function addEvent({ clubId, userId, title, description, date, locat
     }
 }
 
-export async function updateEvnet({ clubId, evnetId, userId, title, description, date, location }) {
+export async function updateEvent({ clubId, eventId, userId, title, description, date, location }) {
     try {
-        const response = await fetch(URL + `event/${clubId}/${evnetId}`, {
+        console.log(eventId);
+        const response = await fetch(URL + `event/${clubId}/${eventId}`, {
             method: 'PUT',
-            body: {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
                 userId,
                 title,
                 description,
                 date,
                 location,
+            }),
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        }
+        console.log(response);
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+export async function deleteEvent({ clubId, eventId, userId }) {
+    try {
+        const response = await fetch(URL + `event/${clubId}/${eventId}`, {
+            method: 'DELETE',
+            body: JSON.stringify({
+                userId,
+            }),
+            headers: {
+                'Content-Type': 'application/json',
             },
         });
         if (response.ok) {
             const data = await response.json();
             return data;
         }
-    } catch (error) {
-        console.log(error.message);
-    }
-}
-
-export async function deleteEvnet({ clubId, evnetId }) {
-    try {
-        const response = await fetch(URL + `event/${clubId}/${evnetId}`, {
-            method: 'DELETE',
-        });
-        if (response.ok) {
-            const data = await response.json();
-            return data;
-        }
+        console.log(response);
     } catch (error) {
         console.log(error.message);
     }
@@ -261,9 +276,12 @@ export async function proposeClub({ clubId, userId }) {
     try {
         const response = await fetch(URL + `club/proposer/${clubId}`, {
             method: 'POST',
-            body: {
-                userId,
+            headers: {
+                'Content-Type': 'application/json',
             },
+            body: JSON.stringify({
+                userId,
+            }),
         });
         if (response.ok) {
             const data = await response.json();
@@ -279,10 +297,13 @@ export async function approveClub({ clubId, userId, approve }) {
     try {
         const response = await fetch(URL + `club/approve/${clubId}`, {
             method: 'POST',
-            body: {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
                 userId,
                 approve,
-            },
+            }),
         });
         if (response.ok) {
             const data = await response.json();
@@ -298,6 +319,9 @@ export async function deleteClub({ clubId }) {
     try {
         const response = await fetch(URL + `club/${clubId}`, {
             method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
         });
         if (response.ok) {
             const data = await response.json();

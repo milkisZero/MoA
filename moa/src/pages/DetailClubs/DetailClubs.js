@@ -3,7 +3,7 @@ import styles from './DetailClubs.module.css';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { useParams } from 'react-router-dom';
-import { addEvent, getClubDetail, getMonthEvent, getTotalPost } from '../../api';
+import { addEvent, deleteEvent, getClubDetail, getMonthEvent, getTotalPost, updateEvent } from '../../api';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 // import DatePicker from '../../components/DatePicker/DatePicker';
@@ -49,6 +49,27 @@ const Detail_club = () => {
         return time;
     };
 
+    const handleFormUpdate = async (event) => {
+        if (!userAuth) {
+            alert('회원이 아닙니다');
+            return;
+        }
+
+        const data = await updateEvent({
+            clubId,
+            userId: userAuth._id,
+            title: event.title,
+            description: event.description,
+            date: event.date,
+            location: event.location,
+            eventId: event.eventId,
+        });
+        if (data) {
+            setIsFetching(true);
+        } else {
+            alert('수정에 실패했습니다');
+        }
+    };
     const handleFormSubmit = async (event) => {
         if (!userAuth) {
             alert('회원이 아닙니다');
@@ -67,6 +88,20 @@ const Detail_club = () => {
             setIsFetching(true);
         } else {
             alert('작성에 실패했습니다');
+        }
+    };
+
+    const handleDelete = async (eventId) => {
+        if (!userAuth) {
+            alert('회원이 아닙니다');
+            return;
+        }
+        if (window.confirm('삭제하시겠습니까?') === false) return;
+        const data = await deleteEvent({ clubId, eventId, userId: userAuth._id });
+        if (data) {
+            setIsFetching(true);
+        } else {
+            alert('삭제에 실패했습니다');
         }
     };
 
@@ -157,7 +192,7 @@ const Detail_club = () => {
             <section>
                 <h2 className={styles.sectionTitle}>동아리 활동 일정</h2>
 
-                <EventModal clubId={clubId} onSubmit={handleFormSubmit}></EventModal>
+                <EventModal isType={'create'} clubId={clubId} onSubmit={handleFormSubmit}></EventModal>
 
                 <div className={styles.calendarSection}>
                     {events.map((activity) => (
@@ -170,6 +205,16 @@ const Detail_club = () => {
                                 <h3>제목: {activity.title}</h3>
                                 <p>장소: {activity.location}</p>
                                 <p>날짜: {new Date(activity.date).toLocaleDateString()}</p>
+                                <div>
+                                    <EventModal
+                                        isType={'update'}
+                                        clubId={clubId}
+                                        eventId={activity._id}
+                                        onSubmit={handleFormUpdate}
+                                        preData={activity}
+                                    ></EventModal>
+                                    <button onClick={() => handleDelete(activity._id)}>삭제</button>
+                                </div>
                             </div>
                         </div>
                     ))}
