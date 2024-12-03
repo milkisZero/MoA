@@ -19,6 +19,11 @@ router.post('/', async (req, res) => {
         });
 
         await newMsgRoom.save();
+        await User.updateMany(
+            { _id: { $in: members }},
+            { $addToSet: { msgRooms: newMsgRoom._id }},
+        );
+
         res.status(200).json({
             message: 'newMsgRoom created successfully',
             newMsgRoom,
@@ -28,6 +33,21 @@ router.post('/', async (req, res) => {
         res.status(500).json({ message: 'Server post error in /msgRoom' });
     }
 });
+
+router.get('/name/:msgRoomId', async (req, res) => {
+    try {
+        const msgRoom = await MsgRoom.findById(req.params.msgRoomId);
+        if (!msgRoom) return res.status(404).json({ message: 'Chat room not found' });
+        
+        res.status(200).json({
+            message: 'MsgRoom name get successfully',
+            name: msgRoom.name
+        })
+    } catch (e) {
+        console.log('get error in /msgRoom/name/msgRoomId:', e);
+        res.status(500).json({ message: 'get error in /msgRoom/name/msgRoomId' });
+    }
+})
 
 // 채팅방 유저 불러오기
 router.get('/users/:msgRoomId', async (req, res) => {
@@ -42,7 +62,7 @@ router.get('/users/:msgRoomId', async (req, res) => {
             members: msgRoom.members,
         });
     } catch (e) {
-        console.log('get error in /msgRoom/user/msgRoomId:', e);
+        console.log('get error in /msgRoom/users/msgRoomId:', e);
         res.status(500).json({ message: 'get error in /msgRoom/users/msgRoomId' });
     }
 });
@@ -93,12 +113,16 @@ router.put('/:msgRoomId', async (req, res) => {
 // 채팅방 삭제
 router.delete('/:msgRoomId', async (req, res) => {
     try {
-        const msgRoom = await MsgRoom.findById(req.params.msgRoomId);
+        const msgRoomId = req.params.msgRoomId;
+        const msgRoom = await MsgRoom.findById(msgRoomId);
         if (!msgRoom) return res.status(404).json({ message: 'MsgRoom cannot found' });
 
-        const messageId = msgRoom.messages;
-        await Promise.all(messageId.map((msgId) => Message.findByIdAndDelete(msgId)));
-        await MsgRoom.findByIdAndDelete(req.params.msgRoomId);
+        await Message.deleteMany({ _id: { $in: msgRoom.messages } });
+        await MsgRoom.findByIdAndDelete(msgRoomId);
+        await User.updateMany(
+            { _id: { $in: msgRoom.members } },
+            { $pull: { msgRooms: msgRoomId } }
+        );
 
         res.status(200).json({ message: 'MsgRoom and Messages all deleted successfully' });
     } catch (e) {
