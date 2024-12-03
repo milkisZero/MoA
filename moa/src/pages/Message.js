@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import '../css/Pages.css';
-
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -71,9 +70,7 @@ function Message() {
     useEffect(() => {
         const newSocket = io(URL);
         setSocket(newSocket);
-
         newSocket.emit('joinRoom', { msgRoomId: roomId });
-
         newSocket.on('receiveMsg', (newMsg) => {
             if (newMsg.msgRoomId === roomId) {
                 setTotalMsg((prev) => [newMsg, ...prev]);

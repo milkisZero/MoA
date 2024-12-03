@@ -188,7 +188,6 @@ const Detail_club = () => {
             name: clubInfo.name + ' 문의방',
             members: [...clubInfo.admin, userAuth._id],
         });
-        console.log(data);
         if (data) {
             goMessage(data._id);
         } else {

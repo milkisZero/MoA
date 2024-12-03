@@ -14,6 +14,7 @@ function Main() {
         <div>
             <Header />
             <section className="main-section" />
+            <h3 style={{ textAlign: 'center', marginBottom: '0' }}>인기순 TOP3</h3>
             <MainClubs />
             <ListSection />
             <Footer />
@@ -22,19 +23,22 @@ function Main() {
 }
 
 function MainClubs() {
-    const list = [
-        {
-            image: tmp,
-            title: '동아리1',
-            info: '내가 속한 동아리의 일정을 알아보세요내가 속한 동아리의 일정을 알아보세요',
-        },
-        { image: tmp, title: '동아리2', info: '안녕하세요' },
-        { image: tmp, title: '동아리3', info: '안녕하세요' },
-    ];
+    const [clubList, setclubList] = useState([]);
+    const page = 1;
+    const limit = 3;
+
+    const fetchData = async () => {
+        const data = await getClubPage({ page, limit });
+        setclubList(data);
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     return (
         <div className="main-clubs-section">
-            {list.map((item, index) => (
+            {clubList.map((item, index) => (
                 <ItemCompo key={index} item={item}></ItemCompo>
             ))}
         </div>
@@ -54,16 +58,6 @@ function ListSection() {
     useEffect(() => {
         fetchData();
     }, []);
-
-    const list = [
-        { image: tmp, title: '동아리1', info: '내가 속한 동아리의 일정을 알아보세요' },
-        {
-            image: tmp,
-            title: '동아리2',
-            info: '안녕하세요안녕하세요안녕하안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요',
-        },
-        { image: tmp, title: '동아리3', info: '안녕하세요' },
-    ];
 
     return (
         <section className="list-section">
