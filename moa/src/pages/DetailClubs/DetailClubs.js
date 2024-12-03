@@ -148,7 +148,7 @@ const Detail_club = () => {
             setIsFetching(false);
         }
         setIsClubMem(userAuth ? userAuth.clubs.includes(clubId) : false);
-        setIsClubAuth(userAuth ? clubInfo.admin.includes(userAuth._id) : false);
+        setIsClubAuth(userAuth && clubInfo._id ? clubInfo.admin.includes(userAuth._id) : false);
         // if (userAuth) console.log('user: ', clubInfo.admin.includes(userAuth._id));
         // console.log(isClubAuth);
     }, [userAuth, isFetching]);
