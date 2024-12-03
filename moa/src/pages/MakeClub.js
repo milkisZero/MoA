@@ -37,6 +37,8 @@ function MakeClub() {
         formData.append('admin', userId);
         formData.append('img', clubImg);
 
+        console.log(clubImg);
+
         const data = !club ? await addClub(formData) : await updateClubInfo({ formData, clubId: club._id });
         if (!data._id) {
             alert('NULL found');
