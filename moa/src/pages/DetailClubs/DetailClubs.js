@@ -398,7 +398,7 @@ const Detail_club = () => {
                             onClick={() => handleViewPost(post)}
                             style={{ cursor: 'pointer' }}
                         >
-                            <img src={post.postImgs} alt={post.title} className={styles.boardImage} />
+                            <img src={post.postImgs[0]} alt={post.title} className={styles.boardImage} />
                             <h4 className={styles.boardTitle}>{post.title}</h4>
                             <p className={styles.boardContent}>{post.content}</p>
 
