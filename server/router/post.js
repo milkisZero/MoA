@@ -25,7 +25,7 @@ const upload = multer({
         s3: s3,
         bucket: 'moaprojects3',
         key: function (req, file, cb) {
-            cb(null, Date.now().toString());
+            cb(null, Date.now().toString() + '_' + file.originalname);
         },
     }),
 });
@@ -48,10 +48,11 @@ const binarySearch = (arr, target) => {
 };
 
 // 동아리 게시글 등록
-router.post('/:clubId', upload.single('img'), async (req, res) => {
+router.post('/:clubId', upload.array('img', 10), async (req, res) => {
     try {
-        const { userId, title, content, postImgs } = req.body;
-
+        const { userId, title, content } = req.body;
+        const postImgs = req.files ? req.files.map((file) => file.location) : null;
+        
         const club = await Club.findById(req.params.clubId);
         if (!club)
             return res.status(404).json({ message: 'Club not found' });
@@ -126,9 +127,9 @@ router.get('/:postId', async (req, res) => {
 });
 
 // 게시글 수정
-router.put('/:clubId/:postId', upload.single('img'),async (req, res) => {
+router.put('/:clubId/:postId', upload.array('img', 10),async (req, res) => {
     try {
-        const { userId, title, content, postImgs } = req.body;
+        const { userId, title, content } = req.body;
 
         const club = await Club.findById(req.params.clubId);
         if (!club)
@@ -137,6 +138,7 @@ router.put('/:clubId/:postId', upload.single('img'),async (req, res) => {
         if (!club.admin.includes(userId))
             return res.status(403).json({ message: 'BeomBu cannot modify post'});
 
+        const postImgs = req.files ? req.files.map((file) => file.location) : club.postImgs;
         const updatedData = {
             title: title,
             content: content,

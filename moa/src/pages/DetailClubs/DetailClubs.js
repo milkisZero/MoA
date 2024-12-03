@@ -223,6 +223,15 @@ const Detail_club = () => {
         navigate('/MakeClub', { state: { club: clubInfo } });
     };
 
+    const handleAddPost = async () => {
+        if (!userAuth) {
+            alert('로그인이 필요합니다');
+            return;
+        }
+
+        navigate('/MakePost', { state: { club: clubInfo } });
+    }
+
     return (
         <div className={styles.container}>
             <Header />
@@ -304,9 +313,9 @@ const Detail_club = () => {
             {/* 활동 일정 */}
             <section>
                 <h2 className={styles.sectionTitle}>동아리 활동 일정</h2>
-
-                <EventModal isType={'create'} clubId={clubId} onSubmit={handleFormSubmit}></EventModal>
-
+                {isClubAuth && (
+                    <EventModal isType={'create'} clubId={clubId} onSubmit={handleFormSubmit}></EventModal>
+                )}
                 <div className={styles.calendarSection}>
                     {events.map((activity) => (
                         <div key={activity._id} className={styles.eventBox}>
@@ -337,6 +346,15 @@ const Detail_club = () => {
             {/* 자유 게시판 */}
             <section>
                 <h2 className={styles.sectionTitle}>동아리 자유게시판</h2>
+                {isClubAuth && (
+                    <button
+                        className={styles.joinButton}
+                        style={{ margin: '3% 0', fontSize: '100%' }}
+                        onClick={() => handleAddPost()}
+                    >
+                        동아리 게시글 작성
+                    </button>
+                )}
                 <div className={styles.boardGrid}>
                     {posts.map((post) => (
                         <div key={post._id} className={styles.boardItem}>
