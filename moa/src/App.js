@@ -37,6 +37,7 @@ import MakeClub from './pages/MakeClub';
 import MyPage from './pages/MyPage';
 import Pictures from './pages/Pictures';
 import Detail_club from './pages/DetailClubs/DetailClubs';
+import MakePost from './pages/MakePost';
 
 function App() {
     return (
@@ -54,6 +55,7 @@ function App() {
                         <Route path="/Detail_club/:clubId" element={<Detail_club />} />
                         <Route path="/Message/:roomId" element={<Message />}></Route>
                         <Route path="/MakeClub" element={<MakeClub />}></Route>
+                        <Route path="/MakePost" element={<MakePost />}></Route>
                     </Routes>
                 </div>
             </AuthProvider>

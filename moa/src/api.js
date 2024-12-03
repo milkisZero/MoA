@@ -135,6 +135,7 @@ export async function addPost({ formData, clubId }) {
             body: formData,
         });
         if (response.ok) {
+            console.log(response);
             const data = await response.json();
             return data;
         }
@@ -383,5 +384,7 @@ export async function makeMsgRoom({ name, members }) {
         console.log(error.message);
     }
 }
+
+
 
 // 관리자 추가 삭제
