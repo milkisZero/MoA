@@ -5,6 +5,7 @@ import Footer from '../../components/Footer';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     addEvent,
+    deleteClub,
     deleteEvent,
     getClubDetail,
     getMonthEvent,
@@ -48,8 +49,9 @@ const Detail_club = () => {
     const limit = 5;
 
     const navigate = useNavigate();
-    const [roomId, setRoomId] = useState();
+    // const [roomId, setRoomId] = useState();
     const [isClubMem, setIsClubMem] = useState(userAuth ? userAuth.clubs.includes(clubId) : false);
+    const [isClubAuth, setIsClubAuth] = useState(false);
 
     const getDayOfWeek = (date) => {
         const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
@@ -132,11 +134,13 @@ const Detail_club = () => {
         const club_data = await getClubDetail({ clubId });
         setClubInfo(club_data);
         console.log(club_data);
-        setRoomId(club_data.msgRoomId);
+        // setRoomId(club_data.msgRoomId);
         const event_data = await getMonthEvent({ clubId, year, month });
         setEvents(event_data);
         const post_data = await getTotalPost({ clubId, page, limit });
         setPosts(post_data);
+
+        setIsClubAuth(userAuth ? club_data.admin.includes(userAuth._id) : false);
     };
 
     useEffect(() => {
@@ -150,7 +154,7 @@ const Detail_club = () => {
         setIsClubMem(userAuth ? userAuth.clubs.includes(clubId) : false);
     }, [userAuth]);
 
-    const goMessage = () => {
+    const goMessage = (roomId) => {
         if (!roomId) {
             alert('NULL found');
             return;
@@ -185,10 +189,30 @@ const Detail_club = () => {
             name: clubInfo.name + ' 문의방',
             members: [...clubInfo.admin, userAuth._id],
         });
+        console.log(data);
         if (data) {
-            goMessage();
+            goMessage(data._id);
         } else {
             alert('문의방 형성에 실패했습니다');
+        }
+    };
+
+    const handleDeleteClub = async () => {
+        if (!userAuth) {
+            alert('로그인이 필요합니다');
+            return;
+        }
+        if (window.confirm('동아리를 삭제하시겠습니까?') === false) return;
+        if (window.confirm('동아리를 정말 삭제하시겠습니까?') === false) return;
+
+        const data = await deleteClub({
+            clubId,
+        });
+        if (data) {
+            alert('동아리가 삭제되었습니다');
+            navigate('/');
+        } else {
+            alert('동아리 삭제에 실패했습니다');
         }
     };
 
@@ -227,7 +251,7 @@ const Detail_club = () => {
                             <button
                                 className={styles.joinButton}
                                 style={{ width: '40%', margin: '3%' }}
-                                onClick={() => goMessage()}
+                                onClick={() => goMessage(clubInfo.msgRoomId)}
                             >
                                 채팅방으로
                             </button>
@@ -307,7 +331,17 @@ const Detail_club = () => {
                     ))}
                 </div>
             </section>
-
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                {isClubAuth && (
+                    <button
+                        className={styles.joinButton}
+                        style={{ width: '10%', margin: '3%', fontSize: '50%', backgroundColor: 'red' }}
+                        onClick={() => handleDeleteClub()}
+                    >
+                        동아리삭제
+                    </button>
+                )}
+            </div>
             <Footer />
         </div>
     );

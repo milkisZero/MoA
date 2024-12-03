@@ -106,7 +106,7 @@ function Message() {
         <div>
             <Header />
             <section className="msg-section">
-                <h2>동아리 채팅방입니다</h2>
+                <h2>{roomId}</h2>
 
                 <div className="msg-info">
                     <div className="user-list">
