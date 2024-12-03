@@ -17,7 +17,7 @@ import {
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import EventModal from '../../components/EventModal.js';
-// import DatePicker from '../../components/DatePicker/DatePicker';
+import DatePicker from '../../components/DatePicker/DatePicker';
 
 // 재사용 가능한 컴포넌트: 정보 섹션
 const InfoSection = ({ title, content, isLink }) => (
@@ -52,6 +52,7 @@ const Detail_club = () => {
     // const [roomId, setRoomId] = useState();
     const [isClubMem, setIsClubMem] = useState(userAuth ? userAuth.clubs.includes(clubId) : false);
     const [isClubAuth, setIsClubAuth] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(new Date()); // 초기값을 현재 날짜로 설정
 
     const getDayOfWeek = (date) => {
         const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
@@ -230,7 +231,7 @@ const Detail_club = () => {
         }
 
         navigate('/MakePost', { state: { club: clubInfo } });
-    }
+    };
 
     return (
         <div className={styles.container}>
@@ -308,14 +309,18 @@ const Detail_club = () => {
                 </div>
             </section> */}
 
-            {/* <DatePicker></DatePicker> */}
+            <DatePicker
+                selectedDate={selectedDate} // 선택된 날짜
+                setSelectedDate={setSelectedDate} // 날짜 업데이트 함수
+            />
+            <div className="mt-4">
+                <p>선택된 날짜: {selectedDate.toLocaleDateString()}</p>
+            </div>
 
             {/* 활동 일정 */}
             <section>
                 <h2 className={styles.sectionTitle}>동아리 활동 일정</h2>
-                {isClubAuth && (
-                    <EventModal isType={'create'} clubId={clubId} onSubmit={handleFormSubmit}></EventModal>
-                )}
+                {isClubAuth && <EventModal isType={'create'} clubId={clubId} onSubmit={handleFormSubmit}></EventModal>}
                 <div className={styles.calendarSection}>
                     {events.map((activity) => (
                         <div key={activity._id} className={styles.eventBox}>

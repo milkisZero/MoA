@@ -5,7 +5,6 @@ import Footer from '../components/Footer';
 import { addPost } from '../api';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
 
 function MakePost() {
     const navigate = useNavigate();
@@ -39,7 +38,7 @@ function MakePost() {
         Promise.all(previewUrls).then((urls) => {
             setPreviewImages((prev) => [...prev, ...urls]); // 기존 미리보기 이미지에 추가
         });
-    
+
         setImages((prev) => [...prev, ...validFiles]); // 기존 이미지에 추가
     };
 
@@ -67,7 +66,7 @@ function MakePost() {
         });
 
         try {
-            const data = await addPost({formData, clubId: club._id});
+            const data = await addPost({ formData, clubId: club._id });
             console.log('Post created:', data.newPost);
 
             alert('게시글이 성공적으로 등록되었습니다.');
@@ -85,20 +84,11 @@ function MakePost() {
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>제목</label>
-                    <input
-                        type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        required
-                    />
+                    <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
                 </div>
                 <div>
                     <label>내용</label>
-                    <textarea
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                        required
-                    />
+                    <textarea value={content} onChange={(e) => setContent(e.target.value)} required />
                 </div>
                 <div>
                     <div style={{ alignItems: 'center', gap: '10px' }}>
@@ -148,7 +138,7 @@ function MakePost() {
                                         width: '20px',
                                         height: '20px',
                                         fontSize: '12px',
-                                        cursor: 'pointer'
+                                        cursor: 'pointer',
                                     }}
                                 >
                                     ×
