@@ -7,6 +7,14 @@ import { useNavigate } from 'react-router-dom';
 function ClubItem({ club, button_text }) {
     const navigate = useNavigate();
 
+    const goDetailPage = () => {
+        if (!club._id) {
+            alert('NULL found');
+            return;
+        }
+        navigate(`/Detail_club/${club._id}`);
+    };
+
     return (
         <div className="club-item">
             <img src={club.clubImg}></img>
@@ -14,7 +22,7 @@ function ClubItem({ club, button_text }) {
                 <h3>{club.name}</h3>
                 <p>{club.description}</p>
             </div>
-            <button onClick={() => navigate(`/Detail_club/${club._id}`)}>{button_text}</button>
+            <button onClick={() => goDetailPage()}>{button_text}</button>
         </div>
     );
 }

@@ -33,7 +33,6 @@ function ListSection() {
     };
 
     useEffect(() => {
-        console.log(page);
         fetchData();
     }, [page]);
 

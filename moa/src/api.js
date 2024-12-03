@@ -25,13 +25,25 @@ export async function userRegister(info) {
     }
 }
 
-export async function getPage({ roomId, msgId }) {
+export async function getMessage({ roomId, msgId }) {
     try {
         msgId = !msgId ? '' : msgId;
         const response = await fetch(URL + `msgRoom/${roomId}` + `?msgId=${msgId}`);
         if (response.ok) {
             const data = await response.json();
             return data.messages;
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+export async function getMsgUser({ roomId }) {
+    try {
+        const response = await fetch(URL + `msgRoom/users/${roomId}`);
+        if (response.ok) {
+            const data = await response.json();
+            return data.members;
         }
     } catch (error) {
         console.log(error.message);
@@ -325,6 +337,47 @@ export async function deleteClub({ clubId }) {
         if (response.ok) {
             const data = await response.json();
             return data;
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+export async function getOutClub({ clubId, members }) {
+    try {
+        const response = await fetch(URL + `club/members/${clubId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                members,
+            }),
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+export async function makeMsgRoom({ name, members }) {
+    try {
+        const response = await fetch(URL + `msgRoom`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name,
+                members,
+            }),
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data.newMsgRoom;
         }
     } catch (error) {
         console.log(error.message);

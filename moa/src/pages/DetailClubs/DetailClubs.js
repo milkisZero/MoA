@@ -3,11 +3,20 @@ import styles from './DetailClubs.module.css';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { useParams, useNavigate } from 'react-router-dom';
-import { addEvent, deleteEvent, getClubDetail, getMonthEvent, getTotalPost, updateEvent } from '../../api';
+import {
+    addEvent,
+    deleteEvent,
+    getClubDetail,
+    getMonthEvent,
+    getOutClub,
+    getTotalPost,
+    makeMsgRoom,
+    updateEvent,
+} from '../../api';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-// import DatePicker from '../../components/DatePicker/DatePicker';
 import EventModal from '../../components/EventModal.js';
+// import DatePicker from '../../components/DatePicker/DatePicker';
 
 // 재사용 가능한 컴포넌트: 정보 섹션
 const InfoSection = ({ title, content, isLink }) => (
@@ -25,20 +34,22 @@ const InfoSection = ({ title, content, isLink }) => (
 
 const Detail_club = () => {
     const { clubId } = useParams();
-    const [clubDetails, setClubDetails] = useState({});
+    const [clubInfo, setClubInfo] = useState({});
     const [events, setEvents] = useState([]);
     const [posts, setPosts] = useState([]);
-    const page = 1;
-    const limit = 5;
     const { userAuth } = useAuth();
-    const [isFetching, setIsFetching] = useState(false);
+    const [isFetching, setIsFetching] = useState(true);
+
+    // 수정할 부분
     const now = new Date();
     const year = now.getFullYear();
     const month = now.getMonth() + 1; //
+    const page = 1;
+    const limit = 5;
+
     const navigate = useNavigate();
     const [roomId, setRoomId] = useState();
-
-    const isClubMem = userAuth ? userAuth.clubs.includes(clubId) : false;
+    const [isClubMem, setIsClubMem] = useState(userAuth ? userAuth.clubs.includes(clubId) : false);
 
     const getDayOfWeek = (date) => {
         const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
@@ -119,7 +130,7 @@ const Detail_club = () => {
 
     const fetchData = async () => {
         const club_data = await getClubDetail({ clubId });
-        setClubDetails(club_data);
+        setClubInfo(club_data);
         console.log(club_data);
         setRoomId(club_data.msgRoomId);
         const event_data = await getMonthEvent({ clubId, year, month });
@@ -129,39 +140,57 @@ const Detail_club = () => {
     };
 
     useEffect(() => {
-        fetchData();
-        setIsFetching(false);
+        if (isFetching) {
+            fetchData();
+            setIsFetching(false);
+        }
     }, [isFetching]);
 
-    // const clubDetails = {
-    //     name: '동아리명',
-    //     description: '동아리 한 줄 소개',
-    //     location: '성호관 207호',
-    //     contact: 'Tel: 010-0000-0000',
-    //     sns: 'https://www.instagram.com',
-    //     activities: [
-    //         {
-    //             id: 1,
-    //             title: '2학기 정기 리액트 스터디',
-    //             place: '성호관 207호',
-    //             time: '17:00 ~ 19:00',
-    //         },
-    //     ],
-    //     boardPosts: [
-    //         {
-    //             id: 1,
-    //             title: '게시판 제목 1',
-    //             content: '게시판 내용입니다. 2줄을 넘으면 ...',
-    //             image: '/path/to/post-image-1.jpg',
-    //         },
-    //         {
-    //             id: 2,
-    //             title: '게시판 제목 2',
-    //             content: '게시판 내용입니다. 2줄을 넘으면 ...',
-    //             image: '/path/to/post-image-2.jpg',
-    //         },
-    //     ],
-    // };
+    useEffect(() => {
+        setIsClubMem(userAuth ? userAuth.clubs.includes(clubId) : false);
+    }, [userAuth]);
+
+    const goMessage = () => {
+        if (!roomId) {
+            alert('NULL found');
+            return;
+        }
+        navigate(`/Message/${roomId}`);
+    };
+
+    const handleGetOut = async () => {
+        if (!userAuth) {
+            alert('로그인이 필요합니다');
+            return;
+        } else if (!isClubMem) {
+            alert('회원이 아닙니다');
+            return;
+        }
+        if (window.confirm('탈퇴하시겠습니까?') === false) return;
+        const data = await getOutClub({ clubId, members: [userAuth._id] });
+        if (data) {
+            setIsClubMem(false);
+        } else {
+            alert('탈퇴에 실패했습니다');
+        }
+    };
+
+    const handleInquire = async () => {
+        if (!userAuth) {
+            alert('로그인이 필요합니다');
+            return;
+        }
+
+        const data = await makeMsgRoom({
+            name: clubInfo.name + ' 문의방',
+            members: [...clubInfo.admin, userAuth._id],
+        });
+        if (data) {
+            goMessage();
+        } else {
+            alert('문의방 형성에 실패했습니다');
+        }
+    };
 
     return (
         <div className={styles.container}>
@@ -170,21 +199,22 @@ const Detail_club = () => {
             {/* 동아리 헤더 */}
             <div className={styles.header}>
                 <div className={styles.leftSection}>
-                    <img src={clubDetails.clubImg} alt={`${clubDetails.name} 사진`} className={styles.clubImage} />
+                    <img src={clubInfo.clubImg} alt={`${clubInfo.name} 사진`} className={styles.clubImage} />
                 </div>
                 <div className={styles.rightSection}>
-                    <h1 className={styles.clubName}>{clubDetails.name}</h1>
-                    <p className={styles.clubDescription}>{clubDetails.description}</p>
+                    <h1 className={styles.clubName}>{clubInfo.name}</h1>
+                    <p className={styles.clubDescription}>{clubInfo.description}</p>
 
-                    <InfoSection title="동아리 위치" content={clubDetails.location} />
-                    <InfoSection title="회장 연락처" content={clubDetails.phone} />
-                    <InfoSection title="SNS" content={clubDetails.sns} isLink />
+                    <InfoSection title="동아리 위치" content={clubInfo.location} />
+                    <InfoSection title="회장 연락처" content={clubInfo.phone} />
+                    <InfoSection title="SNS" content={clubInfo.sns} isLink />
 
                     <div style={{ display: 'flex', direction: 'row' }}>
                         {isClubMem ? (
                             <button
                                 className={styles.joinButton}
                                 style={{ width: '40%', margin: '3%', backgroundColor: 'red' }}
+                                onClick={() => handleGetOut()}
                             >
                                 탈퇴하기
                             </button>
@@ -197,12 +227,16 @@ const Detail_club = () => {
                             <button
                                 className={styles.joinButton}
                                 style={{ width: '40%', margin: '3%' }}
-                                onClick={() => navigate(`/Message/${roomId}`)}
+                                onClick={() => goMessage()}
                             >
                                 채팅방으로
                             </button>
                         ) : (
-                            <button className={styles.joinButton} style={{ width: '40%', margin: '3%' }}>
+                            <button
+                                className={styles.joinButton}
+                                style={{ width: '40%', margin: '3%' }}
+                                onClick={() => handleInquire()}
+                            >
                                 문의하기
                             </button>
                         )}
