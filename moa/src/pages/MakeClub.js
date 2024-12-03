@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import '../css/Pages.css';
-import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { addClub } from '../api';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 function MakeClub() {
     const [name, setClubname] = useState('');
@@ -14,6 +14,7 @@ function MakeClub() {
     const [sns, setSns] = useState('');
     const [clubImg, setClubImg] = useState('');
     const { userAuth } = useAuth();
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -34,6 +35,11 @@ function MakeClub() {
         formData.append('img', clubImg);
 
         const data = await addClub(formData);
+        if (!data._id) {
+            alert('NULL found');
+            return;
+        }
+        navigate(`/Detail_club/${data._id}`);
     };
 
     return (

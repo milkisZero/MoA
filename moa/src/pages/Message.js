@@ -6,18 +6,20 @@ import Footer from '../components/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane, faUserCircle } from '@fortawesome/free-solid-svg-icons'; // 필요한 아이콘 가져오기
 import { io } from 'socket.io-client';
-import { getPage } from '../api';
+import { getMessage, getMsgUser } from '../api';
 import { useAuth } from '../context/AuthContext';
+import { useParams } from 'react-router-dom';
 
 function Message() {
     const [sendMsg, setSendMsg] = useState('');
     const [totalMsg, setTotalMsg] = useState([]);
     const [totalUser, setTotalUser] = useState([]);
-    const roomId = '67495c33ac807b6a451308d6';
     const [socket, setSocket] = useState(null);
     const [page, setPage] = useState(0);
     const [isFetching, setIsFetching] = useState(false); // 데이터가 로딩 중인지 체크
     const { userAuth } = useAuth();
+    const URL = 'http://localhost:8080';
+    const { roomId } = useParams();
 
     const userId = userAuth ? userAuth._id : null;
     const userName = userAuth ? userAuth.name : null;
@@ -48,26 +50,26 @@ function Message() {
         setIsFetching(true);
 
         const msgId = totalMsg.length > 0 ? totalMsg[totalMsg.length - 1]._id : '';
-        const data = await getPage({ roomId, msgId });
+        const data = await getMessage({ roomId, msgId });
 
-        // if (totalMsg.length > 0) console.log(totalMsg[totalMsg.length - 1]._id);
-
-        // 0번이 젤 나중
+        // 0번이 젤 나중, 마지막으로부터 10개 호출
         setTotalMsg((prev) => [...prev, ...data]);
-
-        const newUserName = data.map((item) => item.senderName);
-        setTotalUser((prev) => [...new Set([...prev, ...newUserName])]);
 
         setIsFetching(false);
     };
 
+    const fetchUser = async () => {
+        const data = await getMsgUser({ roomId });
+        return data;
+    };
+
     useEffect(() => {
-        // console.log(page);
+        console.log(page);
         if (page > 0) fetchData();
     }, [page]);
 
     useEffect(() => {
-        const newSocket = io('http://localhost:8080'); // 서버 주소
+        const newSocket = io(URL);
         setSocket(newSocket);
 
         newSocket.emit('joinRoom', { msgRoomId: roomId });
@@ -76,7 +78,9 @@ function Message() {
             if (newMsg.msgRoomId === roomId) {
                 setTotalMsg((prev) => [newMsg, ...prev]);
             }
-            setTotalUser((prev) => (prev.includes(newMsg.senderName) ? prev : [...prev, newMsg.senderName]));
+
+            const fetchedUsers = fetchUser();
+            setTotalUser((prev) => [...new Set([...prev, ...fetchedUsers])]);
         });
 
         return () => {

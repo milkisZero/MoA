@@ -3,7 +3,7 @@ const multer = require('multer');
 const multerS3 = require('multer-s3');
 const { S3Client } = require('@aws-sdk/client-s3');
 
-const { User } = require('../model/User'); 
+const { User } = require('../model/User');
 const { Event } = require('../model/Event');
 const { Club } = require('../model/Club');
 const { Post } = require('../model/Post');
@@ -35,7 +35,7 @@ router.post('/', upload.single('img'), async (req, res) => {
     try {
         const { name, description, members, admin, location, phone, sns } = req.body;
         const clubImg = req.file ? req.file.location : null;
-        
+
         const newClub = new Club({
             name: name,
             description: description,
@@ -52,6 +52,7 @@ router.post('/', upload.single('img'), async (req, res) => {
             members: members,
         });
 
+        newClub.msgRoomId = newMsgRoom._id;
         await newClub.save();
         await newMsgRoom.save();
 
@@ -65,12 +66,12 @@ router.post('/', upload.single('img'), async (req, res) => {
         res.status(200).json({
             message: 'Club and Clubchatroom created successfully',
             newClub,
-            newMsgRoom
+            newMsgRoom,
         });
     } catch (e) {
         console.log('post error in /club: ', e);
         res.status(500).json({
-            message: 'Server post error in /club'
+            message: 'Server post error in /club',
         });
     }
 });
@@ -78,16 +79,16 @@ router.post('/', upload.single('img'), async (req, res) => {
 // 전체 동아리 목록 (미리보기)
 router.get('/total_club', async (req, res) => {
     try {
-        const { page, limit } = req.query;  // 페이지 번호, 개수
+        const { page, limit } = req.query; // 페이지 번호, 개수
 
         const club = await Club.find()
-            .sort({ createdAt: -1 })        // 최신순 정렬
-            .skip((page - 1) * limit)       // 시작 지점
-            .limit(Number(limit));          // 가져올 개수
+            .sort({ createdAt: -1 }) // 최신순 정렬
+            .skip((page - 1) * limit) // 시작 지점
+            .limit(Number(limit)); // 가져올 개수
         if (!club) return res.status(404).json({ message: 'cannot found club list' });
 
         return res.status(200).json({
-            message: `조회수 ${(page-1) * limit + 1}위 부터 ${limit}개 list`,
+            message: `조회수 ${(page - 1) * limit + 1}위 부터 ${limit}개 list`,
             club,
         });
     } catch (e) {
@@ -100,13 +101,12 @@ router.get('/total_club', async (req, res) => {
 router.get('/:clubId', async (req, res) => {
     try {
         const clubId = req.params.clubId;
-        const foundCulb = await Club.findById(clubId);
-        if (!foundCulb)
-            return res.status(404).json({ message: 'cannot find clubId '});
+        const foundClub = await Club.findById(clubId);
+        if (!foundClub) return res.status(404).json({ message: 'cannot find clubId ' });
 
         return res.status(200).json({
             message: `find club`,
-            foundCulb,
+            foundClub,
         });
     } catch (e) {
         console.log('get error in /club/:clubId: ', e);
@@ -118,24 +118,19 @@ router.get('/:clubId', async (req, res) => {
 router.put('/:clubId', upload.single('img'), async (req, res) => {
     try {
         const { name, description, clubImg, location, phone, sns } = req.body;
-        
+
         const updatedData = {
             name: name,
             description: description,
             clubImg: clubImg,
             location: location,
             phone: phone,
-            sns: sns
+            sns: sns,
         };
 
-        const updatedClub = await Club.findByIdAndUpdate(
-            req.params.clubId,
-            updatedData,
-            { new: true },
-        );
+        const updatedClub = await Club.findByIdAndUpdate(req.params.clubId, updatedData, { new: true });
 
-        if (!updatedClub)
-            return res.status(404).json({ message: 'Club not found' });
+        if (!updatedClub) return res.status(404).json({ message: 'Club not found' });
 
         res.status(200).json({
             message: 'Club successfully updated',
@@ -153,18 +148,17 @@ router.put('/members/:clubId', async (req, res) => {
         const clubId = req.params.clubId;
         const { members } = req.body;
         const addMembers = members;
-    
+
         const club = await Club.findById(clubId);
-        if (!club)
-            return res.status(404).json({ message: 'Club not found' });
-    
-        const newMembers = addMembers.filter(member => !club.members.includes(member));
+        if (!club) return res.status(404).json({ message: 'Club not found' });
+
+        const newMembers = addMembers.filter((member) => !club.members.includes(member));
         club.members.push(...newMembers);
         await club.save();
-    
+
         const updatedMembers = newMembers.map(async (userId) => {
             const user = await User.findById(userId);
-    
+
             if (user && !user.clubs.includes(clubId)) {
                 user.clubs.push(clubId);
                 await user.save();
@@ -188,12 +182,11 @@ router.delete('/members/:clubId', async (req, res) => {
         const clubId = req.params.clubId;
         const { members } = req.body;
         const deleteMembers = members;
-    
+
         const club = await Club.findById(clubId);
-        if (!club)
-            return res.status(404).json({ message: 'Club not found' });
-        
-        club.members = club.members.filter(member => !deleteMembers.includes(member.toString()));
+        if (!club) return res.status(404).json({ message: 'Club not found' });
+
+        club.members = club.members.filter((member) => !deleteMembers.includes(member.toString()));
         await club.save();
 
         const updatedMembers = deleteMembers.map(async (userId) => {
@@ -222,18 +215,17 @@ router.put('/admin/:clubId', async (req, res) => {
     try {
         const clubId = req.params.clubId;
         const { admin } = req.body;
-        
-        const club = await Club.findById(clubId);
-        if (!club)
-            return res.status(404).json({ message: 'Club not found' });
 
-        const newAdmins = admin.filter(admin => !club.admin.includes(admin));
+        const club = await Club.findById(clubId);
+        if (!club) return res.status(404).json({ message: 'Club not found' });
+
+        const newAdmins = admin.filter((admin) => !club.admin.includes(admin));
         club.admin.push(...newAdmins);
         await club.save();
 
         return res.status(200).json({
             message: 'Club admin updated Successfully',
-            updatedClub: club
+            updatedClub: club,
         });
     } catch (e) {
         console.log('put error in /club/admin/:clubId: ', e);
@@ -247,17 +239,16 @@ router.delete('/admin/:clubId', async (req, res) => {
         const clubId = req.params.clubId;
         const { admin } = req.body;
         const deleteAdmin = admin;
-        
-        const club = await Club.findById(clubId);
-        if (!club)
-            return res.status(404).json({ message: 'Club not found' });
 
-        club.admin = club.admin.filter(admin => !deleteAdmin.includes(admin.toString()));
+        const club = await Club.findById(clubId);
+        if (!club) return res.status(404).json({ message: 'Club not found' });
+
+        club.admin = club.admin.filter((admin) => !deleteAdmin.includes(admin.toString()));
         await club.save();
 
         return res.status(200).json({
             message: 'Club admin delete successfully',
-            updatedClub: club
+            updatedClub: club,
         });
     } catch (e) {
         console.log('delete error in /club/admin/:clubId: ', e);
@@ -269,12 +260,12 @@ router.delete('/admin/:clubId', async (req, res) => {
 router.delete('/:clubId', async (req, res) => {
     try {
         const club = await Club.findByIdAndDelete(req.params.clubId);
-        if (!club) return res.status(404).json({ message: 'cannot found Club'});
+        if (!club) return res.status(404).json({ message: 'cannot found Club' });
 
         const clubId = club._id;
         const deletedMemebers = club.members.map(async (userId) => {
             const user = await User.findById(userId);
-    
+
             if (user && !user.clubs.includes(clubId)) {
                 user.clubs.push(clubId);
                 await user.save();
@@ -284,7 +275,7 @@ router.delete('/:clubId', async (req, res) => {
 
         return res.status(200).json({
             message: 'Club successfully deleted',
-            deletedClub: club
+            deletedClub: club,
         });
     } catch (e) {
         console.log('delete error in /club/:clubId: ', e);
@@ -297,12 +288,12 @@ router.post('/proposer/:clubId', async (req, res) => {
     try {
         const userId = req.body.userId;
         const clubId = req.params.clubId;
-        
+
         const user = await User.findById(userId);
-        if (!user) return res.status(404).json({ message: 'User cannot found'});
-        
+        if (!user) return res.status(404).json({ message: 'User cannot found' });
+
         const club = await Club.findById(clubId);
-        if (!club) return res.status(404).json({ message: 'Club cannot found'});
+        if (!club) return res.status(404).json({ message: 'Club cannot found' });
 
         if (!user.waitingClubs.includes(clubId)) {
             user.waitingClubs.push(clubId);
@@ -315,9 +306,9 @@ router.post('/proposer/:clubId', async (req, res) => {
         }
 
         res.status(200).json({
-            message: "Successfully proposered",
+            message: 'Successfully proposered',
             user,
-            club
+            club,
         });
     } catch (e) {
         console.log('post error in /club/proposer/:clubId: ', e);
@@ -334,27 +325,27 @@ router.post('/approve/:clubId', async (req, res) => {
 
         const user = await User.findById(userId);
         const club = await Club.findById(clubId);
-        if (!user) return res.status(404).json({ message: 'User cannot found'});
-        if (!club) return res.status(404).json({ message: 'Club cannot found'});
-        
+        if (!user) return res.status(404).json({ message: 'User cannot found' });
+        if (!club) return res.status(404).json({ message: 'Club cannot found' });
+
         const userIdx = user.waitingClubs.indexOf(clubId);
         if (userIdx > -1) user.waitingClubs.splice(userIdx, 1);
 
         const clubIdx = club.proposers.indexOf(userId);
         if (clubIdx > -1) club.proposers.splice(clubIdx, 1);
-        
+
         if (approve) {
             user.clubs.push(clubId);
             club.members.push(userId);
         }
-        
+
         await user.save();
         await club.save();
-        
+
         res.status(200).json({
-            message: approve ? "Successfully approved" : "Successfully rejected",
+            message: approve ? 'Successfully approved' : 'Successfully rejected',
             user,
-            club
+            club,
         });
     } catch (e) {
         console.log('post error in /club/approve/:clubId: ', e);

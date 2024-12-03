@@ -33,22 +33,24 @@ function MyPage() {
     return (
         <div>
             <Header />
-            <h3>내 동아리 리스트</h3>
-            {/* <div className="register-section">
+            <div className="register-section">
+                <div className="mypage-container"></div>
+            </div>
+            <div className="register-section">
                 <div className="mypage-container">
                     {list.map((item, index) => (
                         <ItemCompo key={index} item={item}></ItemCompo>
                     ))}
                 </div>
-            </div> */}
+            </div>
 
             <div className="mypage-clubs">
                 {/* {list.map((item, index) => (
                     <ItemCompo key={index} item={item}></ItemCompo>
                 ))} */}
-                <div className="club-list" id="mypage-msg">
+                <div className="club-list" id="mypage_msg">
                     {list.map((item, index) => (
-                        <ClubItem key={index} club={item}></ClubItem>
+                        <ClubItem key={index} club={item} button_text={'채팅방으로'}></ClubItem>
                     ))}
                 </div>
             </div>

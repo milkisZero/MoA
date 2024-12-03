@@ -1,5 +1,5 @@
 const express = require('express');
-const { User } = require('../model/User'); 
+const { User } = require('../model/User');
 const { Event } = require('../model/Event');
 const { Club } = require('../model/Club');
 const { Post } = require('../model/Post');
@@ -12,13 +12,11 @@ const router = express.Router();
 router.post('/:clubId', async (req, res) => {
     try {
         const { userId, title, description, date, location } = req.body;
-        
-        const club = await Club.findById(req.params.clubId);
-        if (!club)
-            return res.status(404).json({ message: 'Club not found' });
 
-        if (!club.admin.includes(userId))
-            return res.status(403).json({ message: 'BeomBu cannot post event'});
+        const club = await Club.findById(req.params.clubId);
+        if (!club) return res.status(404).json({ message: 'Club not found' });
+
+        if (!club.admin.includes(userId)) return res.status(403).json({ message: 'BeomBu cannot post event' });
 
         const newEvent = new Event({
             clubId: req.params.clubId,
@@ -28,13 +26,13 @@ router.post('/:clubId', async (req, res) => {
             location: location,
         });
         await newEvent.save();
-        
+
         club.events.push(newEvent._id);
         await club.save();
 
         res.status(200).json({
             message: 'Event successfully created',
-            newEvent
+            newEvent,
         });
     } catch (e) {
         console.log('post error in /event/:clubId: ', e);
@@ -52,13 +50,15 @@ router.get('/:clubId', async (req, res) => {
             clubId: clubId,
             date: {
                 $gte: new Date(`${year}-${month}-01`),
-                $lt: new Date(month === '12' ? `${parseInt(year) + 1}-${month}-01` : `${year}-${parseInt(month) + 1}-01`),
+                $lt: new Date(
+                    month === '12' ? `${parseInt(year) + 1}-${month}-01` : `${year}-${parseInt(month) + 1}-01`
+                ),
             },
         });
 
         return res.status(200).json({
             message: 'Events successfully found',
-            foundEvents
+            foundEvents,
         });
     } catch (e) {
         console.log('get error in /event/:clubId: ', e);
@@ -70,31 +70,23 @@ router.get('/:clubId', async (req, res) => {
 router.put('/:clubId/:eventId', async (req, res) => {
     try {
         const { userId, title, description, date, location } = req.body;
-        if (!userId)
-            return res.status(404).json({ message: 'userId not enclosed'});
-        
-        const club = await Club.findById(req.params.clubId);
-        if (!club)
-            return res.status(404).json({ message: 'Club not found' });
+        if (!userId) return res.status(404).json({ message: 'userId not enclosed' });
 
-        if (!club.admin.includes(userId))
-            return res.status(403).json({ message: 'BeomBu cannot modify event'});
+        const club = await Club.findById(req.params.clubId);
+        if (!club) return res.status(404).json({ message: 'Club not found' });
+
+        if (!club.admin.includes(userId)) return res.status(403).json({ message: 'BeomBu cannot modify event' });
 
         const updatedData = {
             title: title,
             description: description,
             date: date,
-            location: location
-        }
+            location: location,
+        };
 
-        const updatedEvent = await Event.findByIdAndUpdate(
-            req.params.eventId,
-            updatedData,
-            { new: true },
-        );
+        const updatedEvent = await Event.findByIdAndUpdate(req.params.eventId, updatedData, { new: true });
 
-        if (!updatedEvent)
-            return res.status(404).json({ message: 'Event not found' });
+        if (!updatedEvent) return res.status(404).json({ message: 'Event not found' });
 
         return res.status(200).json({
             message: 'Successfully update a event',
@@ -110,19 +102,15 @@ router.put('/:clubId/:eventId', async (req, res) => {
 router.delete('/:clubId/:eventId', async (req, res) => {
     try {
         const userId = req.body.userId;
-        if (!userId)
-            return res.status(404).json({ message: 'userId not enclosed'});
-        
-        const club = await Club.findById(req.params.clubId);
-        if (!club)
-            return res.status(404).json({ message: 'Club not found' });
+        if (!userId) return res.status(404).json({ message: 'userId not enclosed' });
 
-        if (!club.admin.includes(userId))
-            return res.status(403).json({ message: 'BeomBu cannot delete event'});
+        const club = await Club.findById(req.params.clubId);
+        if (!club) return res.status(404).json({ message: 'Club not found' });
+
+        if (!club.admin.includes(userId)) return res.status(403).json({ message: 'BeomBu cannot delete event' });
 
         const deletedEvent = await Event.findByIdAndDelete(req.params.eventId);
-        if (!deletedEvent)
-            return res.status(404).json({ message: 'Event not found' });
+        if (!deletedEvent) return res.status(404).json({ message: 'Event not found' });
 
         const idx = club.events.indexOf(req.params.eventId);
         if (idx > -1) {
@@ -132,7 +120,7 @@ router.delete('/:clubId/:eventId', async (req, res) => {
 
         return res.status(200).json({
             message: 'Event successfully delete',
-            deletedEvent
+            deletedEvent,
         });
     } catch (e) {
         console.log('delete error in /event/:clubId: ', e);

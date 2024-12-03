@@ -1,18 +1,30 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import "../css/Pages.css";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import '../css/Pages.css';
+import Detail_club from '../pages/DetailClubs/DetailClubs';
+import { useNavigate } from 'react-router-dom';
 
-function ClubItem({ club }) {
-  return (
-    <div className="club-item">
-      <img src={club.clubImg}></img>
-      <div>
-        <h3>{club.name}</h3>
-        <p>{club.description}</p>
-      </div>
-      <button>동아리 이동하기</button>
-    </div>
-  );
+function ClubItem({ club, button_text }) {
+    const navigate = useNavigate();
+
+    const goDetailPage = () => {
+        if (!club._id) {
+            alert('NULL found');
+            return;
+        }
+        navigate(`/Detail_club/${club._id}`);
+    };
+
+    return (
+        <div className="club-item">
+            <img src={club.clubImg}></img>
+            <div>
+                <h3>{club.name}</h3>
+                <p>{club.description}</p>
+            </div>
+            <button onClick={() => goDetailPage()}>{button_text}</button>
+        </div>
+    );
 }
 
 export default ClubItem;
