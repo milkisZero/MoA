@@ -8,6 +8,23 @@ const { Message } = require('../model/Message');
 
 const router = express.Router();
 
+const binarySearch = (arr, target) => {
+    let left = 0;
+    let right = arr.length - 1;
+
+    while (left <= right) {
+        const mid = Math.floor((left + right) / 2);
+        if (arr[mid] === target) {
+            return mid;
+        } else if (arr[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    return -1;
+};
+
 // 동아리 일정 등록
 router.post('/:clubId', async (req, res) => {
     try {
@@ -101,8 +118,7 @@ router.put('/:clubId/:eventId', async (req, res) => {
 // 동아리 일정 삭제
 router.delete('/:clubId/:eventId', async (req, res) => {
     try {
-        const userId = req.body.userId;
-        if (!userId) return res.status(404).json({ message: 'userId not enclosed' });
+        const { userId } = req.body;
 
         const club = await Club.findById(req.params.clubId);
         if (!club) return res.status(404).json({ message: 'Club not found' });
@@ -112,11 +128,15 @@ router.delete('/:clubId/:eventId', async (req, res) => {
         const deletedEvent = await Event.findByIdAndDelete(req.params.eventId);
         if (!deletedEvent) return res.status(404).json({ message: 'Event not found' });
 
-        const idx = club.events.indexOf(req.params.eventId);
+        const events = club.events;
+        const idx = binarySearch(events, req.params.eventId);
         if (idx > -1) {
-            club.events.splice(idx, 1);
-            await club.save();
-        }
+            events.splice(idx, 1);
+            await Club.updateOne(
+                { _id: club._id },
+                { events: events }
+            );
+        };
 
         return res.status(200).json({
             message: 'Event successfully delete',
