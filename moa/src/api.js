@@ -118,7 +118,8 @@ export async function getTotalPost({ clubId, page, limit }) {
 
 export async function getPost({ postId }) {
     try {
-        const response = await fetch(URL + `post/${postId}/`);
+        const response = await fetch(URL + `post/${postId}`);
+        console.log(postId);
         if (response.ok) {
             const data = await response.json();
             return data.foundPost;
@@ -144,13 +145,16 @@ export async function addPost({ formData, clubId }) {
     }
 }
 
-export async function deletePost({ postId }) {
+export async function deletePost({ clubId, postId, userId }) {
     try {
-        const response = await fetch(URL + `post/${postId}`, {
+        const response = await fetch(URL + `post/${clubId}/${postId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
             },
+            body: JSON.stringify({
+                userId: userId
+            }),
         });
         if (response.ok) {
             const data = await response.json();
@@ -161,9 +165,9 @@ export async function deletePost({ postId }) {
     }
 }
 
-export async function updatedPost({ formData, postId }) {
+export async function updatedPost({ formData, clubId, postId }) {
     try {
-        const response = await fetch(URL + `post/${postId}`, {
+        const response = await fetch(URL + `post/${clubId}/${postId}`, {
             method: 'PUT',
             body: formData,
         });

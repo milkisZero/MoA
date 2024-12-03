@@ -7,6 +7,7 @@ import {
     addEvent,
     deleteClub,
     deleteEvent,
+    deletePost,
     getClubDetail,
     getMonthEvent,
     getOutClub,
@@ -233,6 +234,40 @@ const Detail_club = () => {
         navigate('/MakePost', { state: { club: clubInfo } });
     };
 
+    const handleEditPost = async (post) => {
+        if (!userAuth) {
+            alert('로그인이 필요합니다');
+            return;
+        }
+        
+        navigate('/MakePost', { state: { club: clubInfo, post } });
+    }
+
+    const handleDeletePost = async (postId) => {
+        if (!userAuth) {
+            alert('로그인이 필요합니다');
+            return;
+        }
+
+        const confirmed = window.confirm('이 게시글을 삭제하시겠습니까?');
+        if (confirmed) {
+            try {
+                await deletePost({ clubId, postId, userId: userAuth._id});
+                alert('게시글이 삭제되었습니다.');
+    
+                // 삭제된 게시글을 제외한 나머지를 업데이트
+                setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
+            } catch (error) {
+                console.error('Error deleting post:', error);
+                alert('게시글 삭제 중 오류가 발생했습니다.');
+            }
+        }
+    }
+
+    const handleViewPost = (post) => {
+        navigate(`/DetailPost/${post._id}`, { state: { post } });
+    }
+
     return (
         <div className={styles.container}>
             <Header />
@@ -362,10 +397,55 @@ const Detail_club = () => {
                 )}
                 <div className={styles.boardGrid}>
                     {posts.map((post) => (
-                        <div key={post._id} className={styles.boardItem}>
-                            <img src={post.postImgs} alt={post.title} className={styles.boardImage} />
+                        <div 
+                            key={post._id}
+                            className={styles.boardItem}
+                            onClick={() => handleViewPost(post)}
+                            style={{ cursor: 'pointer' }}
+                        >
+                            <img src={post.postImgs[0]} alt={post.title} className={styles.boardImage} />
                             <h4 className={styles.boardTitle}>{post.title}</h4>
                             <p className={styles.boardContent}>{post.content}</p>
+
+                            {isClubAuth && (
+                                <div style={{ marginTop: '10px' }}>
+                                    <button
+                                        className={styles.editButton}
+                                        style={{
+                                            marginRight: '5px',
+                                            backgroundColor: '#4CAF50',
+                                            color: 'white',
+                                            padding: '5px 10px',
+                                            border: 'none',
+                                            borderRadius: '4px',
+                                            cursor: 'pointer',
+                                        }}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleEditPost(post);
+                                        }}
+                                    >
+                                        수정
+                                    </button>
+                                    <button
+                                        className={styles.deleteButton}
+                                        style={{
+                                            backgroundColor: '#f44336',
+                                            color: 'white',
+                                            padding: '5px 10px',
+                                            border: 'none',
+                                            borderRadius: '4px',
+                                            cursor: 'pointer',
+                                        }}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDeletePost(post._id);
+                                        }}
+                                    >
+                                        삭제
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     ))}
                 </div>

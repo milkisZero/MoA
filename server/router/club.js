@@ -191,7 +191,10 @@ router.delete('/members/:clubId', async (req, res) => {
         const deleteMembers = new Set(members.map(String));
         club.members = club.members.filter((member) => !deleteMembers.has(member.toString()));
         club.admin = club.admin.filter((member => !deleteMembers.has(member.toString())));
-        
+
+        if (club.admin.length === 0)
+            return res.status(403).json({ message: 'Club must have at least one admin'});
+
         await club.save();
         await User.updateMany(
             { _id: { $in: members } },
@@ -245,6 +248,10 @@ router.delete('/admin/:clubId', async (req, res) => {
 
         const deleteAdminSet = new Set(admin.map(String));
         club.admin = club.admin.filter(adminId => !deleteAdminSet.has(adminId.toString()));
+        
+        if (club.admin.length === 0)
+            return res.status(403).json({ message: 'Club must have at least one admin'});
+
         await club.save();
 
         return res.status(200).json({
