@@ -30,27 +30,40 @@ const upload = multer({
     }),
 });
 
+const binarySearch = (arr, target) => {
+    let left = 0;
+    let right = arr.length - 1;
+
+    while (left <= right) {
+        const mid = Math.floor((left + right) / 2);
+        if (arr[mid] === target) {
+            return mid;
+        } else if (arr[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    return -1;
+};
+
 // 동아리 게시글 등록
 router.post('/:clubId', upload.single('img'), async (req, res) => {
     try {
-        const { userId, title, content, clubImgs } = req.body;
-
-        const posterId = await User.findById(userId);
-        if (!posterId)
-            return res.status(404).json({ message: 'Poster not found' });
+        const { userId, title, content, postImgs } = req.body;
 
         const club = await Club.findById(req.params.clubId);
         if (!club)
             return res.status(404).json({ message: 'Club not found' });
 
-        if (!club.members.includes(userId))
-            return res.status(403).json({ message: 'User is a not member of the club'});
+        if (!club.admin.includes(userId))
+            return res.status(403).json({ message: 'BeomBu cannot make post'});
 
         const newPost = new Post({
             clubId: req.params.clubId,
             title: title,
             content: content,
-            postImgs: clubImgs,
+            postImgs: postImgs,
         });
         await newPost.save();
 
@@ -113,14 +126,16 @@ router.get('/:postId', async (req, res) => {
 });
 
 // 게시글 수정
-router.put('/:postId', upload.single('img'),async (req, res) => {
+router.put('/:clubId/:postId', upload.single('img'),async (req, res) => {
     try {
-        const { title, content, postImgs } = req.body;
+        const { userId, title, content, postImgs } = req.body;
 
-        const postId = req.params.postId;
-        const post = await Post.findById(postId);
-        if (!post)
-            return res.status(404).json({ message: 'Post not found' });
+        const club = await Club.findById(req.params.clubId);
+        if (!club)
+            return res.status(404).json({ message: 'Club not found' });
+
+        if (!club.admin.includes(userId))
+            return res.status(403).json({ message: 'BeomBu cannot modify post'});
 
         const updatedData = {
             title: title,
@@ -146,27 +161,35 @@ router.put('/:postId', upload.single('img'),async (req, res) => {
 });
 
 // 게시글 삭제
-router.delete('/:postId', async (req, res) => {
+router.delete('/:clubId/:postId', async (req, res) => {
     try {
-        const post = await Post.findById(req.params.postId);
-        const club = await Club.findById(post.clubId);
+        const { userId } = req.body;
+        
+        const club = await Club.findById(req.params.clubId);
         if (!club)
             return res.status(404).json({ message: 'Club not found '});
+        
+        if (!club.admin.includes(userId))
+            return res.status(403).json({ message: 'BeomBu cannot delete post'});
 
         const deletedPost = await Post.findByIdAndDelete(req.params.postId);
         if (!deletedPost)
             return res.status(404).json({ message: 'Post not found' });
 
-        const idx = club.postIds.indexOf(req.params.postId);
+        const postIds = club.postIds;
+        const idx = binarySearch(postIds, req.params.postId);
         if (idx > -1) {
-            club.postIds.splice(idx, 1);
-            await club.save();
-        }
+            postIds.splice(idx, 1);
+            await Club.updateOne(
+                { _id: club._id },
+                { postIds: postIds }
+            );
+        };
 
         return res.status(200).json({
             message: 'Successfully delete Post',
             deletedPost
-        })
+        });
     } catch (e) {
         console.log('delete error in /post/:postId: ', e);
         return res.status(500).json({ message: 'Server delete error in /post/:postId' });

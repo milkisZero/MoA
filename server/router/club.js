@@ -79,12 +79,12 @@ router.post('/', upload.single('img'), async (req, res) => {
 // 전체 동아리 목록 (미리보기)
 router.get('/total_club', async (req, res) => {
     try {
-        const { page, limit } = req.query; // 페이지 번호, 개수
+        const { page, limit } = req.query;
 
         const club = await Club.find()
-            .sort({ createdAt: -1 }) // 최신순 정렬
-            .skip((page - 1) * limit) // 시작 지점
-            .limit(Number(limit)); // 가져올 개수
+            .sort({ members: -1 })
+            .skip((page - 1) * limit)
+            .limit(Number(limit));
         if (!club) return res.status(404).json({ message: 'cannot found club list' });
 
         return res.status(200).json({
@@ -117,7 +117,8 @@ router.get('/:clubId', async (req, res) => {
 // 동아리 세부정보 update (member 편집 제외)
 router.put('/:clubId', upload.single('img'), async (req, res) => {
     try {
-        const { name, description, clubImg, location, phone, sns } = req.body;
+        const { name, description, location, phone, sns } = req.body;
+        const clubImg = req.file ? req.file.location : null;
 
         const updatedData = {
             name: name,
@@ -181,24 +182,24 @@ router.delete('/members/:clubId', async (req, res) => {
     try {
         const clubId = req.params.clubId;
         const { members } = req.body;
-        const deleteMembers = members;
 
         const club = await Club.findById(clubId);
         if (!club) return res.status(404).json({ message: 'Club not found' });
 
-        club.members = club.members.filter((member) => !deleteMembers.includes(member.toString()));
-        await club.save();
+        const deleteMembers = new Set(members.map(String));
+        club.members = club.members.filter((member) => !deleteMembers.has(member.toString()));
+        club.admin = club.admin.filter((member => !deleteMembers.has(member.toString())));
 
-        const updatedMembers = deleteMembers.map(async (userId) => {
+        const updatedMembers = members.map(async (userId) => {
             const user = await User.findById(userId);
-
             const idx = user.clubs.indexOf(clubId);
             if (idx > -1) {
                 user.clubs.splice(idx, 1);
                 await user.save();
             }
         });
-        await Promise.all(updatedMembers);
+
+        await Promise.all([club.save(), ...updatedMembers]);
 
         return res.status(200).json({
             message: 'Members removed successfully',
