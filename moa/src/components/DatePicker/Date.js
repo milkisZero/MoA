@@ -1,8 +1,8 @@
 import { format, isSameDay, isSameMonth, addMonths, subMonths } from "date-fns";
-import CaretLeftIcon from "@/public/svgs/CaretLeft.svg";
-import CaretRightIcon from "@/public/svgs/CaretRight.svg";
-import CaretDownIcon from "@/public/svgs/CaretDown.svg";
-import useCalender from "@/hooks/common/useCalender";
+import CaretLeftIcon from "@/public/CaretLeft.svg";
+import CaretRightIcon from "@/public/CaretRight.svg";
+import CaretDownIcon from "@/public/CaretDown.svg";
+import useCalender from "../../hooks/common/useCalender";
 
 export default function Date({
   selectedDate,
