@@ -138,16 +138,18 @@ router.put('/:clubId/:postId', upload.array('img', 10),async (req, res) => {
         if (!club.admin.includes(userId))
             return res.status(403).json({ message: 'BeomBu cannot modify post'});
 
-        const postImgs = req.files ? req.files.map((file) => file.location) : club.postImgs;
+        const post = await Post.findById(req.params.postId);
+
+        const postImgs = req.files ? req.files.map((file) => file.location) : post.postImgs;
         const updatedData = {
             title: title,
             content: content,
             updatedAt: Date.now(),
             postImgs: postImgs
-        }
+        };
 
         const updatedPost = await Post.findByIdAndUpdate(
-            postId,
+            req.params.postId,
             updatedData,
             { new: true },
         );
@@ -180,6 +182,7 @@ router.delete('/:clubId/:postId', async (req, res) => {
 
         const postIds = club.postIds;
         const idx = binarySearch(postIds, req.params.postId);
+        console.log(idx);
         if (idx > -1) {
             postIds.splice(idx, 1);
             await Club.updateOne(

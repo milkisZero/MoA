@@ -1,22 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import styles from '../App.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { addPost } from '../api';
+import { addPost, getPost, updatedPost } from '../api';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
 
 function MakePost() {
     const navigate = useNavigate();
     const location = useLocation();
-    const club = location.state?.club;
+    const { club, post } = location.state || {};
 
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [images, setImages] = useState([]);
     const [previewImages, setPreviewImages] = useState([]);
     const { userAuth } = useAuth();
+    
+    useEffect(() => {
+        fetchPost();
+    }, [post]);
+
+    const fetchPost = async () => {
+        if (post?._id) {
+            try {
+                const foundPost = await getPost({ postId: post._id });
+                setTitle(foundPost.title);
+                setContent(foundPost.content);
+                setPreviewImages(foundPost.postImgs || []); // 이미지 URL 미리보기 설정
+            } catch (error) {
+                console.error('Error fetching post:', error);
+                alert('게시글 정보를 불러오는 중 오류가 발생했습니다.');
+            }
+        }
+    };
 
     const handleImageChange = (e) => {
         const files = Array.from(e.target.files);
@@ -67,10 +83,11 @@ function MakePost() {
         });
 
         try {
-            const data = await addPost({formData, clubId: club._id});
+            const data = post ? await updatedPost({formData, clubId: club._id, postId: post._id }) : await addPost({formData, clubId: club._id});
+            
             console.log('Post created:', data.newPost);
-
-            alert('게시글이 성공적으로 등록되었습니다.');
+            post ? alert('게시글이 성공적으로 수정되었습니다.') : alert('게시글이 성공적으로 등록되었습니다.');
+            
             navigate(`/Detail_Club/${club._id}`);
         } catch (error) {
             console.error('Error creating post:', error);
@@ -124,7 +141,7 @@ function MakePost() {
                         >
                             이미지 추가
                         </label>
-                        <p>선택된 파일 개수 : {images.length}/10</p>
+                        <p>선택된 파일 개수 : {previewImages.length}/10</p>
                     </div>
                     <div style={{ display: 'flex', gap: '10px', marginTop: '10px', justifyContent: 'center' }}>
                         {previewImages.map((src, index) => (
