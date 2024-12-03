@@ -55,6 +55,19 @@
   font-size: 20px;
 }
 
+.infoLink {
+  font-size: 20px;
+  white-space: nowrap;
+  /* 텍스트를 한 줄로 유지 */
+  overflow: hidden;
+  /* 넘치는 텍스트를 숨김 */
+  text-overflow: ellipsis;
+  /* 숨겨진 텍스트에 줄임표 추가 */
+  display: block;
+  /* block 또는 inline-block으로 설정 */
+  max-width: 100%;
+}
+
 .divider {
   border-bottom: 1px solid #ccc;
   margin: 0 16px;
