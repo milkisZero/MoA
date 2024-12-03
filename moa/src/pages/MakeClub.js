@@ -18,6 +18,7 @@ function MakeClub() {
     const [clubImg, setClubImg] = useState(club ? club.clubImg : '');
     const { userAuth } = useAuth();
     const navigate = useNavigate();
+    const [preview, setPreview] = useState(club ? club.clubImg : null); // 미리보기 URL
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -47,6 +48,22 @@ function MakeClub() {
         navigate(`/Detail_club/${data._id}`);
     };
 
+    const handleImgchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setClubImg(file);
+            setPreview(URL.createObjectURL(file)); // 미리보기 URL 생성
+        }
+    };
+
+    const handleImgDelete = (e) => {
+        e.preventDefault(); // 기본 동작 방지
+        e.stopPropagation(); // 이벤트 전파 차단
+
+        setClubImg('');
+        setPreview(null);
+    };
+
     return (
         <div>
             <Header />
@@ -54,7 +71,52 @@ function MakeClub() {
                 <div className="register-container">
                     <h2>{!club ? '신규 동아리 등록' : '동아리 정보 수정'}</h2>
                     <form onSubmit={handleSubmit} className="register-inside">
-                        <input type="file" onChange={(e) => setClubImg(e.target.files[0])} accept="image/*" />
+                        <label htmlFor="fileInput">
+                            {preview && (
+                                <button
+                                    type="button"
+                                    onClick={handleImgDelete}
+                                    style={{
+                                        position: 'absolute',
+                                        top: '200px',
+                                        right: '550px',
+                                        width: '30px',
+                                        height: '30px',
+                                        background: 'red',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '50%',
+                                        fontSize: '16px',
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        cursor: 'pointer',
+                                        zIndex: 10,
+                                    }}
+                                >
+                                    ×
+                                </button>
+                            )}
+                            <img
+                                src={preview || 'https://dummyimage.com/300x300/cccccc/000000?text=Image'} // 미리보기 or placeholder
+                                alt="Club Preview"
+                                style={{
+                                    width: '150px',
+                                    height: '150px',
+                                    objectFit: 'cover',
+                                    borderRadius: '10px',
+                                    marginBottom: '10px',
+                                    cursor: 'pointer',
+                                }}
+                            />
+                        </label>
+                        <input
+                            id="fileInput"
+                            type="file"
+                            onChange={handleImgchange}
+                            accept="image/*"
+                            style={{ display: 'none' }}
+                        />
                         <input
                             type="text"
                             placeholder="동아리 이름"

@@ -25,7 +25,7 @@ const InfoSection = ({ title, content, isLink }) => (
     <div className={styles.infoSection}>
         <h2 className={styles.infoHeading}>{title}</h2>
         {isLink ? (
-            <a href={content} target="_blank" rel="noopener noreferrer" className={styles.infoText}>
+            <a href={content} target="_blank" rel="noopener noreferrer" className={styles.infoLink}>
                 {content}
             </a>
         ) : (
@@ -273,7 +273,11 @@ const Detail_club = () => {
             {/* 동아리 헤더 */}
             <div className={styles.header}>
                 <div className={styles.leftSection}>
-                    <img src={clubInfo.clubImg} alt={`${clubInfo.name} 사진`} className={styles.clubImage} />
+                    <img
+                        src={clubInfo.clubImg || 'https://dummyimage.com/300x300/cccccc/000000?text=none'}
+                        alt={`${clubInfo.name} 사진`}
+                        className={styles.clubImage}
+                    />
                     {isClubAuth && (
                         <button
                             className={styles.joinButton}
