@@ -17,7 +17,7 @@ function DetailPost() {
         if (post?._id) {
             try {
                 const foundPost = await getPost({ postId: post._id });
-                
+
                 setTitle(foundPost.title);
                 setContent(foundPost.content);
                 setImages(foundPost.postImgs || []); // 이미지 URL 미리보기 설정
@@ -36,9 +36,7 @@ function DetailPost() {
         <div>
             <Header />
             <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
-                <h1 style={{ fontSize: '2rem', marginBottom: '20px', textAlign: 'center' }}>
-                    {title}
-                </h1>
+                <h1 style={{ fontSize: '2rem', marginBottom: '20px', textAlign: 'center' }}>{title}</h1>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center' }}>
                     {images.map((img, index) => (
                         <img
@@ -70,6 +68,5 @@ function DetailPost() {
         </div>
     );
 }
-
 
 export default DetailPost;

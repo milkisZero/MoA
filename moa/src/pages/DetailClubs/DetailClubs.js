@@ -140,8 +140,6 @@ const Detail_club = () => {
         setEvents(event_data);
         const post_data = await getTotalPost({ clubId, page, limit });
         setPosts(post_data);
-
-        setIsClubAuth(userAuth ? club_data.admin.includes(userAuth._id) : false);
     };
 
     useEffect(() => {
@@ -149,11 +147,11 @@ const Detail_club = () => {
             fetchData();
             setIsFetching(false);
         }
-    }, [isFetching]);
-
-    useEffect(() => {
         setIsClubMem(userAuth ? userAuth.clubs.includes(clubId) : false);
-    }, [userAuth]);
+        setIsClubAuth(userAuth ? clubInfo.admin.includes(userAuth._id) : false);
+        // if (userAuth) console.log('user: ', clubInfo.admin.includes(userAuth._id));
+        // console.log(isClubAuth);
+    }, [userAuth, isFetching]);
 
     const goMessage = (roomId) => {
         if (!roomId) {
@@ -239,9 +237,9 @@ const Detail_club = () => {
             alert('로그인이 필요합니다');
             return;
         }
-        
+
         navigate('/MakePost', { state: { club: clubInfo, post } });
-    }
+    };
 
     const handleDeletePost = async (postId) => {
         if (!userAuth) {
@@ -252,9 +250,9 @@ const Detail_club = () => {
         const confirmed = window.confirm('이 게시글을 삭제하시겠습니까?');
         if (confirmed) {
             try {
-                await deletePost({ clubId, postId, userId: userAuth._id});
+                await deletePost({ clubId, postId, userId: userAuth._id });
                 alert('게시글이 삭제되었습니다.');
-    
+
                 // 삭제된 게시글을 제외한 나머지를 업데이트
                 setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
             } catch (error) {
@@ -262,11 +260,11 @@ const Detail_club = () => {
                 alert('게시글 삭제 중 오류가 발생했습니다.');
             }
         }
-    }
+    };
 
     const handleViewPost = (post) => {
         navigate(`/DetailPost/${post._id}`, { state: { post } });
-    }
+    };
 
     return (
         <div className={styles.container}>
@@ -397,7 +395,7 @@ const Detail_club = () => {
                 )}
                 <div className={styles.boardGrid}>
                     {posts.map((post) => (
-                        <div 
+                        <div
                             key={post._id}
                             className={styles.boardItem}
                             onClick={() => handleViewPost(post)}
