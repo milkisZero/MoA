@@ -54,12 +54,10 @@ router.get('/:msgRoomId', async (req, res) => {
         const limit = 10;
 
         const msgRoom = await MsgRoom.findById(req.params.msgRoomId).lean();
-        if (!msgRoom)
-            return res.status(404).json({ message: 'MsgRoom cannot found' });
-        
+        if (!msgRoom) return res.status(404).json({ message: 'MsgRoom cannot found' });
+
         const endIdx = msgId ? msgRoom.messages.indexOf(msgId) : msgRoom.messages.length;
-        if (endIdx === -1)
-            return res.status(404).json({ message: 'Message cannot found' });
+        if (endIdx === -1) return res.status(404).json({ message: 'Message cannot found' });
         const startIdx = Math.max(0, endIdx - limit);
 
         const slicedMsg = msgRoom.messages.slice(startIdx, endIdx).reverse();
