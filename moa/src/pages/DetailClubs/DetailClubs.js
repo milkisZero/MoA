@@ -134,7 +134,6 @@ const Detail_club = () => {
         const club_data = await getClubDetail({ clubId });
         setClubInfo(club_data);
         console.log(club_data);
-        // setRoomId(club_data.msgRoomId);
         const event_data = await getMonthEvent({ clubId, year, month });
         setEvents(event_data);
         const post_data = await getTotalPost({ clubId, page, limit });
@@ -216,6 +215,15 @@ const Detail_club = () => {
         }
     };
 
+    const handleUpdateClub = async () => {
+        if (!userAuth) {
+            alert('로그인이 필요합니다');
+            return;
+        }
+
+        navigate('/MakeClub', { state: { club: clubInfo } });
+    };
+
     return (
         <div className={styles.container}>
             <Header />
@@ -224,15 +232,24 @@ const Detail_club = () => {
             <div className={styles.header}>
                 <div className={styles.leftSection}>
                     <img src={clubInfo.clubImg} alt={`${clubInfo.name} 사진`} className={styles.clubImage} />
+                    {isClubAuth && (
+                        <button
+                            className={styles.joinButton}
+                            style={{ width: '20%', margin: '3%', fontSize: '100%' }}
+                            onClick={() => handleUpdateClub()}
+                        >
+                            정보 수정
+                        </button>
+                    )}
                 </div>
+
                 <div className={styles.rightSection}>
                     <h1 className={styles.clubName}>{clubInfo.name}</h1>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}></div>
                     <p className={styles.clubDescription}>{clubInfo.description}</p>
-
                     <InfoSection title="동아리 위치" content={clubInfo.location} />
                     <InfoSection title="회장 연락처" content={clubInfo.phone} />
                     <InfoSection title="SNS" content={clubInfo.sns} isLink />
-
                     <div style={{ display: 'flex', direction: 'row' }}>
                         {isClubMem ? (
                             <button
@@ -335,7 +352,7 @@ const Detail_club = () => {
                 {isClubAuth && (
                     <button
                         className={styles.joinButton}
-                        style={{ width: '10%', margin: '3%', fontSize: '50%', backgroundColor: 'red' }}
+                        style={{ width: '10%', margin: '3%', fontSize: '100%', backgroundColor: 'red' }}
                         onClick={() => handleDeleteClub()}
                     >
                         동아리삭제

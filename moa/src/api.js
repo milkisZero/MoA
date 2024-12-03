@@ -97,7 +97,7 @@ export async function updateClubInfo({ formData, clubId }) {
         });
         if (response.ok) {
             const data = await response.json();
-            return data;
+            return data.updatedClub;
         }
     } catch (error) {
         console.log(error.message);
