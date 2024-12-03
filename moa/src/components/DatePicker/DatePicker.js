@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { format } from "date-fns";
 import ko from "date-fns/locale/ko";
-import useOutSideClick from "@/hooks/common/useOutSideClick";
+import useOutSideClick from "../../hooks/common/useOutSideClick";
 import Date from "./Date";
 import Month from "./Month";
 import DatePickerWrapper from "./DatePickerWrapper";
