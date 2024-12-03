@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './DetailClubs.module.css';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { addEvent, deleteEvent, getClubDetail, getMonthEvent, getTotalPost, updateEvent } from '../../api';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
@@ -30,11 +30,15 @@ const Detail_club = () => {
     const [posts, setPosts] = useState([]);
     const page = 1;
     const limit = 5;
+    const { userAuth } = useAuth();
+    const [isFetching, setIsFetching] = useState(false);
     const now = new Date();
     const year = now.getFullYear();
     const month = now.getMonth() + 1; //
-    const { userAuth } = useAuth();
-    const [isFetching, setIsFetching] = useState(false);
+    const navigate = useNavigate();
+    const [roomId, setRoomId] = useState();
+
+    const isClubMem = userAuth ? userAuth.clubs.includes(clubId) : false;
 
     const getDayOfWeek = (date) => {
         const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
@@ -51,6 +55,9 @@ const Detail_club = () => {
 
     const handleFormUpdate = async (event) => {
         if (!userAuth) {
+            alert('로그인이 필요합니다');
+            return;
+        } else if (!isClubMem) {
             alert('회원이 아닙니다');
             return;
         }
@@ -72,6 +79,9 @@ const Detail_club = () => {
     };
     const handleFormSubmit = async (event) => {
         if (!userAuth) {
+            alert('로그인이 필요합니다');
+            return;
+        } else if (!isClubMem) {
             alert('회원이 아닙니다');
             return;
         }
@@ -90,9 +100,11 @@ const Detail_club = () => {
             alert('작성에 실패했습니다');
         }
     };
-
     const handleDelete = async (eventId) => {
         if (!userAuth) {
+            alert('로그인이 필요합니다');
+            return;
+        } else if (!isClubMem) {
             alert('회원이 아닙니다');
             return;
         }
@@ -108,7 +120,8 @@ const Detail_club = () => {
     const fetchData = async () => {
         const club_data = await getClubDetail({ clubId });
         setClubDetails(club_data);
-
+        console.log(club_data);
+        setRoomId(club_data.msgRoomId);
         const event_data = await getMonthEvent({ clubId, year, month });
         setEvents(event_data);
         const post_data = await getTotalPost({ clubId, page, limit });
@@ -167,7 +180,33 @@ const Detail_club = () => {
                     <InfoSection title="회장 연락처" content={clubDetails.phone} />
                     <InfoSection title="SNS" content={clubDetails.sns} isLink />
 
-                    <button className={styles.joinButton}>동아리 가입 신청하기</button>
+                    <div style={{ display: 'flex', direction: 'row' }}>
+                        {isClubMem ? (
+                            <button
+                                className={styles.joinButton}
+                                style={{ width: '40%', margin: '3%', backgroundColor: 'red' }}
+                            >
+                                탈퇴하기
+                            </button>
+                        ) : (
+                            <button className={styles.joinButton} style={{ width: '40%', margin: '3%' }}>
+                                가입 신청
+                            </button>
+                        )}
+                        {isClubMem ? (
+                            <button
+                                className={styles.joinButton}
+                                style={{ width: '40%', margin: '3%' }}
+                                onClick={() => navigate(`/Message/${roomId}`)}
+                            >
+                                채팅방으로
+                            </button>
+                        ) : (
+                            <button className={styles.joinButton} style={{ width: '40%', margin: '3%' }}>
+                                문의하기
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
 

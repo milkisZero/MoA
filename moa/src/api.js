@@ -242,7 +242,6 @@ export async function deleteEvent({ clubId, eventId, userId }) {
             const data = await response.json();
             return data;
         }
-        console.log(response);
     } catch (error) {
         console.log(error.message);
     }

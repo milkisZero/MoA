@@ -8,16 +8,18 @@ import { faPaperPlane, faUserCircle } from '@fortawesome/free-solid-svg-icons'; 
 import { io } from 'socket.io-client';
 import { getPage } from '../api';
 import { useAuth } from '../context/AuthContext';
+import { useParams } from 'react-router-dom';
 
 function Message() {
     const [sendMsg, setSendMsg] = useState('');
     const [totalMsg, setTotalMsg] = useState([]);
     const [totalUser, setTotalUser] = useState([]);
-    const roomId = '67495c33ac807b6a451308d6';
     const [socket, setSocket] = useState(null);
     const [page, setPage] = useState(0);
     const [isFetching, setIsFetching] = useState(false); // 데이터가 로딩 중인지 체크
     const { userAuth } = useAuth();
+    const URL = 'http://localhost:8080';
+    const { roomId } = useParams();
 
     const userId = userAuth ? userAuth._id : null;
     const userName = userAuth ? userAuth.name : null;
@@ -67,7 +69,7 @@ function Message() {
     }, [page]);
 
     useEffect(() => {
-        const newSocket = io('http://localhost:8080'); // 서버 주소
+        const newSocket = io(URL);
         setSocket(newSocket);
 
         newSocket.emit('joinRoom', { msgRoomId: roomId });

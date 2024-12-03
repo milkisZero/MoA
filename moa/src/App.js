@@ -49,11 +49,11 @@ function App() {
                         <Route path="/TotalClubs" element={<TotalClubs />}></Route>
                         <Route path="/Login" element={<Login />}></Route>
                         <Route path="/Register" element={<Register />}></Route>
-                        <Route path="/Message" element={<Message />}></Route>
                         <Route path="/MakeClub" element={<MakeClub />}></Route>
                         <Route path="/MyPage" element={<MyPage />}></Route>
                         <Route path="/Pictures" element={<Pictures />}></Route>
                         <Route path="/Detail_club/:clubId" element={<Detail_club />} />
+                        <Route path="/Message/:roomId" element={<Message />}></Route>
                     </Routes>
                 </div>
             </AuthProvider>
