@@ -110,7 +110,6 @@ io.on('connection', (socket) => {
 })
 
 app.get('/api/session/', async (req, res) => {
-    console.log(req.session);
     if (!req.session || !req.session.userId) {
         return res.status(401).json({ success: false, message: 'Unauthorized' });
     }
