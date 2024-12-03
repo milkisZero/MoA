@@ -117,13 +117,13 @@ router.get('/:clubId', async (req, res) => {
 // 동아리 세부정보 update (member 편집 제외)
 router.put('/:clubId', upload.single('img'), async (req, res) => {
     try {
-        const { name, description, location, phone, sns } = req.body;
-        const clubImg = req.file ? req.file.location : null;
+        const { name, description, img, location, phone, sns } = req.body;
+        const newImg = img ? img : req.file.location;
 
         const updatedData = {
             name: name,
             description: description,
-            clubImg: clubImg,
+            clubImg: newImg,
             location: location,
             phone: phone,
             sns: sns,
