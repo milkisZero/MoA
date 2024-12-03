@@ -119,7 +119,6 @@ export async function getTotalPost({ clubId, page, limit }) {
 export async function getPost({ postId }) {
     try {
         const response = await fetch(URL + `post/${postId}`);
-        console.log(postId);
         if (response.ok) {
             const data = await response.json();
             return data.foundPost;

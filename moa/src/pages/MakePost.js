@@ -24,9 +24,11 @@ function MakePost() {
         if (post?._id) {
             try {
                 const foundPost = await getPost({ postId: post._id });
+                console.log(foundPost);
                 setTitle(foundPost.title);
                 setContent(foundPost.content);
-                setPreviewImages(foundPost.postImgs || []); // 이미지 URL 미리보기 설정
+                setImages(foundPost.postImgs || []);
+                setPreviewImages(foundPost.postImgs || []);
             } catch (error) {
                 console.error('Error fetching post:', error);
                 alert('게시글 정보를 불러오는 중 오류가 발생했습니다.');
@@ -36,13 +38,13 @@ function MakePost() {
 
     const handleImageChange = (e) => {
         const files = Array.from(e.target.files);
-        const totalFiles = images.length + files.length;
+        const totalFiles = previewImages.length + files.length;
 
         if (totalFiles > 10) {
             alert('최대 10개의 이미지만 업로드할 수 있습니다.');
         }
 
-        const validFiles = files.slice(0, 10 - images.length);
+        const validFiles = files.slice(0, 10 - previewImages.length);
 
         const previewUrls = validFiles.map((file) => {
             const reader = new FileReader();
@@ -77,9 +79,14 @@ function MakePost() {
         formData.append('title', title);
         formData.append('content', content);
 
-        // 여러 이미지 업로드 지원
         images.forEach((image) => {
-            formData.append('img', image); // S3 multer는 'img' key를 사용
+            if (typeof image === 'string') {
+                // 기존 이미지 URL인 경우
+                formData.append('existingImgs', image);
+            } else {
+                // 새로운 파일인 경우
+                formData.append('img', image);
+            }
         });
 
         try {

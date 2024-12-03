@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
-const { S3Client } = require('@aws-sdk/client-s3');
+const { S3Client, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 
 const { User } = require('../model/User'); 
 const { Event } = require('../model/Event');
@@ -129,7 +129,7 @@ router.get('/:postId', async (req, res) => {
 // 게시글 수정
 router.put('/:clubId/:postId', upload.array('img', 10),async (req, res) => {
     try {
-        const { userId, title, content } = req.body;
+        const { userId, title, content, existingImgs, deletedImgs } = req.body;
 
         const club = await Club.findById(req.params.clubId);
         if (!club)
@@ -138,14 +138,20 @@ router.put('/:clubId/:postId', upload.array('img', 10),async (req, res) => {
         if (!club.admin.includes(userId))
             return res.status(403).json({ message: 'BeomBu cannot modify post'});
 
-        const post = await Post.findById(req.params.postId);
+        const existingPost = await Post.findById(req.params.postId);
+        if (!existingPost)
+            return res.status(404).json({ message: 'Post not found' });
 
-        const postImgs = req.files ? req.files.map((file) => file.location) : post.postImgs;
+        const updatedImgs = [
+            ...(Array.isArray(existingImgs) ? existingImgs : [existingImgs].filter(Boolean)),
+            ...req.files.map((file) => file.location),
+        ];
+
         const updatedData = {
             title: title,
             content: content,
             updatedAt: Date.now(),
-            postImgs: postImgs
+            postImgs: updatedImgs
         };
 
         const updatedPost = await Post.findByIdAndUpdate(
@@ -153,6 +159,14 @@ router.put('/:clubId/:postId', upload.array('img', 10),async (req, res) => {
             updatedData,
             { new: true },
         );
+
+        if (deletedImgs) {
+            const imagesToDelete = Array.isArray(deletedImgs) ? deletedImgs : [deletedImgs];
+            imagesToDelete.forEach(async (img) => {
+                const key = img.split('/').pop();
+                await s3.deleteObject({ Bucket: 'moaprojects3', Key: key }).promise();
+            });
+        }
 
         return res.status(200).json({
             message: 'Successfully update a post',
@@ -176,23 +190,37 @@ router.delete('/:clubId/:postId', async (req, res) => {
         if (!club.admin.includes(userId))
             return res.status(403).json({ message: 'BeomBu cannot delete post'});
 
-        const deletedPost = await Post.findByIdAndDelete(req.params.postId);
-        if (!deletedPost)
+        const post = await Post.findById(req.params.postId);
+        if (!post)
             return res.status(404).json({ message: 'Post not found' });
 
+        const deletedPost = await Post.findByIdAndDelete(req.params.postId);
+        
         const postIds = club.postIds;
-        const idx = binarySearch(postIds, req.params.postId);
-        console.log(idx);
+        const idx = postIds.indexOf(req.params.postId);
         if (idx > -1) {
-            postIds.splice(idx, 1);
-            await Club.updateOne(
-                { _id: club._id },
-                { postIds: postIds }
-            );
+            club.postIds.splice(idx, 1);
+            await club.save();
+        };
+
+        if (post.postImgs) {
+            for (const img of post.postImgs) {
+                const key = img.split('/').pop(); 
+                console.log(key);
+                try {
+                    await s3.deleteObject({
+                        Bucket: 'moaprojects3',
+                        Key: key,
+                    });
+                } catch (err) {
+                    console.error(`Failed to delete image: ${key}`, err);
+                }
+            };
         };
 
         return res.status(200).json({
             message: 'Successfully delete Post',
+            club,
             deletedPost
         });
     } catch (e) {
