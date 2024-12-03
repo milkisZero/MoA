@@ -76,10 +76,8 @@ function AuthProvider({ children }) {
     };
 
     useEffect(() => {
-        console.log(userAuth);
-
         if (userAuth) {
-            console.log('로그인 되었습니다:', userAuth);
+            console.log('로그인 되었습니다');
         } else {
             console.log('로그아웃 되었습니다');
         }

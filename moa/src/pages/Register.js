@@ -4,12 +4,14 @@ import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { userRegister } from '../api';
+import { useNavigate } from 'react-router-dom';
 
 function Register() {
     const [name, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -20,7 +22,13 @@ function Register() {
             return;
         }
 
-        await userRegister({ name, email, password });
+        const data = await userRegister({ name, email, password });
+        if (data) {
+            window.confirm('회원가입에 성공했습니다');
+            navigate('/Login');
+        } else {
+            alert('회원가입에 실패했습니다');
+        }
     };
 
     return (

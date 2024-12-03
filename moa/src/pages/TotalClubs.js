@@ -5,7 +5,7 @@ import tmp from '../assets/sample.png';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ClubItem from '../components/ClubItem';
-import { getClubInfo } from '../api';
+import { getClubPage } from '../api';
 import { Link } from 'react-router-dom';
 
 function TotalClubs() {
@@ -25,7 +25,7 @@ function ListSection() {
     const limit = 5;
 
     const fetchData = async () => {
-        const data = await getClubInfo({ page, limit });
+        const data = await getClubPage({ page, limit });
         if (data.length > 0) {
             setclubList(data);
             window.scrollTo(0, 0);
@@ -33,7 +33,6 @@ function ListSection() {
     };
 
     useEffect(() => {
-        console.log(page);
         fetchData();
     }, [page]);
 
@@ -58,7 +57,7 @@ function ListSection() {
             </header>
             <div className="club-list">
                 {clubList.map((item, index) => (
-                    <ClubItem key={index} club={item}></ClubItem>
+                    <ClubItem key={index} club={item} button_text={'동아리 이동하기'}></ClubItem>
                 ))}
             </div>
             <div className="page-Move">

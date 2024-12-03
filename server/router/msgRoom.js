@@ -1,5 +1,5 @@
 const express = require('express');
-const { User } = require('../model/User'); 
+const { User } = require('../model/User');
 const { Event } = require('../model/Event');
 const { Club } = require('../model/Club');
 const { Post } = require('../model/Post');
@@ -15,19 +15,39 @@ router.post('/', async (req, res) => {
         const newMsgRoom = new MsgRoom({
             name: name,
             members: members,
-            messages: []
-        })
+            messages: [],
+        });
 
         await newMsgRoom.save();
+        await User.updateMany(
+            { _id: { $in: members }},
+            { $addToSet: { msgRooms: newMsgRoom._id }},
+        );
+
         res.status(200).json({
             message: 'newMsgRoom created successfully',
-            newMsgRoom
+            newMsgRoom,
         });
     } catch (e) {
         console.log('post error in /msgRoom: ', e);
         res.status(500).json({ message: 'Server post error in /msgRoom' });
     }
 });
+
+router.get('/name/:msgRoomId', async (req, res) => {
+    try {
+        const msgRoom = await MsgRoom.findById(req.params.msgRoomId);
+        if (!msgRoom) return res.status(404).json({ message: 'Chat room not found' });
+        
+        res.status(200).json({
+            message: 'MsgRoom name get successfully',
+            name: msgRoom.name
+        })
+    } catch (e) {
+        console.log('get error in /msgRoom/name/msgRoomId:', e);
+        res.status(500).json({ message: 'get error in /msgRoom/name/msgRoomId' });
+    }
+})
 
 // 채팅방 유저 불러오기
 router.get('/users/:msgRoomId', async (req, res) => {
@@ -36,13 +56,13 @@ router.get('/users/:msgRoomId', async (req, res) => {
         const msgRoom = await MsgRoom.findById(msgRoomId).populate('members', 'name');
 
         if (!msgRoom) return res.status(404).json({ message: 'Chat room not found' });
-        
+
         res.status(200).json({
             message: 'Users retrieved successfully',
             members: msgRoom.members,
         });
     } catch (e) {
-        console.log('get error in /msgRoom/user/msgRoomId:', e);
+        console.log('get error in /msgRoom/users/msgRoomId:', e);
         res.status(500).json({ message: 'get error in /msgRoom/users/msgRoomId' });
     }
 });
@@ -53,29 +73,21 @@ router.get('/:msgRoomId', async (req, res) => {
         const { msgId } = req.query;
         const limit = 10;
 
-        const msgRoom = await MsgRoom.findById(req.params.msgRoomId);
+        const msgRoom = await MsgRoom.findById(req.params.msgRoomId).lean();
         if (!msgRoom)
             return res.status(404).json({ message: 'MsgRoom cannot found' });
         
-        let startIdx, endIdx;
-        if (!msgId)
-            endIdx = msgRoom.messages.length;
-        else
-            endIdx = msgRoom.messages.indexOf(msgId);
-
-        startIdx = endIdx - limit;
-
-        if (startIdx < 0) startIdx = 0;
-        if (endIdx < 0) endIdx = 0;
+        const endIdx = msgId ? msgRoom.messages.indexOf(msgId) : msgRoom.messages.length;
+        if (endIdx === -1)
+            return res.status(404).json({ message: 'Message cannot found' });
+        const startIdx = Math.max(0, endIdx - limit);
 
         const slicedMsg = msgRoom.messages.slice(startIdx, endIdx).reverse();
-        const messages = await Promise.all(
-            slicedMsg.map((msgId) => Message.findById(msgId))
-        );
+        const messages = await Promise.all(slicedMsg.map((msgId) => Message.findById(msgId)));
 
         res.status(200).json({
             message: 'Succefully get messages',
-            messages
+            messages,
         });
     } catch (e) {
         console.log('get error in /msgRoom/msgRoomId:', e);
@@ -87,17 +99,12 @@ router.get('/:msgRoomId', async (req, res) => {
 router.put('/:msgRoomId', async (req, res) => {
     try {
         const { name } = req.body;
-        const updatedMsgRoom = await MsgRoom.findByIdAndUpdate(
-            req.params.msgRoomId,
-            { name: name },
-            { new: true }
-        )
-        if (!updatedMsgRoom)
-            return res.status(404).json({ message: 'MsgRoom not found' });
+        const updatedMsgRoom = await MsgRoom.findByIdAndUpdate(req.params.msgRoomId, { name: name }, { new: true });
+        if (!updatedMsgRoom) return res.status(404).json({ message: 'MsgRoom not found' });
 
         res.status(200).json({
             message: 'MsgRoom name updated successfully',
-            updatedMsgRoom
+            updatedMsgRoom,
         });
     } catch (e) {
         console.log('put error in /msgRoom/msgRoomId:', e);
@@ -108,13 +115,16 @@ router.put('/:msgRoomId', async (req, res) => {
 // 채팅방 삭제
 router.delete('/:msgRoomId', async (req, res) => {
     try {
-        const msgRoom = await MsgRoom.findById(req.params.msgRoomId);
-        if (!msgRoom)
-            return res.status(404).json({ message: 'MsgRoom cannot found' });
+        const msgRoomId = req.params.msgRoomId;
+        const msgRoom = await MsgRoom.findById(msgRoomId);
+        if (!msgRoom) return res.status(404).json({ message: 'MsgRoom cannot found' });
 
-        const messageId = msgRoom.messages;
-        await Promise.all(messageId.map((msgId) => Message.findByIdAndDelete(msgId)));
-        await MsgRoom.findByIdAndDelete(req.params.msgRoomId);
+        await Message.deleteMany({ _id: { $in: msgRoom.messages } });
+        await MsgRoom.findByIdAndDelete(msgRoomId);
+        await User.updateMany(
+            { _id: { $in: msgRoom.members } },
+            { $pull: { msgRooms: msgRoomId } }
+        );
 
         res.status(200).json({ message: 'MsgRoom and Messages all deleted successfully' });
     } catch (e) {

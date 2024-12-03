@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import '../css/Pages.css';
-import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { addClub } from '../api';
+import { addClub, updateClubInfo } from '../api';
 import { useAuth } from '../context/AuthContext';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function MakeClub() {
-    const [name, setClubname] = useState('');
-    const [description, setDescript] = useState('');
-    const [location, setLocation] = useState('');
-    const [phone, setPhone] = useState('');
-    const [sns, setSns] = useState('');
-    const [clubImg, setClubImg] = useState('');
+    const locate = useLocation();
+    const club = locate.state?.club;
+
+    const [name, setClubname] = useState(club ? club.name : '');
+    const [description, setDescript] = useState(club ? club.description : '');
+    const [location, setLocation] = useState(club ? club.location : '');
+    const [phone, setPhone] = useState(club ? club.phone : '');
+    const [sns, setSns] = useState(club ? club.sns : '');
+    const [clubImg, setClubImg] = useState(club ? club.clubImg : '');
     const { userAuth } = useAuth();
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -33,7 +37,14 @@ function MakeClub() {
         formData.append('admin', userId);
         formData.append('img', clubImg);
 
-        const data = await addClub(formData);
+        console.log(clubImg);
+
+        const data = !club ? await addClub(formData) : await updateClubInfo({ formData, clubId: club._id });
+        if (!data._id) {
+            alert('NULL found');
+            return;
+        }
+        navigate(`/Detail_club/${data._id}`);
     };
 
     return (
@@ -41,7 +52,7 @@ function MakeClub() {
             <Header />
             <section className="register-section">
                 <div className="register-container">
-                    <h2>신규 동아리 등록</h2>
+                    <h2>{!club ? '신규 동아리 등록' : '동아리 정보 수정'}</h2>
                     <form onSubmit={handleSubmit} className="register-inside">
                         <input type="file" onChange={(e) => setClubImg(e.target.files[0])} accept="image/*" />
                         <input
