@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 import ClubItem from './ClubItem';
-import { approveClub } from '../api';
+import { approveClub, getProposer } from '../api';
 
-const ProposeModal = ({ clubId, userList }) => {
+const ProposeModal = ({ clubId }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [users, setUsers] = useState(userList);
-    const handleOpen = () => setIsOpen(true);
+    const [users, setUsers] = useState([]);
+    const handleOpen = async () => {
+        const data = await getProposer({ clubId });
+        if (data) setUsers(data);
+        setIsOpen(true);
+    };
     const handleClose = () => setIsOpen(false);
 
     const handleApprove = async (approve, userId, removeIdx) => {
@@ -47,11 +51,11 @@ const ProposeModal = ({ clubId, userList }) => {
                                 border: '1px solid black',
                             }}
                         >
-                            <div>{user}</div>
-                            <button onClick={() => handleApprove(true, user, index)} style={{ marginLeft: '5%' }}>
+                            <div>{user.name}</div>
+                            <button onClick={() => handleApprove(true, user._id, index)} style={{ marginLeft: '5%' }}>
                                 승인
                             </button>
-                            <button onClick={() => handleApprove(false, user, index)} style={{ margin: '5%' }}>
+                            <button onClick={() => handleApprove(false, user._id, index)} style={{ margin: '5%' }}>
                                 거절
                             </button>
                         </div>
