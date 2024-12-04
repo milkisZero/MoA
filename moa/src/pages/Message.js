@@ -59,15 +59,17 @@ function Message() {
 
     const fetchUser = async () => {
         const data = await getMsgUser({ roomId });
-        return data;
+        setTotalUser(data);
     };
 
     useEffect(() => {
-        console.log(page);
+        // console.log(page);
         if (page > 0) fetchData();
     }, [page]);
 
     useEffect(() => {
+        fetchUser();
+
         const newSocket = io(URL);
         setSocket(newSocket);
         newSocket.emit('joinRoom', { msgRoomId: roomId });
@@ -75,9 +77,7 @@ function Message() {
             if (newMsg.msgRoomId === roomId) {
                 setTotalMsg((prev) => [newMsg, ...prev]);
             }
-
-            const fetchedUsers = fetchUser();
-            setTotalUser((prev) => [...new Set([...prev, ...fetchedUsers])]);
+            fetchUser();
         });
 
         return () => {
@@ -108,7 +108,7 @@ function Message() {
                 <div className="msg-info">
                     <div className="user-list">
                         {totalUser.map((prev, index) => (
-                            <UserBox key={index} senderName={prev} />
+                            <UserBox key={index} user={prev} />
                         ))}
                     </div>
                     <div className="msg-screen">
@@ -137,11 +137,11 @@ function Message() {
     );
 }
 
-function UserBox({ senderName }) {
+function UserBox({ user }) {
     return (
         <div className="user-box">
             <FontAwesomeIcon icon={faUserCircle} size="2x" />
-            <div className="user-info">{senderName}</div>
+            <div className="user-info">{user.name}</div>
         </div>
     );
 }
