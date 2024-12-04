@@ -83,11 +83,14 @@ router.get('/total_club', async (req, res) => {
 
         const [totalClubs, club] = await Promise.all([
             Club.countDocuments(),
-            Club.find()
-                .sort({ members: -1 })
-                .skip((page - 1) * limit)
-                .limit(Number(limit)),
+            Club.aggregate([
+                { $addFields: { memberCount: { $size: '$members' } }},
+                { $sort: { memberCount: -1 }},
+                { $skip: (page - 1) * limit},
+                { $limit: Number(limit)},
+            ]),
         ]);
+
         if (!club || totalClubs === 0)
             return res.status(404).json({ message: 'cannot found club list' });
 
