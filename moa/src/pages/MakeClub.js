@@ -79,7 +79,7 @@ function MakeClub() {
                                     style={{
                                         position: 'absolute',
                                         top: '200px',
-                                        right: '550px',
+                                        right: '680px',
                                         width: '30px',
                                         height: '30px',
                                         background: 'red',

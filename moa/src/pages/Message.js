@@ -52,20 +52,21 @@ function Message() {
         const data = await getMessage({ roomId, msgId });
 
         // 0번이 젤 나중, 마지막으로부터 10개 호출
-        setTotalMsg((prev) => [...prev, ...data]);
+        if (data) setTotalMsg((prev) => [...prev, ...data]);
+        console.log(data);
 
         setIsFetching(false);
-    };
-
-    const fetchUser = async () => {
-        const data = await getMsgUser({ roomId });
-        setTotalUser(data);
     };
 
     useEffect(() => {
         // console.log(page);
         if (page > 0) fetchData();
     }, [page]);
+
+    const fetchUser = async () => {
+        const data = await getMsgUser({ roomId });
+        setTotalUser(data);
+    };
 
     useEffect(() => {
         fetchUser();
@@ -108,7 +109,7 @@ function Message() {
                 <div className="msg-info">
                     <div className="user-list">
                         {totalUser.map((prev, index) => (
-                            <UserBox key={index} user={prev} />
+                            <UserBox key={index} name={prev.name} />
                         ))}
                     </div>
                     <div className="msg-screen">
@@ -137,11 +138,11 @@ function Message() {
     );
 }
 
-function UserBox({ user }) {
+function UserBox({ name }) {
     return (
         <div className="user-box">
             <FontAwesomeIcon icon={faUserCircle} size="2x" />
-            <div className="user-info">{user.name}</div>
+            <div className="user-info">{name}</div>
         </div>
     );
 }
@@ -150,7 +151,7 @@ function MessageBox({ senderName, content, timestamp }) {
     const time = new Date(timestamp).toLocaleTimeString();
     return (
         <div className="msg-message">
-            <UserBox senderName={senderName} />
+            <UserBox name={senderName} />
             <p>{content}</p>
             <p>{time}</p>
         </div>

@@ -32,7 +32,7 @@ export async function getMessage({ roomId, msgId }) {
         if (response.ok) {
             const data = await response.json();
             return data.messages;
-        }
+        } else console.log(response);
     } catch (error) {
         console.log(error.message);
     }
