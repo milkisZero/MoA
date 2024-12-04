@@ -123,7 +123,7 @@ router.get('/:clubId', async (req, res) => {
 router.put('/:clubId', upload.single('img'), async (req, res) => {
     try {
         const { name, description, img, location, phone, sns } = req.body;
-        const newImg = img ? img : req.file.location;
+        const newImg = req.file ? req.file.location : img;
 
         const updatedData = {
             name: name,
