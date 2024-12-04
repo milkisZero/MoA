@@ -43,7 +43,7 @@ export async function getMsgUser({ roomId }) {
         const response = await fetch(URL + `msgRoom/users/${roomId}`);
         if (response.ok) {
             const data = await response.json();
-            return data.members;
+            return data;
         }
     } catch (error) {
         console.log(error.message);
@@ -292,7 +292,7 @@ export async function getProposer({ clubId }) {
         const response = await fetch(URL + `club/proposer/${clubId}`);
         if (response.ok) {
             const data = await response.json();
-            return data.proposer;
+            return data.proposers;
         }
     } catch (error) {
         console.log(error.message);

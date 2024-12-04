@@ -19,6 +19,7 @@ function Message() {
     const { userAuth } = useAuth();
     const URL = 'http://localhost:8080';
     const { roomId } = useParams();
+    const [roomTitle, setRoomTitle] = useState('');
 
     const userId = userAuth ? userAuth._id : null;
     const userName = userAuth ? userAuth.name : null;
@@ -65,7 +66,8 @@ function Message() {
 
     const fetchUser = async () => {
         const data = await getMsgUser({ roomId });
-        setTotalUser(data);
+        setTotalUser(data.members);
+        setRoomTitle(data.roomTitle);
     };
 
     useEffect(() => {
@@ -104,7 +106,7 @@ function Message() {
         <div>
             <Header />
             <section className="msg-section">
-                <h2>{roomId}</h2>
+                <h2>{roomTitle}</h2>
 
                 <div className="msg-info">
                     <div className="user-list">
