@@ -287,6 +287,18 @@ export async function getMyEvents({ userId }) {
     }
 }
 
+export async function getProposer({ clubId }) {
+    try {
+        const response = await fetch(URL + `club/proposer/${clubId}`);
+        if (response.ok) {
+            const data = await response.json();
+            return data.proposer;
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 export async function proposeClub({ clubId, userId }) {
     try {
         const response = await fetch(URL + `club/proposer/${clubId}`, {
