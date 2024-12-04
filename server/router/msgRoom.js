@@ -60,6 +60,7 @@ router.get('/users/:msgRoomId', async (req, res) => {
         res.status(200).json({
             message: 'Users retrieved successfully',
             members: msgRoom.members,
+            roomTitle : msgRoom.name
         });
     } catch (e) {
         console.log('get error in /msgRoom/users/msgRoomId:', e);
