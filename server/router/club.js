@@ -299,7 +299,7 @@ router.delete('/:clubId', async (req, res) => {
 // 동아리 가입 신청
 router.post('/proposer/:clubId', async (req, res) => {
     try {
-        const { userId, aprove } = req.body;
+        const { userId } = req.body;
         const clubId = req.params.clubId;
 
         const [user, club] = await Promise.all([User.findById(userId), Club.findById(clubId)]);
@@ -328,6 +328,22 @@ router.post('/proposer/:clubId', async (req, res) => {
     } catch (e) {
         console.log('post error in /club/proposer/:clubId: ', e);
         return res.status(500).json({ message: 'Server post error in /club/proposer/:clubId' });
+    }
+});
+
+// 동아리 가입 신청자 목록
+router.get('/proposer/:clubId', async (req, res) => {
+    try {
+        const club = await Club.findById(req.params.clubId).populate('proposers', '_id name');
+        if (!club) return res.status(404).json({ message: 'cannot found Club' });
+
+        res.status(200).json({
+            message: 'successfully get proposer list: _id and name',
+            proposers: club.proposers
+        })
+    } catch (e) {
+        console.log('pogetst error in /club/proposer/:clubId: ', e);
+        return res.status(500).json({ message: 'Server get error in /club/proposer/:clubId' });
     }
 });
 
