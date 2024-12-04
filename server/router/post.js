@@ -190,32 +190,29 @@ router.delete('/:clubId/:postId', async (req, res) => {
         if (!club.admin.includes(userId))
             return res.status(403).json({ message: 'BeomBu cannot delete post'});
 
-        const post = await Post.findById(req.params.postId);
-        if (!post)
-            return res.status(404).json({ message: 'Post not found' });
-
         const deletedPost = await Post.findByIdAndDelete(req.params.postId);
+        if (!deletedPost)
+            return res.status(404).json({ message: 'Post not found' });
         
-        const postIds = club.postIds;
-        const idx = postIds.indexOf(req.params.postId);
-        if (idx > -1) {
-            club.postIds.splice(idx, 1);
-            await club.save();
-        };
+        await Club.updateOne(
+            { _id: req.params.clubId },
+            { $pull: { postIds: req.params.postId } }
+        );
 
-        if (post.postImgs) {
-            for (const img of post.postImgs) {
-                const key = img.split('/').pop(); 
-                console.log(key);
+        if (Array.isArray(deletedPost.postImgs) && deletedPost.postImgs.length > 0) {
+            const deleteImagePromises = deletedPost.postImgs.map(async (img) => {
+                const key = img.split('/').pop();
+                console.log(`Deleting image: ${key}`);
                 try {
-                    await s3.deleteObject({
+                    await s3.deleteOne({
                         Bucket: 'moaprojects3',
                         Key: key,
-                    });
+                    }).promise();
                 } catch (err) {
                     console.error(`Failed to delete image: ${key}`, err);
                 }
-            };
+            });
+            await Promise.all(deleteImagePromises);
         };
 
         return res.status(200).json({

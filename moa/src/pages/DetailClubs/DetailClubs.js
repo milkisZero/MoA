@@ -250,11 +250,12 @@ const Detail_club = () => {
         const confirmed = window.confirm('이 게시글을 삭제하시겠습니까?');
         if (confirmed) {
             try {
-                await deletePost({ clubId, postId, userId: userAuth._id });
+                const data = await deletePost({ clubId, postId, userId: userAuth._id });
                 alert('게시글이 삭제되었습니다.');
 
                 // 삭제된 게시글을 제외한 나머지를 업데이트
-                setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
+                if (data)
+                    setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
             } catch (error) {
                 console.error('Error deleting post:', error);
                 alert('게시글 삭제 중 오류가 발생했습니다.');
