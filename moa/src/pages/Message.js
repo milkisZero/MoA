@@ -66,6 +66,7 @@ function Message() {
 
     const fetchUser = async () => {
         const data = await getMsgUser({ roomId });
+        console.log(data.members);
         setTotalUser(data.members);
         setRoomTitle(data.roomTitle);
     };

@@ -189,7 +189,7 @@ const Detail_club = () => {
 
         const data = await makeMsgRoom({
             name: clubInfo.name + ' 문의방',
-            userId,
+            userId: userAuth._id,
             clubId,
             // members: [...clubInfo.admin, userAuth._id],
         });
