@@ -55,7 +55,7 @@ export async function getClubPage({ page, limit }) {
         const response = await fetch(URL + 'club/total_club' + `?page=${page}` + `&limit=${limit}`);
         if (response.ok) {
             const data = await response.json();
-            return data.club;
+            return { club: data.club, totalNum: data.totalClubs };
         }
     } catch (error) {
         console.log(error.message);
@@ -152,7 +152,7 @@ export async function deletePost({ clubId, postId, userId }) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                userId: userId
+                userId: userId,
             }),
         });
         if (response.ok) {
@@ -322,8 +322,10 @@ export async function approveClub({ clubId, userId, approve }) {
         });
         if (response.ok) {
             const data = await response.json();
+            console.log(data);
             return data;
         }
+        console.log(response);
     } catch (error) {
         console.log(error.message);
     }
@@ -387,7 +389,5 @@ export async function makeMsgRoom({ name, members }) {
         console.log(error.message);
     }
 }
-
-
 
 // 관리자 추가 삭제
