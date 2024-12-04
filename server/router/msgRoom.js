@@ -73,7 +73,7 @@ router.get('/:msgRoomId', async (req, res) => {
         const { msgId } = req.query;
         const limit = 10;
 
-        const msgRoom = await MsgRoom.findById(req.params.msgRoomId).lean();
+        const msgRoom = await MsgRoom.findById(req.params.msgRoomId);
         if (!msgRoom) return res.status(404).json({ message: 'MsgRoom cannot found' });
 
         const endIdx = msgId ? msgRoom.messages.indexOf(msgId) : msgRoom.messages.length;
