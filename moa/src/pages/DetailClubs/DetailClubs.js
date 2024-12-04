@@ -415,6 +415,7 @@ const Detail_club = () => {
                     ))}
                 </div>
             </section>
+
             {/* 자유 게시판 */}
             <section>
                 <h2 className={styles.sectionTitle}>동아리 자유게시판</h2>
@@ -435,9 +436,23 @@ const Detail_club = () => {
                             onClick={() => handleViewPost(post)}
                             style={{ cursor: 'pointer' }}
                         >
-                            <img src={post.postImgs[0]} alt={post.title} className={styles.boardImage} />
-                            <h4 className={styles.boardTitle}>{post.title}</h4>
-                            <p className={styles.boardContent}>{post.content}</p>
+                            <img
+                                src={post.postImgs[0] || 'https://dummyimage.com/300x300/cccccc/000000?text=none'}
+                                alt={post.title}
+                                className={styles.boardImage}
+                            />
+                            <h4
+                                className={styles.boardTitle}
+                                style={{ WebkitLineClamp: '1', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                            >
+                                {post.title}
+                            </h4>
+                            <p
+                                className={styles.boardContent}
+                                style={{ WebkitLineClamp: '3', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                            >
+                                {post.content}
+                            </p>
 
                             {isClubAuth && (
                                 <div style={{ marginTop: '10px' }}>
