@@ -381,7 +381,7 @@ export async function getOutClub({ clubId, members }) {
     }
 }
 
-export async function makeMsgRoom({ name, members }) {
+export async function makeMsgRoom({ name, userId, clubId }) {
     try {
         const response = await fetch(URL + `msgRoom`, {
             method: 'POST',
@@ -390,7 +390,8 @@ export async function makeMsgRoom({ name, members }) {
             },
             body: JSON.stringify({
                 name,
-                members,
+                userId,
+                clubId,
             }),
         });
         if (response.ok) {

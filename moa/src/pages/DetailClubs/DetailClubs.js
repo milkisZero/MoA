@@ -189,7 +189,9 @@ const Detail_club = () => {
 
         const data = await makeMsgRoom({
             name: clubInfo.name + ' 문의방',
-            members: [...clubInfo.admin, userAuth._id],
+            userId,
+            clubId,
+            // members: [...clubInfo.admin, userAuth._id],
         });
         if (data) {
             goMessage(data._id);
@@ -257,8 +259,7 @@ const Detail_club = () => {
                 alert('게시글이 삭제되었습니다.');
 
                 // 삭제된 게시글을 제외한 나머지를 업데이트
-                if (data)
-                    setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
+                if (data) setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
             } catch (error) {
                 console.error('Error deleting post:', error);
                 alert('게시글 삭제 중 오류가 발생했습니다.');
