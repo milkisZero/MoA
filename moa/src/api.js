@@ -322,8 +322,10 @@ export async function approveClub({ clubId, userId, approve }) {
         });
         if (response.ok) {
             const data = await response.json();
+            console.log(data);
             return data;
         }
+        console.log(response);
     } catch (error) {
         console.log(error.message);
     }

@@ -13,12 +13,14 @@ import {
     getOutClub,
     getTotalPost,
     makeMsgRoom,
+    proposeClub,
     updateEvent,
 } from '../../api';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import EventModal from '../../components/EventModal.js';
 import DatePicker from '../../components/DatePicker/DatePicker';
+import ProposeModal from '../../components/ProposeModal.js';
 
 // 재사용 가능한 컴포넌트: 정보 섹션
 const InfoSection = ({ title, content, isLink }) => (
@@ -53,6 +55,8 @@ const Detail_club = () => {
     // const [roomId, setRoomId] = useState();
     const [isClubMem, setIsClubMem] = useState(userAuth ? userAuth.clubs.includes(clubId) : false);
     const [isClubAuth, setIsClubAuth] = useState(false);
+    const [isWaitingMem, setIsWaitingMem] = useState(false);
+
     const [selectedDate, setSelectedDate] = useState(new Date()); // 초기값을 현재 날짜로 설정
 
     const getDayOfWeek = (date) => {
@@ -149,8 +153,7 @@ const Detail_club = () => {
         }
         setIsClubMem(userAuth ? userAuth.clubs.includes(clubId) : false);
         setIsClubAuth(userAuth && clubInfo._id ? clubInfo.admin.includes(userAuth._id) : false);
-        // if (userAuth) console.log('user: ', clubInfo.admin.includes(userAuth._id));
-        // console.log(isClubAuth);
+        setIsWaitingMem(userAuth ? userAuth.waitingClubs.includes(clubId) : false);
     }, [userAuth, isFetching]);
 
     const goMessage = (roomId) => {
@@ -266,10 +269,26 @@ const Detail_club = () => {
         navigate(`/DetailPost/${post._id}`, { state: { post } });
     };
 
+    const handlePropose = async () => {
+        if (!userAuth) {
+            alert('로그인이 필요합니다');
+            return;
+        }
+
+        const confirmed = window.confirm('동아리에 가입요청을 보내시겠습니까?');
+        if (confirmed) {
+            try {
+                const data = await proposeClub({ clubId, userId: userAuth._id });
+                console.log(data);
+                if (data) setIsWaitingMem(true);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    };
     return (
         <div className={styles.container}>
             <Header />
-
             {/* 동아리 헤더 */}
             <div className={styles.header}>
                 <div className={styles.leftSection}>
@@ -287,6 +306,7 @@ const Detail_club = () => {
                             정보 수정
                         </button>
                     )}
+                    {isClubAuth && <ProposeModal clubId={clubId} userList={clubInfo.proposers}></ProposeModal>}
                 </div>
 
                 <div className={styles.rightSection}>
@@ -305,8 +325,19 @@ const Detail_club = () => {
                             >
                                 탈퇴하기
                             </button>
+                        ) : isWaitingMem ? (
+                            <button
+                                className={styles.joinButton}
+                                style={{ width: '40%', margin: '3%', backgroundColor: 'grey' }}
+                            >
+                                가입 대기
+                            </button>
                         ) : (
-                            <button className={styles.joinButton} style={{ width: '40%', margin: '3%' }}>
+                            <button
+                                className={styles.joinButton}
+                                style={{ width: '40%', margin: '3%' }}
+                                onClick={() => handlePropose()}
+                            >
                                 가입 신청
                             </button>
                         )}
@@ -330,7 +361,6 @@ const Detail_club = () => {
                     </div>
                 </div>
             </div>
-
             {/* 주요 활동 사진 */}
             {/* <section>
                 <h2 className={styles.sectionTitle}>동아리 주요 활동 사진</h2>
@@ -353,7 +383,6 @@ const Detail_club = () => {
             <div className="mt-4">
                 <p>선택된 날짜: {selectedDate.toLocaleDateString()}</p>
             </div>
-
             {/* 활동 일정 */}
             <section>
                 <h2 className={styles.sectionTitle}>동아리 활동 일정</h2>
@@ -384,7 +413,6 @@ const Detail_club = () => {
                     ))}
                 </div>
             </section>
-
             {/* 자유 게시판 */}
             <section>
                 <h2 className={styles.sectionTitle}>동아리 자유게시판</h2>
