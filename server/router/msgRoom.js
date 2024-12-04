@@ -11,19 +11,43 @@ const router = express.Router();
 // 채팅방 생성
 router.post('/', async (req, res) => {
     try {
-        const { name, members } = req.body;
+        const { name, userId, clubId } = req.body;
+
+        const user = await User.findById(userId);
+        if (!user)
+            return res.status(403).json({ message: 'User not found' });
+
+        const existingMsgRoom = await MsgRoom.findOne({
+            _id: { $in: user.msgRooms },
+            qnaRoomId: clubId,
+        })
+
+        if (existingMsgRoom) {
+            return res.status(200).json({
+                message: 'newMsgRoom found successfully',
+                newMsgRoom: existingMsgRoom,
+            });
+        };
+
+        const club = await Club.findById(clubId);
+        if (!club)
+            return res.status(403).json({ message: 'Club not found' });
+
         const newMsgRoom = new MsgRoom({
             name: name,
-            members: members,
+            members: [userId, club.admin[0]],
             messages: [],
+            qnaRoomId: clubId
         });
-
         await newMsgRoom.save();
-        await User.updateMany(
-            { _id: { $in: members }},
-            { $addToSet: { msgRooms: newMsgRoom._id }},
-        );
+        
+        user.msgRooms.push(newMsgRoom._id);
+        await user.save();
 
+        const admin = await User.findById(club.admin[0]);
+        admin.msgRooms.push(newMsgRoom._id);
+        await admin.save();
+        
         res.status(200).json({
             message: 'newMsgRoom created successfully',
             newMsgRoom,
