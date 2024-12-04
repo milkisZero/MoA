@@ -85,8 +85,8 @@ router.get('/total_club', async (req, res) => {
             Club.countDocuments(),
             Club.aggregate([
                 { $addFields: { memberCount: { $size: '$members' } }},
-                { $sort: { memberCount: -1 }},
-                { $skip: (page - 1) * limit},
+                { $sort: { memberCount: -1, createdAt: 1 }},
+                { $skip: (Number(page) - parseInt(1, 10)) * Number(limit)},
                 { $limit: Number(limit)},
             ]),
         ]);
