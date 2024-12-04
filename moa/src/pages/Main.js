@@ -29,7 +29,7 @@ function MainClubs() {
 
     const fetchData = async () => {
         const data = await getClubPage({ page, limit });
-        setclubList(data);
+        if (data) setclubList(data);
     };
 
     useEffect(() => {
@@ -52,7 +52,7 @@ function ListSection() {
 
     const fetchData = async () => {
         const data = await getClubPage({ page, limit });
-        setclubList(data);
+        if (data) setclubList(data);
     };
 
     useEffect(() => {

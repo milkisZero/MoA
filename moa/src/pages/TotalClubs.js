@@ -23,11 +23,13 @@ function ListSection() {
     const [page, setPage] = useState(1);
     const [pageNumbers, setPageNumbers] = useState([1, 2, 3, 4, 5]);
     const limit = 5;
+    const [totalPage, setTotalPage] = useState(5);
 
     const fetchData = async () => {
         const data = await getClubPage({ page, limit });
-        if (data.length > 0) {
-            setclubList(data);
+        if (data) {
+            setclubList(data.club);
+            setTotalPage(Math.ceil(data.totalNum / limit));
             window.scrollTo(0, 0);
         }
     };
@@ -37,11 +39,11 @@ function ListSection() {
     }, [page]);
 
     const movePageNum = (num) => {
-        setPage(Number(num));
+        if (num <= totalPage) setPage(Number(num));
     };
 
     const changePageNum = (num) => {
-        if (pageNumbers[0] + num > 0) {
+        if (pageNumbers[0] + num > 0 && pageNumbers[0] + num <= totalPage) {
             setPageNumbers(pageNumbers.map((item) => item + num));
             setPage(pageNumbers[0] + num);
         }
