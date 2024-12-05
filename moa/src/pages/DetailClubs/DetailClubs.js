@@ -321,47 +321,25 @@ const Detail_club = () => {
                     <InfoSection title="회장 연락처" content={clubInfo.phone} />
                     <InfoSection title="SNS" content={clubInfo.sns} isLink />
                     <div style={{ display: 'flex', direction: 'row' }}>
-                        {isClubMem ? (
-                            <button
-                                className={styles.joinButton}
-                                style={{ width: '40%', margin: '3%', backgroundColor: 'red' }}
-                                onClick={() => handleGetOut()}
-                            >
-                                탈퇴하기
-                            </button>
-                        ) : isWaitingMem ? (
-                            <button
-                                className={styles.joinButton}
-                                style={{ width: '40%', margin: '3%', backgroundColor: 'grey' }}
-                            >
-                                가입 대기
-                            </button>
-                        ) : (
-                            <button
-                                className={styles.joinButton}
-                                style={{ width: '40%', margin: '3%' }}
-                                onClick={() => handlePropose()}
-                            >
-                                가입 신청
-                            </button>
-                        )}
-                        {isClubMem ? (
-                            <button
-                                className={styles.joinButton}
-                                style={{ width: '40%', margin: '3%' }}
-                                onClick={() => goMessage(clubInfo.msgRoomId)}
-                            >
-                                채팅방으로
-                            </button>
-                        ) : (
-                            <button
-                                className={styles.joinButton}
-                                style={{ width: '40%', margin: '3%' }}
-                                onClick={() => handleInquire()}
-                            >
-                                문의하기
-                            </button>
-                        )}
+                        <button
+                            className={styles.joinButton}
+                            style={{
+                                width: '40%',
+                                margin: '3%',
+                                backgroundColor: isClubMem ? 'red' : isWaitingMem ? 'grey' : '#005bac',
+                            }}
+                            onClick={isClubMem ? () => handleGetOut() : isWaitingMem ? 1 : () => handlePropose()}
+                        >
+                            {isClubMem ? '탈퇴하기' : isWaitingMem ? '가입 대기' : '가입 신청'}
+                        </button>
+
+                        <button
+                            className={styles.joinButton}
+                            style={{ width: '40%', margin: '3%' }}
+                            onClick={isClubMem ? () => goMessage(clubInfo.msgRoomId) : () => handleInquire()}
+                        >
+                            {isClubMem ? '채팅방으로' : '문의하기'}
+                        </button>
                     </div>
                 </div>
             </div>

@@ -65,7 +65,11 @@ function ListSection() {
             <div className="page-Move">
                 <div onClick={() => changePageNum(-5)}>{'<'}</div>
                 {pageNumbers.map((item, index) => (
-                    <div key={index} onClick={() => movePageNum(item)}>
+                    <div
+                        key={index}
+                        onClick={() => movePageNum(item)}
+                        style={page === item ? { color: 'white', backgroundColor: 'grey' } : {}}
+                    >
                         {item}
                     </div>
                 ))}
