@@ -1,5 +1,9 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
+const multer = require('multer');
+const multerS3 = require('multer-s3');
+const { S3Client } = require('@aws-sdk/client-s3');
+
 const { User } = require('../model/User'); 
 const { Event } = require('../model/Event');
 const { Club } = require('../model/Club');
@@ -8,6 +12,24 @@ const { MsgRoom } = require('../model/MsgRoom');
 const { Message } = require('../model/Message');
 
 const router = express.Router();
+
+const s3 = new S3Client({
+    region: 'ap-northeast-2',
+    credentials: {
+        accessKeyId: '[ACCESS_KEYID]',
+        secretAccessKey: '[SECRET_ACCESS_KEY]',
+    },
+});
+
+const upload = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: 'moaprojects3',
+        key: function (req, file, cb) {
+            cb(null, Date.now().toString());
+        },
+    }),
+});
 
 // 회원가입
 const saltRounds = 10; // 해쉬 난도
@@ -70,6 +92,27 @@ router.post('/logout', (req, res) => {
         res.clearCookie('connect.sid', { path: '/' });
         res.status(200).json({ message: 'Logout Successfully' });
     });
+});
+
+// 프로필 사진 수정
+router.put('/:userId', upload.single('img'), async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userId);
+        if (!user)
+            return res.status(403).json({ message: 'User not found' });
+
+        const url = req.file.location;
+        user.profileImg = url;
+        await user.save();
+
+        res.status(200).json({
+            message: 'Successfully changed profileImg',
+            profileImg: url,
+        })
+    } catch (e) {
+        console.log('put error in /user/:userId: ', e);
+        return res.status(500).json({ message: 'Server get error in /user/:userId' });
+    }
 });
 
 // 마이페이지 불러오기
