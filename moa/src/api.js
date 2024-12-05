@@ -263,21 +263,21 @@ export async function deleteEvent({ clubId, eventId, userId }) {
     }
 }
 
-export async function getMyClubs({ userId }) {
+export async function getMyPage({userId}) {
     try {
-        const response = await fetch(URL + `user/club/${userId}/`);
+        const response = await fetch(URL + `user/mypage/${userId}`)
         if (response.ok) {
             const data = await response.json();
-            return data.clubs;
+            return data;
         }
     } catch (error) {
         console.log(error.message);
     }
 }
 
-export async function getMyEvents({ userId }) {
+export async function getMyEvents({ userId, year, month }) {
     try {
-        const response = await fetch(URL + `user/event/${userId}/`);
+        const response = await fetch(URL + `user/event/${userId}?year=${year}&month=${month}`);
         if (response.ok) {
             const data = await response.json();
             return data.foundEvents;
