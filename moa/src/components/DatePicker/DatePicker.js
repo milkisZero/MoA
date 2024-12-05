@@ -8,7 +8,7 @@ import Date from './Date';
 import Month from './Month';
 import DatePickerWrapper from './DatePickerWrapper';
 
-export default function DatePicker({ selectedDate, setSelectedDate }) {
+export default function DatePicker({ selectedDate, setSelectedDate, totalEvents }) {
     const ref = useRef(null);
     const [pickerType, setPickerType] = useState('');
     useOutSideClick(ref, () => setPickerType(''));
@@ -25,6 +25,7 @@ export default function DatePicker({ selectedDate, setSelectedDate }) {
                         selectedDate={selectedDate}
                         setSelectedDate={setSelectedDate}
                         onChangePickerType={() => setPickerType('month')}
+                        totalEvents={totalEvents}
                     />
                 );
             case 'month':

@@ -21,6 +21,8 @@ import { useAuth } from '../../context/AuthContext';
 import EventModal from '../../components/EventModal.js';
 import DatePicker from '../../components/DatePicker/DatePicker';
 import ProposeModal from '../../components/ProposeModal.js';
+import ko from 'date-fns/locale/ko';
+import { format } from 'date-fns';
 
 // 재사용 가능한 컴포넌트: 정보 섹션
 const InfoSection = ({ title, content, isLink }) => (
@@ -45,9 +47,6 @@ const Detail_club = () => {
     const [isFetching, setIsFetching] = useState(true);
 
     // 수정할 부분
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth() + 1; //
     const page = 1;
     const limit = 5;
 
@@ -70,6 +69,16 @@ const Detail_club = () => {
         });
         return time;
     };
+
+    const fetchEvent = async () => {
+        const [year, month] = [selectedDate.getFullYear(), selectedDate.getMonth() + 1];
+        const event_data = await getMonthEvent({ clubId, year, month });
+        setEvents(event_data);
+    };
+
+    useEffect(() => {
+        fetchEvent();
+    }, [selectedDate.getMonth() + 1]);
 
     const handleFormUpdate = async (event) => {
         if (!userAuth) {
@@ -113,7 +122,7 @@ const Detail_club = () => {
             location: event.location,
         });
         if (data) {
-            setIsFetching(true);
+            fetchEvent();
         } else {
             alert('작성에 실패했습니다');
         }
@@ -129,7 +138,7 @@ const Detail_club = () => {
         if (window.confirm('삭제하시겠습니까?') === false) return;
         const data = await deleteEvent({ clubId, eventId, userId: userAuth._id });
         if (data) {
-            setIsFetching(true);
+            fetchEvent();
         } else {
             alert('삭제에 실패했습니다');
         }
@@ -138,8 +147,7 @@ const Detail_club = () => {
     const fetchData = async () => {
         const club_data = await getClubDetail({ clubId });
         setClubInfo(club_data);
-        const event_data = await getMonthEvent({ clubId, year, month });
-        setEvents(event_data);
+
         const post_data = await getTotalPost({ clubId, page, limit });
         setPosts(post_data);
     };
@@ -328,7 +336,7 @@ const Detail_club = () => {
                                 margin: '3%',
                                 backgroundColor: isClubMem ? 'red' : isWaitingMem ? 'grey' : '#005bac',
                             }}
-                            onClick={isClubMem ? () => handleGetOut() : isWaitingMem ? 1 : () => handlePropose()}
+                            onClick={isClubMem ? () => handleGetOut() : isWaitingMem ? null : () => handlePropose()}
                         >
                             {isClubMem ? '탈퇴하기' : isWaitingMem ? '가입 대기' : '가입 신청'}
                         </button>
@@ -343,6 +351,7 @@ const Detail_club = () => {
                     </div>
                 </div>
             </div>
+
             {/* 주요 활동 사진 */}
             {/* <section>
                 <h2 className={styles.sectionTitle}>동아리 주요 활동 사진</h2>
@@ -358,43 +367,51 @@ const Detail_club = () => {
                 </div>
             </section> */}
 
-            <DatePicker
-                selectedDate={selectedDate} // 선택된 날짜
-                setSelectedDate={setSelectedDate} // 날짜 업데이트 함수
-            />
-            <div className="mt-4">
-                <p>선택된 날짜: {selectedDate.toLocaleDateString()}</p>
-            </div>
             {/* 활동 일정 */}
             <section>
                 <h2 className={styles.sectionTitle}>동아리 활동 일정</h2>
                 {isClubAuth && <EventModal isType={'create'} clubId={clubId} onSubmit={handleFormSubmit}></EventModal>}
                 <div className={styles.calendarSection}>
-                    {events.map((activity) => (
-                        <div key={activity._id} className={styles.eventBox}>
-                            <div>
-                                <p>{getDayOfWeek(new Date(activity.date))}</p>
-                                <p>{getTime(new Date(activity.date))}</p>
+                    <DatePicker
+                        selectedDate={selectedDate} // 선택된 날짜
+                        setSelectedDate={setSelectedDate} // 날짜 업데이트 함수
+                        totalEvents={events}
+                    />
+                </div>
+                <div className={styles.boardGrid}>
+                    {events
+                        .filter((event) => new Date(event.date).getDate() === selectedDate.getDate())
+                        .map((activity) => (
+                            <div key={activity._id} className={styles.eventBox}>
+                                <div>
+                                    <p>{getDayOfWeek(new Date(activity.date))}</p>
+                                    <p>{getTime(new Date(activity.date))}</p>
+                                    <p>날짜: {new Date(activity.date).toLocaleDateString()}</p>
+                                </div>
+                                <div>
+                                    <h3>제목: {activity.title}</h3>
+                                    <p>설명: {activity.description}</p>
+                                    <p>장소: {activity.location}</p>
+                                    {isClubAuth && (
+                                        <div style={{ display: 'flex' }}>
+                                            <EventModal
+                                                isType={'update'}
+                                                clubId={clubId}
+                                                eventId={activity._id}
+                                                onSubmit={handleFormUpdate}
+                                                preData={activity}
+                                            ></EventModal>
+                                            <button
+                                                style={{ marginLeft: '5%' }}
+                                                onClick={() => handleDelete(activity._id)}
+                                            >
+                                                삭제
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                            <div>
-                                <h3>제목: {activity.title}</h3>
-                                <p>장소: {activity.location}</p>
-                                <p>날짜: {new Date(activity.date).toLocaleDateString()}</p>
-                                {isClubAuth && (
-                                    <div>
-                                        <EventModal
-                                            isType={'update'}
-                                            clubId={clubId}
-                                            eventId={activity._id}
-                                            onSubmit={handleFormUpdate}
-                                            preData={activity}
-                                        ></EventModal>
-                                        <button onClick={() => handleDelete(activity._id)}>삭제</button>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    ))}
+                        ))}
                 </div>
             </section>
 

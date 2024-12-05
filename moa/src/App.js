@@ -39,6 +39,7 @@ import Pictures from './pages/Pictures';
 import Detail_club from './pages/DetailClubs/DetailClubs';
 import MakePost from './pages/MakePost';
 import DetailPost from './pages/DetailPost';
+import './index.css';
 
 function App() {
     return (

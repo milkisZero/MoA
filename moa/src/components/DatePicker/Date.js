@@ -5,7 +5,7 @@ import CaretRightIcon from '../../public/CaretRight.svg';
 import CaretDownIcon from '../../public/CaretDown.svg';
 import useCalender from '../../hooks/common/useCalender';
 
-export default function Date({ selectedDate, setSelectedDate, onChangePickerType }) {
+export default function Date({ selectedDate, setSelectedDate, onChangePickerType, totalEvents }) {
     const { currentMonthAllDates, weekDays } = useCalender(selectedDate);
 
     const nextMonth = () => {
@@ -19,6 +19,8 @@ export default function Date({ selectedDate, setSelectedDate, onChangePickerType
     const onChangeDate = (date) => {
         setSelectedDate(date);
     };
+
+    const events = totalEvents.map((e) => new window.Date(e.date).getDate());
 
     return (
         <div className="flex flex-col gap-1">
@@ -45,20 +47,27 @@ export default function Date({ selectedDate, setSelectedDate, onChangePickerType
             </div>
             <div className="grid grid-cols-7">
                 {currentMonthAllDates.map((date, index) => (
-                    <button
-                        key={index}
-                        className={`p-2 rounded-full 
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <button
+                            key={index}
+                            className={`mb-3 rounded-full h-7 w-7           
               ${isSameMonth(selectedDate, date) ? '' : 'text-grey-200'}
               ${
                   isSameDay(selectedDate, date)
                       ? 'bg-primary-200 text-[#FFFFFF]'
                       : 'hover:bg-primary-50 hover:text-primary-200'
               }`}
-                        type="button"
-                        onClick={() => onChangeDate(date)}
-                    >
-                        {date.getDate()}
-                    </button>
+                            type="button"
+                            onClick={() => onChangeDate(date)}
+                        >
+                            {date.getDate()}
+                        </button>
+                        <div
+                            className={`mb-3 w-2 h-2  rounded-full ${
+                                events.includes(date.getDate()) ? 'bg-orange-500' : 'bg-white-500 '
+                            }`}
+                        ></div>
+                    </div>
                 ))}
             </div>
         </div>
