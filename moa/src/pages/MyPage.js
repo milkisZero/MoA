@@ -4,9 +4,9 @@ import { useAuth } from '../context/AuthContext';
 import { getMyPage, getMyEvents } from '../api';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import ItemCompo from '../components/ItemCompo';
-import ClubItem from '../components/ClubItem';
+import DatePicker from '../components/DatePicker/DatePicker';
 import tmp from '../assets/sample.png';
+import styles from './DetailClubs/DetailClubs.module.css';
 import '../css/Mypage.css';
 
 function MyPage() {
@@ -16,12 +16,35 @@ function MyPage() {
     const [clubs, setClubs] = useState([]);
     const [events, setEvents] = useState([]);
     const [msgRooms, setMsgRooms] = useState([]);
-    const [year, setYear] = useState(2024);
-    const [month, setMonth] = useState(12);
     const { userAuth } = useAuth();
     const navigate = useNavigate();
 
-    async function fetchData()  {
+    const [selectedDate, setSelectedDate] = useState(new Date()); // 초기값을 현재 날짜로 설정
+
+    const getDayOfWeek = (date) => {
+        const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+        return days[date.getDay()];
+    };
+    const getTime = (date) => {
+        const time = date.toLocaleTimeString('ko-KR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+        });
+        return time;
+    };
+
+    const fetchEvent = async () => {
+        const [year, month] = [selectedDate.getFullYear(), selectedDate.getMonth() + 1];
+        const event_data = await getMyEvents({ userId: userAuth._id, year, month });
+        setEvents(event_data);
+    };
+
+    useEffect(() => {
+        fetchEvent();
+    }, [selectedDate.getMonth() + 1]);
+
+    const fetchData = async () => {
         if (!userAuth?._id) return;
         try {
             const data = await getMyPage({ userId: userAuth._id });
@@ -30,10 +53,6 @@ function MyPage() {
             setProfileImg(data.user.profileImg);
             setClubs(data.clubs);
             setMsgRooms(data.msgRooms);
-
-            const events = await getMyEvents({ userId: userAuth._id, year, month });
-            console.log(events);
-            setEvents(events);
         } catch (e) {
             console.error('Failed to fetch MyPage data:', e);
         }
@@ -59,28 +78,19 @@ function MyPage() {
         fetchData();
     }, [userAuth]);
 
-    const list = [
-        { image: tmp, title: '동아리1' },
-        { image: tmp, title: '동아리2' },
-        { image: tmp, title: '동아리3' },
-    ];
-
     return (
         <div>
             <Header />
             <section>
-                <h2 style={{ textAlign: 'center'}}>My프로필</h2>
+                <h2 style={{ textAlign: 'center' }}>My프로필</h2>
                 <div className="profile-section">
                     <div className="profile-container">
                         <img src={profileImg || tmp} alt="Profile" className="profile-img" />
                         <div className="profile-info">
                             <h2>{name}</h2>
                             <p>{email}</p>
-                            <button
-                                className="edit-button"
-                                onClick={() => navigate('/edit-profile')}
-                            >
-                                회원 정보 수정하기
+                            <button>
+                                프로필 사진 변경하기
                             </button>
                         </div>
                     </div>
@@ -112,7 +122,7 @@ function MyPage() {
                 </div>
             </section>
 
-            <section>
+            {/* <section>
                 <h2 style={{ textAlign: 'center'}}>My 일정</h2>
                 <div className="event-list-horizontal">
                     {events.map((event) => (
@@ -124,7 +134,37 @@ function MyPage() {
                         </div>
                     ))}
                 </div>
+            </section> */}
+
+            <section>
+                <h2 className={styles.sectionTitle}>동아리 활동 일정</h2>
+                <div className={styles.calendarSection}>
+                    <DatePicker
+                        selectedDate={selectedDate} // 선택된 날짜
+                        setSelectedDate={setSelectedDate} // 날짜 업데이트 함수
+                        totalEvents={events}
+                    />
+                </div>
+                <div className={styles.boardGrid}>
+                    {events
+                        .filter((event) => new Date(event.date).getDate() === selectedDate.getDate())
+                        .map((activity) => (
+                            <div key={activity._id} className={styles.eventBox}>
+                                <div>
+                                    <p>{getDayOfWeek(new Date(activity.date))}</p>
+                                    <p>{getTime(new Date(activity.date))}</p>
+                                    <p>날짜: {new Date(activity.date).toLocaleDateString()}</p>
+                                </div>
+                                <div>
+                                    <h3>제목: {activity.title}</h3>
+                                    <p>설명: {activity.description}</p>
+                                    <p>장소: {activity.location}</p>
+                                </div>
+                            </div>
+                        ))}
+                </div>
             </section>
+
             <Footer />
         </div>
     );

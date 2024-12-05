@@ -39,7 +39,7 @@
     color: #555;
 }
 
-.edit-button {
+.profile-info button {
     background-color: #007bff;
     color: white;
     border: none;
@@ -48,7 +48,7 @@
     cursor: pointer;
 }
 
-.edit-button:hover {
+profile-info button:hover {
     background-color: #0056b3;
 }
 
