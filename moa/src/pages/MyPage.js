@@ -4,8 +4,9 @@ import { useAuth } from '../context/AuthContext';
 import { getMyPage, getMyEvents } from '../api';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import ProfileImgModal from '../components/ProfileImgModal.js';
 import DatePicker from '../components/DatePicker/DatePicker';
-import tmp from '../assets/sample.png';
+import tmp from '../assets/hi.png';
 import styles from './DetailClubs/DetailClubs.module.css';
 import '../css/Mypage.css';
 
@@ -16,6 +17,7 @@ function MyPage() {
     const [clubs, setClubs] = useState([]);
     const [events, setEvents] = useState([]);
     const [msgRooms, setMsgRooms] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const { userAuth } = useAuth();
     const navigate = useNavigate();
 
@@ -35,14 +37,11 @@ function MyPage() {
     };
 
     const fetchEvent = async () => {
+        if (!userAuth || !userAuth._id) return;
         const [year, month] = [selectedDate.getFullYear(), selectedDate.getMonth() + 1];
         const event_data = await getMyEvents({ userId: userAuth._id, year, month });
         setEvents(event_data);
     };
-
-    useEffect(() => {
-        fetchEvent();
-    }, [selectedDate.getMonth() + 1]);
 
     const fetchData = async () => {
         if (!userAuth?._id) return;
@@ -74,9 +73,9 @@ function MyPage() {
         navigate(`/Message/${msgRoomId}`)
     }
 
-    useEffect(() => {
-        fetchData();
-    }, [userAuth]);
+    useEffect(() => { fetchEvent() }, [selectedDate.getMonth(), userAuth]);
+    useEffect(() => { fetchData()  }, [userAuth]);
+    useEffect(() => {              }, [isModalOpen]);
 
     return (
         <div>
@@ -89,11 +88,21 @@ function MyPage() {
                         <div className="profile-info">
                             <h2>{name}</h2>
                             <p>{email}</p>
-                            <button>
+                            <button onClick={() => setIsModalOpen(true)}>
                                 프로필 사진 변경하기
                             </button>
                         </div>
                     </div>
+                    {isModalOpen && (
+                        <ProfileImgModal
+                            currentImg={profileImg || tmp}
+                            onClose={() => setIsModalOpen(false)}
+                            onSave={(newImg) => {
+                                setProfileImg(newImg);
+                                setIsModalOpen(false);
+                            }}
+                        />
+                    )}
                 </div>
             </section>
             

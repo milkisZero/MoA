@@ -403,4 +403,19 @@ export async function makeMsgRoom({ name, userId, clubId }) {
     }
 }
 
+export async function editProfileImg({ userId, formData }) {
+    try {
+        const response = await fetch(URL + `user/${userId}`, {
+            method: 'PUT',
+            body: formData,
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data.profileImg;
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 // 관리자 추가 삭제
