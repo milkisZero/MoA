@@ -72,52 +72,36 @@ router.post('/logout', (req, res) => {
     });
 });
 
-// 마이페이지 - 일정보기
-router.get('/event/:userId', async (req, res) => {
+// 마이페이지 불러오기
+router.get('/mypage/:userId', async (req, res) => {
     try {
-        const { year, month } = req.query;
-
         const user = await User.findById(req.params.userId);
-        if (!user) return res.status(404).json({ message: 'User cannot found'});
+        if (!user)
+            return res.status(404).json({ message: 'User not found' });
 
-        const startDate = new Date(`${year}-${month}-01`);
-        const endDate = month === '12'
-            ? new Date(`${parseInt(year) + 1}-01-01`)
-            : new Date(`${year}-${parseInt(month) + 1}-01`);
+        const clubs = await Club.find({ _id: { $in: user.clubs } })
+            .select('_id name description clubImg events') 
+            .populate('events')
+            .lean(); 
 
-        const foundEvents = await Event.find({
-            clubId: { $in: user.clubs },
-            date: {
-                $gte: startDate,
-                $lt: endDate,
-            },
-        });
+        const msgRooms = await MsgRoom.find({ _id: { $in: user.msgRooms } })
+            .select('_id name') 
+            .lean();
 
-        return res.status(200).json({
-            message: "Successfully get mypage club event list",
-            foundEvents,
-        });
-    } catch (err) {
-        console.log('get error in /user/event/:userId: ', e);
-        return res.status(500).json({ message: 'Server get error in /user/event/:userId' });
-    }
-});
-
-// 마이페이지 - 동아리보기
-router.get('/club/:userId', async (req, res) => {
-    try {
-        const user = await User.findById(req.params.userId).populate('clubs');
-        if (!user) return res.status(404).json({ message: 'User cannot found'});
-
-        const clubs = user.clubs;
-
-        return res.status(200).json({
-            message: "Successfully get mypage club list",
-            clubs,
-        });
+        res.status(200).json({
+            message: 'Successfully get mypage',
+            clubs: clubs.map((club) => ({
+                _id: club._id,
+                name: club.name,
+                description: club.description,
+                clubImg: club.clubImg,
+                events: club.events,
+            })),
+            msgRooms,
+        })
     } catch (e) {
-        console.log('get error in /user/club/:userId: ', e);
-        return res.status(500).json({ message: 'Server get error in /user/club/:userId' });
+        console.log('get error in /user/mypage/:userId: ', e);
+        return res.status(500).json({ message: 'Server get error in /user/mypage/:userId' });
     }
 });
 
