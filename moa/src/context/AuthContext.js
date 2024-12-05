@@ -18,7 +18,11 @@ function AuthProvider({ children }) {
 
             if (response.ok) {
                 const data = await response.json();
-                setUserAuth(data.user);
+
+                // 값이 다를 경우에만 상태 업데이트
+                if (JSON.stringify(userAuth) !== JSON.stringify(data.user)) {
+                    setUserAuth(data.user);
+                }
             } else {
                 console.log('세션 해제');
                 setUserAuth(null);

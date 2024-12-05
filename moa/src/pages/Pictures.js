@@ -34,7 +34,7 @@ function Pictures() {
             if (Array.isArray(clubData[key])) {
                 clubData[key].forEach((item) => {
                     formData.append(key, item); // 배열의 각 항목을 개별적으로 추가
-                    });
+                });
             } else {
                 formData.append(key, clubData[key]); // 배열이 아닌 일반 값은 그대로 추가
             }
@@ -48,7 +48,7 @@ function Pictures() {
                 method: 'POST',
                 body: formData, // FormData를 body로 사용
             });
-            
+
             if (response.ok) {
                 alert('Club created successfully!');
                 const responseData = await response.json(); // JSON 형식으로 응답 받기

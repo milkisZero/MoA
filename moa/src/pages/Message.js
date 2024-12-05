@@ -92,6 +92,11 @@ function Message() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!userAuth) {
+            alert('로그인이 필요합니다');
+            return;
+        }
+
         if (sendMsg.trim()) {
             socket.emit('sendMsg', {
                 msgRoomId: roomId,

@@ -72,43 +72,45 @@ function MakeClub() {
                     <h2>{!club ? '신규 동아리 등록' : '동아리 정보 수정'}</h2>
                     <form onSubmit={handleSubmit} className="register-inside">
                         <label htmlFor="fileInput">
-                            {preview && (
-                                <button
-                                    type="button"
-                                    onClick={handleImgDelete}
+                            <div style={{ position: 'relative', display: 'inline-block' }}>
+                                {preview && (
+                                    <button
+                                        type="button"
+                                        onClick={handleImgDelete}
+                                        style={{
+                                            position: 'absolute',
+                                            top: '-5px',
+                                            right: '-5px',
+                                            width: '30px',
+                                            height: '30px',
+                                            background: 'red',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '50%',
+                                            fontSize: '16px',
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            cursor: 'pointer',
+                                            zIndex: 10,
+                                        }}
+                                    >
+                                        ×
+                                    </button>
+                                )}
+                                <img
+                                    src={preview || 'https://dummyimage.com/300x300/cccccc/000000?text=Image'} // 미리보기 or placeholder
+                                    alt="Club Preview"
                                     style={{
-                                        position: 'absolute',
-                                        top: '200px',
-                                        right: '550px',
-                                        width: '30px',
-                                        height: '30px',
-                                        background: 'red',
-                                        color: 'white',
-                                        border: 'none',
-                                        borderRadius: '50%',
-                                        fontSize: '16px',
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
+                                        width: '150px',
+                                        height: '150px',
+                                        objectFit: 'cover',
+                                        borderRadius: '10px',
+                                        marginBottom: '10px',
                                         cursor: 'pointer',
-                                        zIndex: 10,
                                     }}
-                                >
-                                    ×
-                                </button>
-                            )}
-                            <img
-                                src={preview || 'https://dummyimage.com/300x300/cccccc/000000?text=Image'} // 미리보기 or placeholder
-                                alt="Club Preview"
-                                style={{
-                                    width: '150px',
-                                    height: '150px',
-                                    objectFit: 'cover',
-                                    borderRadius: '10px',
-                                    marginBottom: '10px',
-                                    cursor: 'pointer',
-                                }}
-                            />
+                                />
+                            </div>
                         </label>
                         <input
                             id="fileInput"

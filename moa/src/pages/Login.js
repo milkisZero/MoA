@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../css/Pages.css';
 import { useNavigate } from 'react-router-dom';
-
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthContext';
@@ -9,7 +8,7 @@ import { useAuth } from '../context/AuthContext';
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { userAuth, userLogin } = useAuth();
+    const { userLogin } = useAuth();
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {

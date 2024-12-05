@@ -52,10 +52,9 @@ const Detail_club = () => {
     const limit = 5;
 
     const navigate = useNavigate();
-    // const [roomId, setRoomId] = useState();
     const [isClubMem, setIsClubMem] = useState(userAuth ? userAuth.clubs.includes(clubId) : false);
     const [isClubAuth, setIsClubAuth] = useState(false);
-    const [isWaitingMem, setIsWaitingMem] = useState(false);
+    const [isWaitingMem, setIsWaitingMem] = useState(userAuth ? userAuth.waitingClubs.includes(clubId) : false);
 
     const [selectedDate, setSelectedDate] = useState(new Date()); // 초기값을 현재 날짜로 설정
 
@@ -139,7 +138,6 @@ const Detail_club = () => {
     const fetchData = async () => {
         const club_data = await getClubDetail({ clubId });
         setClubInfo(club_data);
-        console.log(club_data);
         const event_data = await getMonthEvent({ clubId, year, month });
         setEvents(event_data);
         const post_data = await getTotalPost({ clubId, page, limit });
@@ -151,10 +149,14 @@ const Detail_club = () => {
             fetchData();
             setIsFetching(false);
         }
+    }, [isFetching]);
+
+    useEffect(() => {
+        if (clubInfo && clubInfo._id)
+            setIsClubAuth(userAuth && clubInfo ? clubInfo.admin.includes(userAuth._id) : false);
         setIsClubMem(userAuth ? userAuth.clubs.includes(clubId) : false);
-        setIsClubAuth(userAuth && clubInfo._id ? clubInfo.admin.includes(userAuth._id) : false);
         setIsWaitingMem(userAuth ? userAuth.waitingClubs.includes(clubId) : false);
-    }, [userAuth, isFetching]);
+    }, [clubInfo, userAuth]);
 
     const goMessage = (roomId) => {
         if (!roomId) {
@@ -400,16 +402,18 @@ const Detail_club = () => {
                                 <h3>제목: {activity.title}</h3>
                                 <p>장소: {activity.location}</p>
                                 <p>날짜: {new Date(activity.date).toLocaleDateString()}</p>
-                                <div>
-                                    <EventModal
-                                        isType={'update'}
-                                        clubId={clubId}
-                                        eventId={activity._id}
-                                        onSubmit={handleFormUpdate}
-                                        preData={activity}
-                                    ></EventModal>
-                                    <button onClick={() => handleDelete(activity._id)}>삭제</button>
-                                </div>
+                                {isClubAuth && (
+                                    <div>
+                                        <EventModal
+                                            isType={'update'}
+                                            clubId={clubId}
+                                            eventId={activity._id}
+                                            onSubmit={handleFormUpdate}
+                                            preData={activity}
+                                        ></EventModal>
+                                        <button onClick={() => handleDelete(activity._id)}>삭제</button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))}
