@@ -116,8 +116,8 @@ function Message() {
 
                 <div className="msg-info">
                     <div className="user-list">
-                        {totalUser.map((prev, index) => (
-                            <UserBox key={index} name={prev.name} />
+                        {totalUser.map((user, index) => (
+                            <UserBox key={index} name={user.name} profileImg={user.profileImg} />
                         ))}
                     </div>
                     <div className="msg-screen">
@@ -128,10 +128,11 @@ function Message() {
                                     senderName={msg.senderName}
                                     content={msg.content}
                                     timestamp={msg.timestamp}
+                                    profileImg={msg.profileImg}
                                 />
                             </div>
                         ))}
-                        <div id="observer">dddd</div>
+                        <div id="observer">_</div>
                     </div>
                 </div>
                 <form onSubmit={handleSubmit} className="msg-input">
@@ -146,20 +147,24 @@ function Message() {
     );
 }
 
-function UserBox({ name }) {
+function UserBox({ name, profileImg }) {
     return (
         <div className="user-box">
-            <FontAwesomeIcon icon={faUserCircle} size="2x" />
+            {profileImg ? (
+                <img src={profileImg} alt={name} className="user-icon" />
+            ) : (
+                <FontAwesomeIcon icon={faUserCircle} size="2x" />
+            )}
             <div className="user-info">{name}</div>
         </div>
     );
 }
 
-function MessageBox({ senderName, content, timestamp }) {
+function MessageBox({ senderName, content, timestamp, profileImg }) {
     const time = new Date(timestamp).toLocaleTimeString();
     return (
         <div className="msg-message">
-            <UserBox name={senderName} />
+            <UserBox name={senderName} profileImg={profileImg} />
             <p>{content}</p>
             <p>{time}</p>
         </div>

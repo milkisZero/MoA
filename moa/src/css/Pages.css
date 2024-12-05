@@ -453,6 +453,13 @@ header {
   flex-shrink: 0;
 }
 
+.user-icon {
+    width: 33px;
+    height: 33px;
+    border-radius: 50%; /* 원형으로 만들기 */
+    object-fit: cover;
+}
+
 .user-info {
   display: flex;
   flex-direction: column;

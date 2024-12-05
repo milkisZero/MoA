@@ -77,7 +77,7 @@ router.get('/name/:msgRoomId', async (req, res) => {
 router.get('/users/:msgRoomId', async (req, res) => {
     try {
         const msgRoomId = req.params.msgRoomId;
-        const msgRoom = await MsgRoom.findById(msgRoomId).populate('members', 'name');
+        const msgRoom = await MsgRoom.findById(msgRoomId).populate('members', 'name profileImg');
 
         if (!msgRoom) return res.status(404).json({ message: 'Chat room not found' });
 
