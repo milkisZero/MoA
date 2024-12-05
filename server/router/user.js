@@ -80,21 +80,24 @@ router.get('/mypage/:userId', async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
 
         const clubs = await Club.find({ _id: { $in: user.clubs } })
-            .select('_id name description clubImg events') 
+            .select('_id name description clubImg events msgRoomId') 
             .populate('events')
             .lean(); 
 
-        const msgRooms = await MsgRoom.find({ _id: { $in: user.msgRooms } })
-            .select('_id name') 
-            .lean();
+        const msgRooms = await MsgRoom.find({ 
+                _id: { $in: user.msgRooms }, 
+                qnaRoomId: { $exists: true } 
+            }).select('_id name').lean();
 
         res.status(200).json({
             message: 'Successfully get mypage',
+            user,
             clubs: clubs.map((club) => ({
                 _id: club._id,
                 name: club.name,
                 description: club.description,
                 clubImg: club.clubImg,
+                msgRoomId: club.msgRoomId,
                 events: club.events,
             })),
             msgRooms,
@@ -102,6 +105,36 @@ router.get('/mypage/:userId', async (req, res) => {
     } catch (e) {
         console.log('get error in /user/mypage/:userId: ', e);
         return res.status(500).json({ message: 'Server get error in /user/mypage/:userId' });
+    }
+});
+
+router.get('/event/:userId', async (req, res) => {
+    try {
+        const { year, month } = req.query;
+
+        const user = await User.findById(req.params.userId);
+        if (!user) return res.status(404).json({ message: 'User cannot found'});
+
+        const startDate = new Date(`${year}-${month}-01`);
+        const endDate = month === '12'
+            ? new Date(`${parseInt(year) + 1}-01-01`)
+            : new Date(`${year}-${parseInt(month) + 1}-01`);
+
+        const foundEvents = await Event.find({
+            clubId: { $in: user.clubs },
+            date: {
+                $gte: startDate,
+                $lt: endDate,
+            },
+        });
+
+        return res.status(200).json({
+            message: "Successfully get mypage club event list",
+            foundEvents,
+        });
+    } catch (e) {
+        console.log('get error in /user/event/:userId: ', e);
+        return res.status(500).json({ message: 'Server get error in /user/event/:userId' });
     }
 });
 
