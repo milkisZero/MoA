@@ -7,7 +7,7 @@ import Footer from '../components/Footer';
 import ClubItem from '../components/ClubItem';
 import { getClubPage } from '../api';
 import { Link, Navigate } from 'react-router-dom';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 
 function TotalClubs() {
     return (
@@ -28,28 +28,42 @@ function ListSection() {
     const [totalPage, setTotalPage] = useState(5);
     const navigate = useNavigate();
 
+    const { pathname } = useLocation();
+    useEffect(() => {
+        console.log(pathname);
+        console.log(urlPage);
+        setPage(urlPage);
+        fetchData();
+    }, [pathname]);
+
     const fetchData = async () => {
         const data = await getClubPage({ page, limit });
         if (data) {
             setclubList(data.club);
             setTotalPage(Math.ceil(data.totalNum / limit));
-            window.scrollTo(0, 0);
+            //window.scrollTo(0, 0);
         }
     };
 
     useEffect(() => {
-        fetchData();
+        console.log('page:', page);
+        // fetchData();
         if (Number(urlPage) !== page) {
             navigate(`/TotalClubs/${page}`); // URL 업데이트
         }
     }, [page]);
 
     const movePageNum = (num) => {
-        if (num <= totalPage) setPage(Number(num));
+        if (num <= totalPage) {
+            sessionStorage.setItem('page', page); // 페이지 상태 저장
+            setPage(Number(num));
+        }
     };
 
     const changePageNum = (num) => {
         if (pageNumbers[0] + num > 0 && pageNumbers[0] + num <= totalPage) {
+            sessionStorage.setItem('page', page); // 페이지 상태 저장
+            sessionStorage.setItem('frontNum', pageNumbers[0]); // 페이지 상태 저장
             setPageNumbers(pageNumbers.map((item) => item + num));
             setPage(pageNumbers[0] + num);
         }
