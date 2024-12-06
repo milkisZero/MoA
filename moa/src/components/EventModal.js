@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
+import styles from '../pages/DetailClubs/DetailClubs.module.css';
 
 const EventModal = ({ isType, clubId, eventId, onSubmit, preData }) => {
     const toLocalTime = (utcDate) => {
@@ -31,9 +32,16 @@ const EventModal = ({ isType, clubId, eventId, onSubmit, preData }) => {
     };
 
     return (
-        <div>
-            <button onClick={handleOpen}>{isType === 'create' ? '새 일정' : '수정'}</button>
+        <div style={isType === 'create' ? {} : {}}>
+            <button
+                onClick={handleOpen}
+                className={isType === 'create' ? styles.joinButton : ''}
+                style={isType === 'create' ? { width: '10%', marginBottom: '2%', fontSize: '100%' } : {}}
+            >
+                {isType === 'create' ? '새 일정' : '수정'}
+            </button>
             <Modal
+                className="EventModal"
                 appElement={document.getElementById('root')}
                 isOpen={isOpen}
                 onRequestClose={handleClose}
@@ -49,8 +57,8 @@ const EventModal = ({ isType, clubId, eventId, onSubmit, preData }) => {
                     },
                 }}
             >
-                <h2>{isType === 'create' ? '일정 작성' : '일정 수정'}</h2>
                 <form onSubmit={handleSubmit}>
+                    <h2>{isType === 'create' ? '일정 작성' : '일정 수정'}</h2>
                     <label>
                         제목:
                         <input

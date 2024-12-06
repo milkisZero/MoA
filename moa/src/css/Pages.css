@@ -621,3 +621,70 @@ button {
     left: 70%;
     bottom: 50%;
 }
+
+
+.EventModal form {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+.EventModal label {
+  display: block;
+  margin-bottom: 15px;
+  font-weight: bold;
+  color: #333;
+}
+
+.EventModal label input,
+label textarea {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.EventModal textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.EventModal input:focus,
+textarea:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.EventModal button {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.EventModal button[type="submit"] {
+  background-color: #007bff;
+  color: white;
+}
+
+.EventModal button[type="button"] {
+  background-color: #6c757d;
+  color: white;
+}
+
+.EventModal button:hover {
+  opacity: 0.9;
+}

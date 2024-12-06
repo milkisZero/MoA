@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { getMembers, setNewAdmin } from '../api';
-import basicImg from '../assets/hi.png'
+import basicImg from '../assets/hi.png';
+import styles from '../pages/DetailClubs/DetailClubs.module.css';
 
 const MemListModal = ({ clubId }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -24,7 +25,7 @@ const MemListModal = ({ clubId }) => {
             const club = await setNewAdmin({ clubId, admin: selectedUserId });
             if (club) {
                 alert('회장이 성공적으로 변경되었습니다.');
-                setIsOpen(false); 
+                setIsOpen(false);
                 window.location.reload();
             } else {
                 alert('회장 변경에 실패했습니다.');
@@ -38,14 +39,16 @@ const MemListModal = ({ clubId }) => {
     return (
         <div>
             <button
-                style={{
-                    backgroundColor: '#007bff',
-                    color: 'white',
-                    border: 'none',
-                    padding: '10px 20px',
-                    borderRadius: '5px',
-                    cursor: 'pointer',
-                }}
+                className={styles.joinButton}
+                style={{ width: '100%', margin: '0%', fontSize: '100%' }}
+                // style={{
+                //     backgroundColor: '#007bff',
+                //     color: 'white',
+                //     border: 'none',
+                //     padding: '10px 20px',
+                //     borderRadius: '5px',
+                //     cursor: 'pointer',
+                // }}
                 onClick={handleOpen}
             >
                 회장 임명하기
@@ -80,14 +83,13 @@ const MemListModal = ({ clubId }) => {
                                     border: '1px solid #ddd',
                                     marginBottom: '10px',
                                     cursor: 'pointer',
-                                    backgroundColor:
-                                        selectedUserId === user._id ? '#f0f8ff' : 'transparent',
+                                    backgroundColor: selectedUserId === user._id ? '#f0f8ff' : 'transparent',
                                     borderRadius: '5px',
                                 }}
                                 onClick={() => setSelectedUserId(user._id)}
                             >
                                 <img
-                                    src={ user.profileImg || basicImg }
+                                    src={user.profileImg || basicImg}
                                     alt={user.name}
                                     style={{
                                         width: '40px',

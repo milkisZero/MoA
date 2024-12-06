@@ -14,7 +14,7 @@ function ItemCompo({ item }) {
     };
 
     return (
-        <div className="main-clubs" onClick={() => handlePage(item._id)} style={{ cursor: 'pointer' }}>
+        <div className="mypage-item" onClick={() => handlePage(item._id)} style={{ cursor: 'pointer', margin: '2%' }}>
             <img src={item.clubImg || 'https://dummyimage.com/300x300/cccccc/000000?text=none'}></img>
             <h3>{item.name}</h3>
             <p>{item.description}</p>

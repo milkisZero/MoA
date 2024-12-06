@@ -14,7 +14,7 @@ function Main() {
         <div>
             <Header />
             <section className="main-section" />
-            <h3 style={{ textAlign: 'center', marginBottom: '0' }}>인기순 TOP3</h3>
+            <h2 style={{ textAlign: 'center', marginTop: '2%' }}>인기순 TOP3</h2>
             <MainClubs />
             <ListSection />
             <Footer />

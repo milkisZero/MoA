@@ -336,23 +336,25 @@ const Detail_club = () => {
                         alt={`${clubInfo.name} 사진`}
                         className={styles.clubImage}
                     />
-                    {isClubAuth && (
-                        <button
-                            className={styles.joinButton}
-                            style={{ width: '20%', margin: '3%', fontSize: '100%' }}
-                            onClick={() => handleUpdateClub()}
-                        >
-                            정보 수정
-                        </button>
-                    )}
-                    {isClubAuth && <ProposeModal clubId={clubId} userList={clubInfo.proposers}></ProposeModal>}
-                    <div className="profile-container">
-                        <h1>동아리 회장</h1>
+                    <div className="profile-container" style={isClubAuth ? { width: '80%' } : {}}>
                         <img src={admin.profileImg || basicProfileImg} alt="Profile" className="profile-img" />
                         <div className="profile-info">
+                            <h1>회장</h1>
                             <h2>{admin.name}</h2>
                             <p>{admin.email}</p>
+                        </div>
+                        <div className="profile-info">
                             {isClubAuth && <MemListModal clubId={clubId} userList={clubInfo.members}></MemListModal>}
+                            {isClubAuth && <ProposeModal clubId={clubId} userList={clubInfo.proposers}></ProposeModal>}
+                            {isClubAuth && (
+                                <button
+                                    className={styles.joinButton}
+                                    style={{ width: '100%', margin: '0%', fontSize: '100%' }}
+                                    onClick={() => handleUpdateClub()}
+                                >
+                                    정보 수정
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -414,17 +416,17 @@ const Detail_club = () => {
                         )
                         .map((activity) => (
                             <div key={activity._id} className={styles.eventBox}>
-                                <div>
+                                <div style={{ width: '40%' }}>
                                     <p>{getDayOfWeek(new Date(activity.date))}</p>
                                     <p>{getTime(new Date(activity.date))}</p>
                                     <p>{new Date(activity.date).toLocaleDateString()}</p>
                                 </div>
                                 <div>
-                                    <h3>제목: {activity.title}</h3>
-                                    <p>설명: {activity.description}</p>
+                                    <h3>일정: {activity.title}</h3>
+                                    <p>내용: {activity.description}</p>
                                     <p>장소: {activity.location}</p>
                                     {isClubAuth && (
-                                        <div style={{ display: 'flex' }}>
+                                        <div style={{ display: 'flex', gap: '10%', marginTop: '5%' }}>
                                             <EventModal
                                                 isType={'update'}
                                                 clubId={clubId}
@@ -432,12 +434,7 @@ const Detail_club = () => {
                                                 onSubmit={handleFormUpdate}
                                                 preData={activity}
                                             ></EventModal>
-                                            <button
-                                                style={{ marginLeft: '5%' }}
-                                                onClick={() => handleDelete(activity._id)}
-                                            >
-                                                삭제
-                                            </button>
+                                            <button onClick={() => handleDelete(activity._id)}>삭제</button>
                                         </div>
                                     )}
                                 </div>

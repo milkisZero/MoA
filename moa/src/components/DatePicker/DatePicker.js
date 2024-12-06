@@ -49,6 +49,7 @@ export default function DatePicker({ selectedDate, setSelectedDate, totalEvents 
                 className="p-4 rounded-[10px] focus-primary body1 w-full text-center cursor-pointer"
                 readOnly
                 onClick={toggleDatePicker}
+                style={{ border: '1px solid black' }}
             />
             {pickerType !== '' && <DatePickerWrapper>{renderPickerByType(pickerType)}</DatePickerWrapper>}
         </div>
