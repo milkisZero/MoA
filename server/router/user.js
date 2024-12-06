@@ -115,7 +115,7 @@ router.put('/:userId', upload.single('img'), async (req, res) => {
     }
 });
 
-// 마이페이지 불러오기
+// 마이페이지 불러오기 (일정 제외)
 router.get('/mypage/:userId', async (req, res) => {
     try {
         const user = await User.findById(req.params.userId);
@@ -151,17 +151,25 @@ router.get('/mypage/:userId', async (req, res) => {
     }
 });
 
+// 마이페이지 일정 불러오기
 router.get('/event/:userId', async (req, res) => {
     try {
-        const { year, month } = req.query;
+        let { year, month } = req.query;
 
         const user = await User.findById(req.params.userId);
         if (!user) return res.status(404).json({ message: 'User cannot found'});
 
-        const startDate = new Date(`${year}-${month}-01`);
-        const endDate = month === '12'
-            ? new Date(`${parseInt(year) + 1}-01-01`)
-            : new Date(`${year}-${parseInt(month) + 1}-01`);
+        year = parseInt(year, 10);
+        month = parseInt(month, 10);
+         
+        const startMonth = month - 1 < 1 ? month+11 : month-1;
+        const startYear = month - 1 < 1 ? year-1 : year;
+
+        const endMonth = month + 2 > 12 ? month-10: month+2;
+        const endYear = month + 2 > 12 ? year+1 : year;
+
+        const startDate = new Date(`${startYear}-${startMonth}-01`);
+        const endDate = new Date(`${endYear}-${endMonth}-01`);
 
         const foundEvents = await Event.find({
             clubId: { $in: user.clubs },

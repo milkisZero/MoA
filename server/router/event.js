@@ -57,19 +57,29 @@ router.post('/:clubId', async (req, res) => {
     }
 });
 
-// 동아리 한달 일정보기
+// 동아리 세달(query, +1. -1) 일정보기
 router.get('/:clubId', async (req, res) => {
     try {
         const clubId = req.params.clubId;
-        const { year, month } = req.query;
+        let { year, month } = req.query;
+
+        year = parseInt(year, 10);
+        month = parseInt(month, 10);
+         
+        const startMonth = month - 1 < 1 ? month+11 : month-1;
+        const startYear = month - 1 < 1 ? year-1 : year;
+
+        const endMonth = month + 2 > 12 ? month-10: month+2;
+        const endYear = month + 2 > 12 ? year+1 : year;
+
+        const startDate = new Date(`${startYear}-${startMonth}-01`);
+        const endDate = new Date(`${endYear}-${endMonth}-01`);
 
         const foundEvents = await Event.find({
             clubId: clubId,
             date: {
-                $gte: new Date(`${year}-${month}-01`),
-                $lt: new Date(
-                    month === '12' ? `${parseInt(year) + 1}-${month}-01` : `${year}-${parseInt(month) + 1}-01`
-                ),
+                $gte: startDate,
+                $lt: endDate,
             },
         });
 
