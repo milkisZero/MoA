@@ -7,34 +7,46 @@
 
 .profile-container {
     display: flex;
+    flex-direction: column; /* 세로 정렬 */
     align-items: center;
     padding: 30px 20px;
-    gap: 15px;
     width: 60%;
     background: #ffffff;
     box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.25);
     border-radius: 20px;
+    text-align: center; /* 텍스트 가운데 정렬 */
+}
+
+.profile-container h1 {
+    font-size: 1.8rem; /* 제목 크기 증가 */
+    color: #333;
+    margin-bottom: 10px; /* 제목과 내용 간 간격 */
 }
 
 .profile-img {
     width: 120px;
     height: 120px;
-    border-radius: 75%;
+    border-radius: 50%; /* 원형 유지 */
     object-fit: cover;
+    border: 3px solid #007bff; /* 강조 테두리 */
 }
 
 .profile-info {
     display: flex;
     flex-direction: column;
+    align-items: center; /* 텍스트 가운데 정렬 */
     gap: 10px;
 }
 
 .profile-info h2 {
     font-size: 1.5rem;
+    font-weight: bold; /* 이름 강조 */
     margin: 0;
+    color: #333;
 }
 
 .profile-info p {
+    font-size: 1rem;
     margin: 0;
     color: #555;
 }
@@ -46,6 +58,8 @@
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
 }
 
 .profile-info button:hover {

@@ -20,8 +20,10 @@ import {
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import EventModal from '../../components/EventModal.js';
+import MemListModal from '../../components/MemListModal.js';
 import DatePicker from '../../components/DatePicker/DatePicker';
 import ProposeModal from '../../components/ProposeModal.js';
+import basicProfileImg from '../../assets/hi.png';
 import ko from 'date-fns/locale/ko';
 import { format } from 'date-fns';
 
@@ -44,7 +46,7 @@ const Detail_club = () => {
     const [clubInfo, setClubInfo] = useState({});
     const [events, setEvents] = useState([]);
     const [posts, setPosts] = useState([]);
-    const [admin, setAdmin] = useState();
+    const [admin, setAdmin] = useState('');
     const { userAuth } = useAuth();
     const [isFetching, setIsFetching] = useState(true);
 
@@ -167,7 +169,6 @@ const Detail_club = () => {
     }, [isFetching]);
 
     useEffect(() => {
-        console.log(userAuth);
         if (clubInfo && clubInfo._id)
             setIsClubAuth(userAuth && clubInfo ? clubInfo.admin.includes(userAuth._id) : false);
         setIsClubMem(userAuth ? userAuth.clubs.includes(clubId) : false);
@@ -345,6 +346,15 @@ const Detail_club = () => {
                         </button>
                     )}
                     {isClubAuth && <ProposeModal clubId={clubId} userList={clubInfo.proposers}></ProposeModal>}
+                    <div className="profile-container">
+                        <h1>동아리 회장</h1>
+                        <img src={admin.profileImg || basicProfileImg} alt="Profile" className="profile-img" />
+                        <div className="profile-info">
+                            <h2>{admin.name}</h2>
+                            <p>{admin.email}</p>
+                            {isClubAuth && <MemListModal clubId={clubId} userList={clubInfo.members}></MemListModal>}
+                        </div>
+                    </div>
                 </div>
 
                 <div className={styles.rightSection}>
@@ -383,21 +393,6 @@ const Detail_club = () => {
                     </div>
                 </div>
             </div>
-
-            {/* 주요 활동 사진 */}
-            {/* <section>
-                <h2 className={styles.sectionTitle}>동아리 주요 활동 사진</h2>
-                <div className={styles.photoSection}>
-                    {[1, 2, 3, 4].map((id) => (
-                        <img
-                            key={id}
-                            src={`/path/to/image-${id}.jpg`}
-                            alt={`활동 사진 ${id}`}
-                            className={styles.photoItem}
-                        />
-                    ))}
-                </div>
-            </section> */}
 
             {/* 활동 일정 */}
             <section>
