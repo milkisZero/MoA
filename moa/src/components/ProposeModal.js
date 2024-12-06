@@ -72,7 +72,7 @@ const ProposeModal = ({ clubId }) => {
                                     marginRight: '10px',
                                 }}
                             />
-                            <div>
+                            <div style={{ width: '100%' }}>
                                 <p style={{ margin: 0 }}>{user.name}</p>
                                 <p style={{ margin: 0, color: '#555' }}>{user.email}</p>
                             </div>

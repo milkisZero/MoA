@@ -107,18 +107,27 @@ function MakePost() {
     return (
         <div>
             <Header />
-            <h1>게시글 작성</h1>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>제목</label>
-                    <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
-                </div>
-                <div>
-                    <label>내용</label>
-                    <textarea value={content} onChange={(e) => setContent(e.target.value)} required />
-                </div>
-                <div>
-                    <div style={{ alignItems: 'center', gap: '10px' }}>
+            <div className="makePost">
+                <form onSubmit={handleSubmit}>
+                    <h2>게시글 작성</h2>
+                    <div>
+                        <br></br>
+                        <label>제목</label>
+                        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
+                    </div>
+                    <div>
+                        <br></br>
+                        <label>내용</label>
+                        <textarea value={content} onChange={(e) => setContent(e.target.value)} required />
+                    </div>
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}
+                    >
                         <br></br>
                         <input
                             id="imgUpload" // id로 label과 연결
@@ -142,40 +151,41 @@ function MakePost() {
                             이미지 추가
                         </label>
                         <p>선택된 파일 개수 : {previewImages.length}/10</p>
+
+                        <div style={{ display: 'flex', gap: '10px', marginTop: '10px', justifyContent: 'center' }}>
+                            {previewImages.map((src, index) => (
+                                <div key={index} style={{ position: 'relative' }}>
+                                    <img
+                                        src={src}
+                                        alt={`preview-${index}`}
+                                        style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => handleRemoveImage(index)}
+                                        style={{
+                                            position: 'absolute',
+                                            top: '-5px',
+                                            right: '-5px',
+                                            background: 'red',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '50%',
+                                            width: '20px',
+                                            height: '20px',
+                                            fontSize: '12px',
+                                            cursor: 'pointer',
+                                        }}
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                        <button type="submit">게시글 등록</button>
                     </div>
-                    <div style={{ display: 'flex', gap: '10px', marginTop: '10px', justifyContent: 'center' }}>
-                        {previewImages.map((src, index) => (
-                            <div key={index} style={{ position: 'relative' }}>
-                                <img
-                                    src={src}
-                                    alt={`preview-${index}`}
-                                    style={{ width: '100px', height: '100px', objectFit: 'cover' }}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => handleRemoveImage(index)}
-                                    style={{
-                                        position: 'absolute',
-                                        top: '-5px',
-                                        right: '-5px',
-                                        background: 'red',
-                                        color: 'white',
-                                        border: 'none',
-                                        borderRadius: '50%',
-                                        width: '20px',
-                                        height: '20px',
-                                        fontSize: '12px',
-                                        cursor: 'pointer',
-                                    }}
-                                >
-                                    ×
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-                <button type="submit">게시글 등록</button>
-            </form>
+                </form>
+            </div>
             <Footer />
         </div>
     );

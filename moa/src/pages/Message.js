@@ -66,7 +66,6 @@ function Message() {
 
     const fetchUser = async () => {
         const data = await getMsgUser({ roomId });
-        console.log(data.members);
         setTotalUser(data.members);
         setRoomTitle(data.roomTitle);
     };
@@ -108,6 +107,11 @@ function Message() {
         }
     };
 
+    const findProfile = (id) => {
+        const found = totalUser.find((user) => user._id === id);
+        return found ? found.profileImg : null;
+    };
+
     return (
         <div>
             <Header />
@@ -128,7 +132,7 @@ function Message() {
                                     senderName={msg.senderName}
                                     content={msg.content}
                                     timestamp={msg.timestamp}
-                                    profileImg={msg.profileImg}
+                                    profileImg={findProfile(msg.senderId)}
                                 />
                             </div>
                         ))}
@@ -161,6 +165,7 @@ function UserBox({ name, profileImg }) {
 }
 
 function MessageBox({ senderName, content, timestamp, profileImg }) {
+    console.log(profileImg);
     const time = new Date(timestamp).toLocaleTimeString();
     return (
         <div className="msg-message">
