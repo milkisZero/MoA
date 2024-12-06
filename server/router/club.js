@@ -110,11 +110,13 @@ router.get('/:clubId', async (req, res) => {
     try {
         const clubId = req.params.clubId;
         const foundClub = await Club.findById(clubId);
+        const adminInfo = await User.findById(foundClub.admin[0]).select('name email profileImg');
         if (!foundClub) return res.status(404).json({ message: 'cannot find clubId ' });
 
         return res.status(200).json({
             message: `find club`,
             foundClub,
+            adminInfo,
         });
     } catch (e) {
         console.log('get error in /club/:clubId: ', e);

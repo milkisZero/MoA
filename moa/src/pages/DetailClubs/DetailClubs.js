@@ -44,6 +44,7 @@ const Detail_club = () => {
     const [clubInfo, setClubInfo] = useState({});
     const [events, setEvents] = useState([]);
     const [posts, setPosts] = useState([]);
+    const [admin, setAdmin] = useState();
     const { userAuth } = useAuth();
     const [isFetching, setIsFetching] = useState(true);
 
@@ -147,11 +148,16 @@ const Detail_club = () => {
 
     const fetchData = async () => {
         const club_data = await getClubDetail({ clubId });
-        setClubInfo(club_data);
+        setClubInfo(club_data.foundClub);
+        setAdmin(club_data.adminInfo);
 
         const post_data = await getTotalPost({ clubId, page, limit });
         setPosts(post_data);
     };
+
+    useEffect(() => {
+        console.log(admin);
+    }, [admin]);
 
     useEffect(() => {
         if (isFetching) {
@@ -161,6 +167,7 @@ const Detail_club = () => {
     }, [isFetching]);
 
     useEffect(() => {
+        console.log(userAuth);
         if (clubInfo && clubInfo._id)
             setIsClubAuth(userAuth && clubInfo ? clubInfo.admin.includes(userAuth._id) : false);
         setIsClubMem(userAuth ? userAuth.clubs.includes(clubId) : false);

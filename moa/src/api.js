@@ -82,7 +82,7 @@ export async function getClubDetail({ clubId }) {
         const response = await fetch(URL + `club/${clubId}`);
         if (response.ok) {
             const data = await response.json();
-            return data.foundClub;
+            return data;
         }
     } catch (error) {
         console.log(error.message);
