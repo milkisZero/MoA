@@ -110,15 +110,64 @@ router.get('/:clubId', async (req, res) => {
     try {
         const clubId = req.params.clubId;
         const foundClub = await Club.findById(clubId);
+        const adminInfo = await User.findById(foundClub.admin[0]).select('name email profileImg');
         if (!foundClub) return res.status(404).json({ message: 'cannot find clubId ' });
 
         return res.status(200).json({
             message: `find club`,
             foundClub,
+            adminInfo,
         });
     } catch (e) {
         console.log('get error in /club/:clubId: ', e);
         return res.status(500).json({ message: 'Server get error in /club/:clubId' });
+    }
+});
+
+// club member 목록 보기
+router.get('/members/:clubId', async (req, res) => {
+    try {
+        const club = await Club.findById(req.params.clubId).select('members admin');
+        if (!club) {
+            return res.status(404).json({ message: 'Club not found' });
+        }
+
+        const filteredMemberIds = club.members.filter(
+            (memberId) => !club.admin.some((adminId) => adminId.toString() === memberId.toString())
+        );
+
+        const members = await User.find({ _id: { $in: filteredMemberIds } })
+            .select('_id name email profileImg')
+            .lean();
+
+        return res.status(200).json({
+            message: 'Successfully retrieved club members',
+            members,
+        });
+    } catch (e) {
+        console.error('Get error in /club/members/:clubId:', e);
+        return res.status(500).json({ message: 'Server get error in /club/members/:clubId' });
+    }
+});
+
+// 동아리 회장 변경
+router.put('/changeAdmin/:clubId', async (req, res) => {
+    try {
+        const { admin } = req.body;
+
+        const club = await Club.findById(req.params.clubId);
+        if (!club) return res.status(404).json({ message: 'Club not found' });
+
+        club.admin[0] = admin;
+        await club.save();
+        
+        return res.status(200).json({
+            message: 'Successfully change admin',
+            club
+        });
+    } catch (e) {
+        console.error('put in /club/members/:clubId:', e);
+        return res.status(500).json({ message: 'Server put error in /club/members/:clubId' });
     }
 });
 

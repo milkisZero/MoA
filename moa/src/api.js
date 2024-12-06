@@ -82,7 +82,7 @@ export async function getClubDetail({ clubId }) {
         const response = await fetch(URL + `club/${clubId}`);
         if (response.ok) {
             const data = await response.json();
-            return data.foundClub;
+            return data;
         }
     } catch (error) {
         console.log(error.message);
@@ -418,4 +418,32 @@ export async function editProfileImg({ userId, formData }) {
     }
 }
 
-// 관리자 추가 삭제
+export async function getMembers({ clubId }) {
+    try {
+        const response = await fetch(URL + `club/members/${clubId}`);
+        if (response.ok) {
+            const data = await response.json();
+            return data.members;
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+export async function setNewAdmin({ clubId, admin }) {
+    try {
+        const response = await fetch(URL + `club/changeAdmin/${clubId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ admin }),
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data.club;
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
