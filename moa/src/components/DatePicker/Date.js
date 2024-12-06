@@ -20,7 +20,12 @@ export default function Date({ selectedDate, setSelectedDate, onChangePickerType
         setSelectedDate(date);
     };
 
-    const events = totalEvents.map((e) => new window.Date(e.date).getDate());
+    const checkDays = (date) => {
+        return totalEvents.some((event) => {
+            const eventDate = new window.Date(event.date);
+            return eventDate.getMonth() === date.getMonth() && eventDate.getDate() === date.getDate();
+        });
+    };
 
     return (
         <div className="flex flex-col gap-1">
@@ -64,7 +69,7 @@ export default function Date({ selectedDate, setSelectedDate, onChangePickerType
                         </button>
                         <div
                             className={`mb-3 w-2 h-2  rounded-full ${
-                                events.includes(date.getDate()) ? 'bg-orange-500' : 'bg-white-500 '
+                                checkDays(date) ? 'bg-orange-500' : 'bg-white-500 '
                             }`}
                         ></div>
                     </div>

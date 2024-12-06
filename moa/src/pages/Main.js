@@ -66,7 +66,7 @@ function ListSection() {
             <header>
                 <h3>이런 동아리는 어떠신가요</h3>
                 <h4 className="clickable">
-                    <Link to="/TotalClubs">더보기</Link>
+                    <Link to="/TotalClubs/1">더보기</Link>
                 </h4>
             </header>
             <div className="club-list">

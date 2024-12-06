@@ -6,7 +6,8 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ClubItem from '../components/ClubItem';
 import { getClubPage } from '../api';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 function TotalClubs() {
     return (
@@ -20,10 +21,12 @@ function TotalClubs() {
 
 function ListSection() {
     const [clubList, setclubList] = useState([]);
-    const [page, setPage] = useState(1);
+    const { page: urlPage } = useParams();
+    const [page, setPage] = useState(urlPage);
     const [pageNumbers, setPageNumbers] = useState([1, 2, 3, 4, 5]);
     const limit = 5;
     const [totalPage, setTotalPage] = useState(5);
+    const navigate = useNavigate();
 
     const fetchData = async () => {
         const data = await getClubPage({ page, limit });
@@ -36,6 +39,9 @@ function ListSection() {
 
     useEffect(() => {
         fetchData();
+        if (Number(urlPage) !== page) {
+            navigate(`/TotalClubs/${page}`); // URL 업데이트
+        }
     }, [page]);
 
     const movePageNum = (num) => {

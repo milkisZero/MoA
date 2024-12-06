@@ -5,6 +5,7 @@ import Footer from '../../components/Footer';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     addEvent,
+    approveClub,
     deleteClub,
     deleteEvent,
     deletePost,
@@ -298,6 +299,24 @@ const Detail_club = () => {
             }
         }
     };
+
+    const handleApprove = async () => {
+        if (!userAuth) {
+            alert('로그인이 필요합니다');
+            return;
+        }
+
+        const confirmed = window.confirm('가입신청을 취소하시겠습니까?');
+        if (confirmed) {
+            try {
+                const data = await approveClub({ clubId, userId: userAuth._id, approve: false });
+                if (data) setIsWaitingMem(false);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    };
+
     return (
         <div className={styles.container}>
             <Header />
@@ -336,9 +355,15 @@ const Detail_club = () => {
                                 margin: '3%',
                                 backgroundColor: isClubMem ? 'red' : isWaitingMem ? 'grey' : '#005bac',
                             }}
-                            onClick={isClubMem ? () => handleGetOut() : isWaitingMem ? null : () => handlePropose()}
+                            onClick={
+                                isClubMem
+                                    ? () => handleGetOut()
+                                    : isWaitingMem
+                                    ? () => handleApprove()
+                                    : () => handlePropose()
+                            }
                         >
-                            {isClubMem ? '탈퇴하기' : isWaitingMem ? '가입 대기' : '가입 신청'}
+                            {isClubMem ? '탈퇴하기' : isWaitingMem ? '신청 취소' : '가입 신청'}
                         </button>
 
                         <button
@@ -378,15 +403,19 @@ const Detail_club = () => {
                         totalEvents={events}
                     />
                 </div>
-                <div className={styles.boardGrid}>
+                <div className={styles.boardGrid} style={{ marginBottom: '5%' }}>
                     {events
-                        .filter((event) => new Date(event.date).getDate() === selectedDate.getDate())
+                        .filter(
+                            (event) =>
+                                new Date(event.date).getMonth() === selectedDate.getMonth() &&
+                                new Date(event.date).getDate() === selectedDate.getDate()
+                        )
                         .map((activity) => (
                             <div key={activity._id} className={styles.eventBox}>
                                 <div>
                                     <p>{getDayOfWeek(new Date(activity.date))}</p>
                                     <p>{getTime(new Date(activity.date))}</p>
-                                    <p>날짜: {new Date(activity.date).toLocaleDateString()}</p>
+                                    <p>{new Date(activity.date).toLocaleDateString()}</p>
                                 </div>
                                 <div>
                                     <h3>제목: {activity.title}</h3>

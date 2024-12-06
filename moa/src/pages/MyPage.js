@@ -70,12 +70,21 @@ function MyPage() {
             alert('NULL found');
             return;
         }
-        navigate(`/Message/${msgRoomId}`)
-    }
+        navigate(`/Message/${msgRoomId}`);
+    };
 
-    useEffect(() => { fetchEvent() }, [selectedDate.getMonth(), userAuth]);
-    useEffect(() => { fetchData()  }, [userAuth]);
-    useEffect(() => {              }, [isModalOpen]);
+    useEffect(() => {
+        fetchEvent();
+    }, [selectedDate.getMonth(), userAuth]);
+
+    useEffect(() => {
+        if (!userAuth) {
+            alert('로그인이 필요합니다');
+            navigate('/Login');
+        }
+        fetchData();
+    }, [userAuth]);
+    useEffect(() => {}, [isModalOpen]);
 
     return (
         <div>
@@ -88,9 +97,12 @@ function MyPage() {
                         <div className="profile-info">
                             <h2>{name}</h2>
                             <p>{email}</p>
-                            <button onClick={() => setIsModalOpen(true)}>
-                                프로필 사진 변경하기
-                            </button>
+                            <button onClick={() => setIsModalOpen(true)}>프로필 사진 변경하기</button>
+                        </div>
+                        <div className="profile-info" style={{ marginLeft: '10%' }}>
+                            {userAuth && <h3>가입일 : {new Date(userAuth.createdAt).toLocaleDateString()}</h3>}
+                            <h3>내 동아리 수 : {clubs.length}</h3>
+                            {userAuth && <h3>대기 중인 동아리 수 : {userAuth.waitingClubs.length}</h3>}
                         </div>
                     </div>
                     {isModalOpen && (
@@ -105,26 +117,43 @@ function MyPage() {
                     )}
                 </div>
             </section>
-            
+
             <section>
-                <h2 style={{ textAlign: 'center'}}>내가 속한 동아리</h2>
+                <h2 style={{ textAlign: 'center' }}>내가 속한 동아리</h2>
                 <div className="mypage-list-horizontal">
                     {clubs.map((club) => (
-                        <div key={club._id} className="mypage-item" onClick={() => goDetailPage(club._id)}>   
-                            <img src={club.clubImg || 'https://dummyimage.com/300x300/cccccc/000000?text=none'} alt="Club"/>
+                        <div key={club._id} className="mypage-item" onClick={() => goDetailPage(club._id)}>
+                            <img
+                                src={club.clubImg || 'https://dummyimage.com/300x300/cccccc/000000?text=none'}
+                                alt="Club"
+                            />
                             <h3>{club.name}</h3>
-                            <p style={{ WebkitLineClamp: '1', overflow: 'hidden', textOverflow: 'ellipsis' }}>{club.description}</p>
-                            <button onClick={(e) => { e.stopPropagation(); goMsgRoom(club.msgRoomId);}}>단체 채팅방 이동하기</button>
+                            <p>{club.description}</p>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    goMsgRoom(club.msgRoomId);
+                                }}
+                            >
+                                단체 채팅방 이동하기
+                            </button>
                         </div>
                     ))}
                 </div>
             </section>
 
             <section>
-                <h2 style={{ textAlign: 'center'}}>내가 속한 문의방</h2>
+                <h2 style={{ textAlign: 'center' }}>내가 속한 문의방</h2>
                 <div className="msgroom-list-horizontal">
                     {msgRooms.map((msgRoom) => (
-                        <div key={msgRoom._id} className="msgroom-item" onClick={(e) => { e.stopPropagation(); goMsgRoom(msgRoom._id);}}>   
+                        <div
+                            key={msgRoom._id}
+                            className="msgroom-item"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                goMsgRoom(msgRoom._id);
+                            }}
+                        >
                             <h3>{msgRoom.name}</h3>
                         </div>
                     ))}
@@ -154,9 +183,13 @@ function MyPage() {
                         totalEvents={events}
                     />
                 </div>
-                <div className={styles.boardGrid}>
+                <div className={styles.boardGrid} style={{ marginBottom: '5%' }}>
                     {events
-                        .filter((event) => new Date(event.date).getDate() === selectedDate.getDate())
+                        .filter(
+                            (event) =>
+                                new Date(event.date).getMonth() === selectedDate.getMonth() &&
+                                new Date(event.date).getDate() === selectedDate.getDate()
+                        )
                         .map((activity) => (
                             <div key={activity._id} className={styles.eventBox}>
                                 <div>

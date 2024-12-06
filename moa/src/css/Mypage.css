@@ -128,7 +128,7 @@
     flex-direction: column;
     align-items: center;
     width: 300px;
-    height: 300px;
+    height: 30%;
     border: 1px solid #ddd;
     border-radius: 10px;
     padding: 10px;
@@ -163,6 +163,11 @@
     color: #555;
     margin-bottom: 10px;
     width: 100%; /* 버튼과 겹치지 않도록 전체 너비 설정 */
+    display: -webkit-box; /* 오버플로우 설정하기 위한 flexbox*/
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    textOverflow: ellipsis;
 }
 
 .mypage-item button {

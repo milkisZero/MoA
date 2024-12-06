@@ -49,7 +49,7 @@ function App() {
                     <ScrollToTop />
                     <Routes>
                         <Route path="/" element={<Main />}></Route>
-                        <Route path="/TotalClubs" element={<TotalClubs />}></Route>
+                        <Route path="/TotalClubs/:page" element={<TotalClubs />}></Route>
                         <Route path="/Login" element={<Login />}></Route>
                         <Route path="/Register" element={<Register />}></Route>
                         <Route path="/MyPage" element={<MyPage />}></Route>
