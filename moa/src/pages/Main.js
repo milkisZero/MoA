@@ -8,15 +8,43 @@ import ClubItem from '../components/ClubItem';
 import ItemCompo from '../components/ItemCompo';
 import { getClubPage } from '../api';
 
+import image1 from '../assets/banner.png';
+import image2 from '../assets/ajou.jpg';
+
 function Main() {
     return (
         <div>
             <Header />
-            <section className="main-section" />
+            <MainSection />
             <h2 style={{ textAlign: 'center', marginTop: '2%' }}>인기순 TOP3</h2>
             <MainClubs />
             <ListSection />
             <Footer />
+        </div>
+    );
+}
+
+function MainSection() {
+    const images = [image1, image2];
+
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+        }, 3000);
+
+        return () => clearInterval(interval);
+    }, [currentImageIndex]);
+
+    return (
+        <div>
+            <section
+                className="main-section"
+                style={{
+                    backgroundImage: `url(${images[currentImageIndex]})`,
+                }}
+            />
         </div>
     );
 }
