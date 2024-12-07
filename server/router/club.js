@@ -176,7 +176,7 @@ router.put('/:clubId', upload.single('img'), async (req, res) => {
     try {
         const { name, description, img, location, phone, sns } = req.body;
         const newImg = req.file ? req.file.location : img;
-
+        
         const updatedData = {
             name: name,
             description: description,
@@ -187,8 +187,12 @@ router.put('/:clubId', upload.single('img'), async (req, res) => {
         };
 
         const updatedClub = await Club.findByIdAndUpdate(req.params.clubId, updatedData, { new: true });
-
         if (!updatedClub) return res.status(404).json({ message: 'Club not found' });
+
+        const club = await Club.findById(req.params.clubId).select('msgRoomId');
+        if (name && club.msgRoomId) {
+            await MsgRoom.findByIdAndUpdate(club.msgRoomId, { name });
+        };
 
         res.status(200).json({
             message: 'Club successfully updated',

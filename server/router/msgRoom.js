@@ -58,6 +58,7 @@ router.post('/', async (req, res) => {
     }
 });
 
+// 채팅방 이름 불러오기
 router.get('/name/:msgRoomId', async (req, res) => {
     try {
         const msgRoom = await MsgRoom.findById(req.params.msgRoomId);
