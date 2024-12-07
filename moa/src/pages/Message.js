@@ -60,7 +60,7 @@ function Message() {
     };
 
     useEffect(() => {
-        // console.log(page);
+        console.log(page);
         if (page > 0) fetchData();
     }, [page]);
 
