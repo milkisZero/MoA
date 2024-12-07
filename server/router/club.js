@@ -404,8 +404,10 @@ router.post('/approve/:clubId', async (req, res) => {
         const clubId = req.params.clubId;
 
         const [user, club] = await Promise.all([User.findById(userId), Club.findById(clubId)]);
+        const msgRoom = await MsgRoom.findById(club.msgRoomId);
         if (!user) return res.status(404).json({ message: 'User cannot found' });
         if (!club) return res.status(404).json({ message: 'Club cannot found' });
+        if (!msgRoom) return res.status(404).json({ message: 'MsgRoom cannot found' });
 
         const updateUser = {
             $pull: { waitingClubs: clubId },
@@ -417,15 +419,21 @@ router.post('/approve/:clubId', async (req, res) => {
             ...(approve && { $addToSet: { members: userId } }),
         };
 
-        await Promise.all([
+        const updateMsgRoom = {
+            ...(approve && { $addToSet: { members: userId } }),
+        }
+
+        const [uUser, uClub, uMsgRoom] = await Promise.all([
             User.updateOne({ _id: userId }, updateUser),
             Club.updateOne({ _id: clubId }, updateClub),
+            MsgRoom.updateOne({ _id: club.msgRoomId }, updateMsgRoom),
         ]);
 
         res.status(200).json({
             message: approve ? 'Successfully approved' : 'Successfully rejected',
-            updateUser,
-            updateClub
+            uUser,
+            uClub,
+            uMsgRoom,
         });
     } catch (e) {
         console.log('post error in /club/approve/:clubId: ', e);

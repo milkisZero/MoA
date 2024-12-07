@@ -14,7 +14,7 @@ const app = express();
 const server = createServer(app);
 const PORT = 8080;
 const dburl =
-    '[DB_URL] origin: 'http://localhost:3000', credentials: true }));
+    '[DB_URL] origin: true, credentials: true }));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.use(
     session({
@@ -63,7 +63,7 @@ async function connect() {
 
 const io = new Server(server, {
     cors: {
-        origin: 'http://localhost:3000',
+        origin: true,
         methods: ['GET', 'POST'],
         credentials: true,
     },
