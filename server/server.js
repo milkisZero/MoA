@@ -50,9 +50,9 @@ const messageRoutes = require('./router/message');
 
 async function connect() {
     try {
-        await mongoose.connect(dburl)
+        await mongoose.connect(dburl);
         console.log('Successfully Connected DB');
-    
+
         server.listen(PORT, () => {
             console.log(`서버 실행. Port : ${PORT}`);
         });
@@ -77,23 +77,20 @@ io.on('connection', (socket) => {
     socket.on('joinRoom', ({ msgRoomId }) => {
         socket.join(msgRoomId);
         console.log(`Socket ${socket.id} joined room: ${msgRoomId}`);
-    })
+    });
 
     // 메세지 broadcast
-    socket.on('sendMsg', async ({ senderName, senderId, msgRoomId, content}) => {
+    socket.on('sendMsg', async ({ senderName, senderId, msgRoomId, content }) => {
         try {
             const newMsg = new Message({
                 senderName,
                 senderId,
                 msgRoomId,
-                content
+                content,
             });
             await newMsg.save();
-            
-            await MsgRoom.findByIdAndUpdate(
-                msgRoomId,
-                { $push: { messages: newMsg._id }},
-            );
+
+            await MsgRoom.findByIdAndUpdate(msgRoomId, { $push: { messages: newMsg._id } });
 
             socket.emit('receiveMsg', newMsg);
             console.log(`Message sent to ${msgRoomId}: ${content}`);
@@ -101,13 +98,13 @@ io.on('connection', (socket) => {
             console.log('Message send error:', e);
             socket.emit('errorMessage', { error: 'Failed to send message.' });
         }
-    })
+    });
 
     // 채팅방 퇴장
     socket.on('disconnect', () => {
         console.log('WebSocket disconnected:', socket.id);
     });
-})
+});
 
 app.get('/api/session/', async (req, res) => {
     if (!req.session || !req.session.userId) {
@@ -116,7 +113,7 @@ app.get('/api/session/', async (req, res) => {
     const user = await User.findById(req.session.userId);
     return res.status(200).json({
         message: 'Successfully user found',
-        user
+        user,
     });
 });
 
@@ -126,5 +123,8 @@ app.use('/api/post', postRoutes);
 app.use('/api/event', eventRoutes);
 app.use('/api/msgRoom', msgRoomRoutes);
 app.use('/api/msg', messageRoutes);
+
+const verifyMailRoutes = require('./router/verifyMail');
+app.use('/api/verifyMail', verifyMailRoutes);
 
 connect();

@@ -39,7 +39,7 @@
     margin-left: 5%;
 }
 
-.profile-info h1,h2 {
+.profile-info h1, .profile-info h2 {
     font-size: 1.5rem;
     font-weight: bold; /* 이름 강조 */
     margin: 0;

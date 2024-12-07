@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import '../css/Pages.css';
-import tmp from '../assets/sample.png';
 import { Link } from 'react-router-dom';
 
 import Header from '../components/Header';

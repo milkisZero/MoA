@@ -24,8 +24,7 @@ import MemListModal from '../../components/MemListModal.js';
 import DatePicker from '../../components/DatePicker/DatePicker';
 import ProposeModal from '../../components/ProposeModal.js';
 import basicProfileImg from '../../assets/hi.png';
-import ko from 'date-fns/locale/ko';
-import { format } from 'date-fns';
+import loading from '../../assets/loading.gif';
 
 // 재사용 가능한 컴포넌트: 정보 섹션
 const InfoSection = ({ title, content, isLink }) => (
@@ -49,6 +48,7 @@ const Detail_club = () => {
     const [admin, setAdmin] = useState('');
     const { userAuth } = useAuth();
     const [isFetching, setIsFetching] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
 
     // 수정할 부분
     const page = 1;
@@ -155,11 +155,9 @@ const Detail_club = () => {
 
         const post_data = await getTotalPost({ clubId, page, limit });
         setPosts(post_data);
-    };
 
-    useEffect(() => {
-        console.log(admin);
-    }, [admin]);
+        setIsLoading(false);
+    };
 
     useEffect(() => {
         if (isFetching) {
@@ -169,10 +167,11 @@ const Detail_club = () => {
     }, [isFetching]);
 
     useEffect(() => {
-        if (clubInfo && clubInfo._id)
-            setIsClubAuth(userAuth && clubInfo ? clubInfo.admin.includes(userAuth._id) : false);
         setIsClubMem(userAuth ? userAuth.clubs.includes(clubId) : false);
         setIsWaitingMem(userAuth ? userAuth.waitingClubs.includes(clubId) : false);
+        if (clubInfo && clubInfo._id) {
+            setIsClubAuth(userAuth && clubInfo ? clubInfo.admin.includes(userAuth._id) : false);
+        }
     }, [clubInfo, userAuth]);
 
     const goMessage = (roomId) => {
@@ -325,7 +324,11 @@ const Detail_club = () => {
         }
     };
 
-    return (
+    return isLoading ? (
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <img src={loading} style={{ marginTop: '100px' }} />
+        </div>
+    ) : (
         <div className={styles.container}>
             <Header />
             {/* 동아리 헤더 */}
@@ -337,11 +340,11 @@ const Detail_club = () => {
                         className={styles.clubImage}
                     />
                     <div className="profile-container" style={isClubAuth ? { width: '80%' } : {}}>
-                        <img src={admin.profileImg || basicProfileImg} alt="Profile" className="profile-img" />
+                        <img src={admin?.profileImg || basicProfileImg} alt="Profile" className="profile-img" />
                         <div className="profile-info">
                             <h1>회장</h1>
-                            <h2>{admin.name}</h2>
-                            <p>{admin.email}</p>
+                            <h2>{admin?.name}</h2>
+                            <p>{admin?.email}</p>
                         </div>
                         <div className="profile-info">
                             {isClubAuth && <MemListModal clubId={clubId} userList={clubInfo.members}></MemListModal>}

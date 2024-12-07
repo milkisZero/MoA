@@ -9,6 +9,7 @@ import DatePicker from '../components/DatePicker/DatePicker';
 import tmp from '../assets/hi.png';
 import styles from './DetailClubs/DetailClubs.module.css';
 import '../css/Mypage.css';
+import loading from '../assets/loading.gif';
 
 function MyPage() {
     const [name, setName] = useState('');
@@ -22,6 +23,7 @@ function MyPage() {
     const navigate = useNavigate();
 
     const [selectedDate, setSelectedDate] = useState(new Date()); // 초기값을 현재 날짜로 설정
+    const [isLoading, setIsLoading] = useState(true);
 
     const getDayOfWeek = (date) => {
         const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
@@ -52,6 +54,7 @@ function MyPage() {
             setProfileImg(data.user.profileImg);
             setClubs(data.clubs);
             setMsgRooms(data.msgRooms);
+            if (userAuth) setIsLoading(false);
         } catch (e) {
             console.error('Failed to fetch MyPage data:', e);
         }
@@ -78,15 +81,21 @@ function MyPage() {
     }, [selectedDate.getMonth(), userAuth]);
 
     useEffect(() => {
-        if (!userAuth) {
-            alert('로그인이 필요합니다');
-            navigate('/Login');
-        }
+        console.log(userAuth);
+        // if (!userAuth) {
+        //     alert('로그인이 필요합니다');
+        //     navigate('/Login');
+        // }
         fetchData();
     }, [userAuth]);
+
     useEffect(() => {}, [isModalOpen]);
 
-    return (
+    return isLoading ? (
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <img src={loading} style={{ marginTop: '100px' }} />
+        </div>
+    ) : (
         <div>
             <Header />
             <section>

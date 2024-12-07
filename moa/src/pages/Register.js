@@ -11,6 +11,7 @@ function Register() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [verifyMail, setVerifyMail] = useState('');
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -31,6 +32,32 @@ function Register() {
         }
     };
 
+    const handleVerify = async () => {
+        console.log('인증시작');
+        const URL = 'http://localhost:8080/api';
+
+        let token;
+        if (!email) {
+            alert('이메일 없음');
+        }
+
+        try {
+            const response = await fetch(URL + '/verifyMail/verificationRequest', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email,
+                }),
+            });
+            const data = await response.json();
+            token = data.token;
+        } catch (error) {
+            console.log(error.message);
+        }
+    };
+
     return (
         <div>
             <Header />
@@ -46,13 +73,32 @@ function Register() {
                             maxLength="50"
                             required
                         />
-                        <input
-                            type="email"
-                            placeholder="이메일"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
+                        <div style={{ width: '70%', display: 'flex', flexDirection: 'row' }}>
+                            <input
+                                type="email"
+                                placeholder="이메일"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                                style={{ width: '100%' }}
+                            />
+                            <button type="button" onClick={() => handleVerify()} style={{ width: '20%' }}>
+                                인증
+                            </button>
+                        </div>
+                        <div style={{ width: '70%', display: 'flex', flexDirection: 'row' }}>
+                            <input
+                                type="text"
+                                placeholder="인증번호 확인"
+                                value={verifyMail}
+                                onChange={(e) => setVerifyMail(e.target.value)}
+                                required
+                                style={{ width: '100%' }}
+                            />
+                            <button type="button" onClick={() => handleVerify()} style={{ width: '20%' }}>
+                                확인
+                            </button>
+                        </div>
                         <input
                             type="password"
                             placeholder="비밀번호"

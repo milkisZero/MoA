@@ -518,8 +518,7 @@ header {
   cursor: pointer;
 }
 
-input,
-button {
+.msg-section input, .msg-section button {
   height: 40%;
   box-sizing: border-box;
   border-radius: 5px;
@@ -641,8 +640,7 @@ button {
   color: #333;
 }
 
-.EventModal label input,
-label textarea {
+.EventModal label input, .EventModal label textarea {
   display: block;
   width: 100%;
   padding: 10px;
@@ -657,8 +655,7 @@ label textarea {
   min-height: 80px;
 }
 
-.EventModal input:focus,
-textarea:focus {
+.EventModal input:focus, .EventModal textarea:focus {
   border-color: #007bff;
   outline: none;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
@@ -705,15 +702,14 @@ textarea:focus {
   font-family: Arial, sans-serif;
 }
 
-.makePost label, p{
+.makePost label, .makePost p{
   margin-bottom: 15px;
   margin-top: 15px;
   font-weight: bold;
   color: #333;
 }
 
-.makePost  input,
- textarea {
+.makePost input, .makePost textarea {
   display: block;
   width: 100%;
   padding: 10px;
@@ -727,8 +723,7 @@ textarea:focus {
   min-height: 200px;
  }
 
-.makePost input:focus,
-textarea:focus {
+.makePost input:focus, .makePost textarea:focus {
   border-color: #007bff;
   outline: none;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
