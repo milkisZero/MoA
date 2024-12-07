@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import { addClub, updateClubInfo } from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
+import basicProfileImg from '../assets/hi.png';
 
 function MakeClub() {
     const locate = useLocation();
@@ -15,10 +16,10 @@ function MakeClub() {
     const [location, setLocation] = useState(club ? club.location : '');
     const [phone, setPhone] = useState(club ? club.phone : '');
     const [sns, setSns] = useState(club ? club.sns : '');
-    const [clubImg, setClubImg] = useState(club ? club.clubImg : '');
+    const [clubImg, setClubImg] = useState(club && club.clubImg ? club.clubImg : '');
     const { userAuth } = useAuth();
     const navigate = useNavigate();
-    const [preview, setPreview] = useState(club ? club.clubImg : null); // 미리보기 URL
+    const [preview, setPreview] = useState(club && club.clubImg ? club.clubImg : null); // 미리보기 URL
 
     const handleSubmit = async (e) => {
         e.preventDefault();

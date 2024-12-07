@@ -263,9 +263,9 @@ export async function deleteEvent({ clubId, eventId, userId }) {
     }
 }
 
-export async function getMyPage({userId}) {
+export async function getMyPage({ userId }) {
     try {
-        const response = await fetch(URL + `user/mypage/${userId}`)
+        const response = await fetch(URL + `user/mypage/${userId}`);
         if (response.ok) {
             const data = await response.json();
             return data;
@@ -337,7 +337,7 @@ export async function approveClub({ clubId, userId, approve }) {
             console.log(data);
             return data;
         }
-        console.log(response);
+        console.log(response.json());
     } catch (error) {
         console.log(error.message);
     }
