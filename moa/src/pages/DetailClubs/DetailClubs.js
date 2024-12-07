@@ -335,7 +335,7 @@ const Detail_club = () => {
             <div className={styles.header}>
                 <div className={styles.leftSection}>
                     <img
-                        src={clubInfo.clubImg || 'https://dummyimage.com/300x300/cccccc/000000?text=none'}
+                        src={clubInfo.clubImg || basicProfileImg}
                         alt={`${clubInfo.name} 사진`}
                         className={styles.clubImage}
                     />

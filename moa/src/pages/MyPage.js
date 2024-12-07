@@ -6,7 +6,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ProfileImgModal from '../components/ProfileImgModal.js';
 import DatePicker from '../components/DatePicker/DatePicker';
-import tmp from '../assets/hi.png';
+import basicProfileImg from '../assets/hi.png';
 import styles from './DetailClubs/DetailClubs.module.css';
 import '../css/Mypage.css';
 import loading from '../assets/loading.gif';
@@ -102,7 +102,7 @@ function MyPage() {
                 <h2 style={{ textAlign: 'center' }}>My프로필</h2>
                 <div className="profile-section">
                     <div className="profile-container">
-                        <img src={profileImg || tmp} alt="Profile" className="profile-img" />
+                        <img src={profileImg || basicProfileImg} alt="Profile" className="profile-img" />
                         <div className="profile-info">
                             <h2>{name}</h2>
                             <p>{email}</p>
@@ -116,7 +116,7 @@ function MyPage() {
                     </div>
                     {isModalOpen && (
                         <ProfileImgModal
-                            currentImg={profileImg || tmp}
+                            currentImg={profileImg || basicProfileImg}
                             onClose={() => setIsModalOpen(false)}
                             onSave={(newImg) => {
                                 setProfileImg(newImg);
@@ -133,7 +133,7 @@ function MyPage() {
                     {clubs.map((club) => (
                         <div key={club._id} className="mypage-item" onClick={() => goDetailPage(club._id)}>
                             <img
-                                src={club.clubImg || 'https://dummyimage.com/300x300/cccccc/000000?text=none'}
+                                src={club.clubImg || basicProfileImg}
                                 alt="Club"
                             />
                             <h3>{club.name}</h3>
@@ -169,19 +169,6 @@ function MyPage() {
                 </div>
             </section>
 
-            {/* <section>
-                <h2 style={{ textAlign: 'center'}}>My 일정</h2>
-                <div className="event-list-horizontal">
-                    {events.map((event) => (
-                        <div key={event._id} className="event-item">
-                            <h3 style={{ WebkitLineClamp: '1', overflow: 'hidden', textOverflow: 'ellipsis' }}>{event.title}</h3>
-                            <p style={{ WebkitLineClamp: '1', overflow: 'hidden', textOverflow: 'ellipsis' }}>{event.description}</p>
-                            <p style={{ WebkitLineClamp: '1', overflow: 'hidden', textOverflow: 'ellipsis' }}>{event.date}</p>
-                            <p style={{ WebkitLineClamp: '1', overflow: 'hidden', textOverflow: 'ellipsis' }}>{event.location}</p>
-                        </div>
-                    ))}
-                </div>
-            </section> */}
 
             <section>
                 <h2 className={styles.sectionTitle}>동아리 활동 일정</h2>
