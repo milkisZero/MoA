@@ -329,214 +329,216 @@ const Detail_club = () => {
             <img src={loading} style={{ marginTop: '100px' }} />
         </div>
     ) : (
-        <div className={styles.container}>
+        <div>
             <Header />
-            {/* 동아리 헤더 */}
-            <div className={styles.header}>
-                <div className={styles.leftSection}>
-                    <img
-                        src={clubInfo.clubImg || basicProfileImg}
-                        alt={`${clubInfo.name} 사진`}
-                        className={styles.clubImage}
-                    />
-                    <div className="profile-container" style={isClubAuth ? { width: '80%' } : {}}>
-                        <img src={admin?.profileImg || basicProfileImg} alt="Profile" className="profile-img" />
-                        <div className="profile-info">
-                            <h1>회장</h1>
-                            <h2>{admin?.name}</h2>
-                            <p>{admin?.email}</p>
+            <div className={styles.container}>
+                {/* 동아리 헤더 */}
+                <div className={styles.header}>
+                    <div className={styles.leftSection}>
+                        <img
+                            src={clubInfo.clubImg || basicProfileImg}
+                            alt={`${clubInfo.name} 사진`}
+                            className={styles.clubImage}
+                        />
+                        <div className="profile-container" style={isClubAuth ? { width: '80%' } : {}}>
+                            <img src={admin?.profileImg || basicProfileImg} alt="Profile" className="profile-img" />
+                            <div className="profile-info">
+                                <h1>회장</h1>
+                                <h2>{admin?.name}</h2>
+                                <p>{admin?.email}</p>
+                            </div>
+                            <div className="profile-info">
+                                {isClubAuth && <MemListModal clubId={clubId} userList={clubInfo.members}></MemListModal>}
+                                {isClubAuth && <ProposeModal clubId={clubId} userList={clubInfo.proposers}></ProposeModal>}
+                                {isClubAuth && (
+                                    <button
+                                        className={styles.joinButton}
+                                        style={{ width: '100%', margin: '0%', fontSize: '100%' }}
+                                        onClick={() => handleUpdateClub()}
+                                    >
+                                        정보 수정
+                                    </button>
+                                )}
+                            </div>
                         </div>
-                        <div className="profile-info">
-                            {isClubAuth && <MemListModal clubId={clubId} userList={clubInfo.members}></MemListModal>}
-                            {isClubAuth && <ProposeModal clubId={clubId} userList={clubInfo.proposers}></ProposeModal>}
-                            {isClubAuth && (
-                                <button
-                                    className={styles.joinButton}
-                                    style={{ width: '100%', margin: '0%', fontSize: '100%' }}
-                                    onClick={() => handleUpdateClub()}
+                    </div>
+
+                    <div className={styles.rightSection}>
+                        <h1 className={styles.clubName}>{clubInfo.name}</h1>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}></div>
+                        <p className={styles.clubDescription}>{clubInfo.description}</p>
+                        <InfoSection title="동아리 위치" content={clubInfo.location} />
+                        <InfoSection title="회장 연락처" content={clubInfo.phone} />
+                        <InfoSection title="SNS" content={clubInfo.sns} isLink />
+                        <div style={{ display: 'flex', direction: 'row' }}>
+                            <button
+                                className={styles.joinButton}
+                                style={{
+                                    width: '40%',
+                                    margin: '3%',
+                                    backgroundColor: isClubMem ? 'red' : isWaitingMem ? 'grey' : '#005bac',
+                                }}
+                                onClick={
+                                    isClubMem
+                                        ? () => handleGetOut()
+                                        : isWaitingMem
+                                        ? () => handleApprove()
+                                        : () => handlePropose()
+                                }
+                            >
+                                {isClubMem ? '탈퇴하기' : isWaitingMem ? '신청 취소' : '가입 신청'}
+                            </button>
+
+                            <button
+                                className={styles.joinButton}
+                                style={{ width: '40%', margin: '3%' }}
+                                onClick={isClubMem ? () => goMessage(clubInfo.msgRoomId) : () => handleInquire()}
+                            >
+                                {isClubMem ? '채팅방으로' : '문의하기'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* 활동 일정 */}
+                <section>
+                    <h2 className={styles.sectionTitle}>동아리 활동 일정</h2>
+                    {isClubAuth && <EventModal isType={'create'} clubId={clubId} onSubmit={handleFormSubmit}></EventModal>}
+                    <div className={styles.calendarSection}>
+                        <DatePicker
+                            selectedDate={selectedDate} // 선택된 날짜
+                            setSelectedDate={setSelectedDate} // 날짜 업데이트 함수
+                            totalEvents={events}
+                        />
+                    </div>
+                    <div className={styles.boardGrid} style={{ marginBottom: '5%' }}>
+                        {events
+                            .filter(
+                                (event) =>
+                                    new Date(event.date).getMonth() === selectedDate.getMonth() &&
+                                    new Date(event.date).getDate() === selectedDate.getDate()
+                            )
+                            .map((activity) => (
+                                <div key={activity._id} className={styles.eventBox}>
+                                    <div style={{ width: '40%' }}>
+                                        <p>{getDayOfWeek(new Date(activity.date))}</p>
+                                        <p>{getTime(new Date(activity.date))}</p>
+                                        <p>{new Date(activity.date).toLocaleDateString()}</p>
+                                    </div>
+                                    <div>
+                                        <h3>일정: {activity.title}</h3>
+                                        <p>내용: {activity.description}</p>
+                                        <p>장소: {activity.location}</p>
+                                        {isClubAuth && (
+                                            <div style={{ display: 'flex', gap: '10%', marginTop: '5%' }}>
+                                                <EventModal
+                                                    isType={'update'}
+                                                    clubId={clubId}
+                                                    eventId={activity._id}
+                                                    onSubmit={handleFormUpdate}
+                                                    preData={activity}
+                                                ></EventModal>
+                                                <button onClick={() => handleDelete(activity._id)}>삭제</button>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                    </div>
+                </section>
+
+                {/* 자유 게시판 */}
+                <section>
+                    <h2 className={styles.sectionTitle}>동아리 자유게시판</h2>
+                    {isClubAuth && (
+                        <button
+                            className={styles.joinButton}
+                            style={{ margin: '3% 0', fontSize: '100%' }}
+                            onClick={() => handleAddPost()}
+                        >
+                            동아리 게시글 작성
+                        </button>
+                    )}
+                    <div className={styles.boardGrid}>
+                        {posts.map((post) => (
+                            <div
+                                key={post._id}
+                                className={styles.boardItem}
+                                onClick={() => handleViewPost(post)}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                <img
+                                    src={post.postImgs[0] || basicProfileImg}
+                                    alt={post.title}
+                                    className={styles.boardImage}
+                                />
+                                <h4
+                                    className={styles.boardTitle}
+                                    style={{ WebkitLineClamp: '1', overflow: 'hidden', textOverflow: 'ellipsis' }}
                                 >
-                                    정보 수정
-                                </button>
-                            )}
-                        </div>
-                    </div>
-                </div>
+                                    {post.title}
+                                </h4>
+                                <p
+                                    className={styles.boardContent}
+                                    style={{ WebkitLineClamp: '3', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                                >
+                                    {post.content}
+                                </p>
 
-                <div className={styles.rightSection}>
-                    <h1 className={styles.clubName}>{clubInfo.name}</h1>
-                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}></div>
-                    <p className={styles.clubDescription}>{clubInfo.description}</p>
-                    <InfoSection title="동아리 위치" content={clubInfo.location} />
-                    <InfoSection title="회장 연락처" content={clubInfo.phone} />
-                    <InfoSection title="SNS" content={clubInfo.sns} isLink />
-                    <div style={{ display: 'flex', direction: 'row' }}>
-                        <button
-                            className={styles.joinButton}
-                            style={{
-                                width: '40%',
-                                margin: '3%',
-                                backgroundColor: isClubMem ? 'red' : isWaitingMem ? 'grey' : '#005bac',
-                            }}
-                            onClick={
-                                isClubMem
-                                    ? () => handleGetOut()
-                                    : isWaitingMem
-                                    ? () => handleApprove()
-                                    : () => handlePropose()
-                            }
-                        >
-                            {isClubMem ? '탈퇴하기' : isWaitingMem ? '신청 취소' : '가입 신청'}
-                        </button>
-
-                        <button
-                            className={styles.joinButton}
-                            style={{ width: '40%', margin: '3%' }}
-                            onClick={isClubMem ? () => goMessage(clubInfo.msgRoomId) : () => handleInquire()}
-                        >
-                            {isClubMem ? '채팅방으로' : '문의하기'}
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            {/* 활동 일정 */}
-            <section>
-                <h2 className={styles.sectionTitle}>동아리 활동 일정</h2>
-                {isClubAuth && <EventModal isType={'create'} clubId={clubId} onSubmit={handleFormSubmit}></EventModal>}
-                <div className={styles.calendarSection}>
-                    <DatePicker
-                        selectedDate={selectedDate} // 선택된 날짜
-                        setSelectedDate={setSelectedDate} // 날짜 업데이트 함수
-                        totalEvents={events}
-                    />
-                </div>
-                <div className={styles.boardGrid} style={{ marginBottom: '5%' }}>
-                    {events
-                        .filter(
-                            (event) =>
-                                new Date(event.date).getMonth() === selectedDate.getMonth() &&
-                                new Date(event.date).getDate() === selectedDate.getDate()
-                        )
-                        .map((activity) => (
-                            <div key={activity._id} className={styles.eventBox}>
-                                <div style={{ width: '40%' }}>
-                                    <p>{getDayOfWeek(new Date(activity.date))}</p>
-                                    <p>{getTime(new Date(activity.date))}</p>
-                                    <p>{new Date(activity.date).toLocaleDateString()}</p>
-                                </div>
-                                <div>
-                                    <h3>일정: {activity.title}</h3>
-                                    <p>내용: {activity.description}</p>
-                                    <p>장소: {activity.location}</p>
-                                    {isClubAuth && (
-                                        <div style={{ display: 'flex', gap: '10%', marginTop: '5%' }}>
-                                            <EventModal
-                                                isType={'update'}
-                                                clubId={clubId}
-                                                eventId={activity._id}
-                                                onSubmit={handleFormUpdate}
-                                                preData={activity}
-                                            ></EventModal>
-                                            <button onClick={() => handleDelete(activity._id)}>삭제</button>
-                                        </div>
-                                    )}
-                                </div>
+                                {isClubAuth && (
+                                    <div style={{ marginTop: '10px' }}>
+                                        <button
+                                            className={styles.editButton}
+                                            style={{
+                                                marginRight: '5px',
+                                                backgroundColor: '#4CAF50',
+                                                color: 'white',
+                                                padding: '5px 10px',
+                                                border: 'none',
+                                                borderRadius: '4px',
+                                                cursor: 'pointer',
+                                            }}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleEditPost(post);
+                                            }}
+                                        >
+                                            수정
+                                        </button>
+                                        <button
+                                            className={styles.deleteButton}
+                                            style={{
+                                                backgroundColor: '#f44336',
+                                                color: 'white',
+                                                padding: '5px 10px',
+                                                border: 'none',
+                                                borderRadius: '4px',
+                                                cursor: 'pointer',
+                                            }}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDeletePost(post._id);
+                                            }}
+                                        >
+                                            삭제
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         ))}
-                </div>
-            </section>
-
-            {/* 자유 게시판 */}
-            <section>
-                <h2 className={styles.sectionTitle}>동아리 자유게시판</h2>
-                {isClubAuth && (
-                    <button
-                        className={styles.joinButton}
-                        style={{ margin: '3% 0', fontSize: '100%' }}
-                        onClick={() => handleAddPost()}
-                    >
-                        동아리 게시글 작성
-                    </button>
-                )}
-                <div className={styles.boardGrid}>
-                    {posts.map((post) => (
-                        <div
-                            key={post._id}
-                            className={styles.boardItem}
-                            onClick={() => handleViewPost(post)}
-                            style={{ cursor: 'pointer' }}
+                    </div>
+                </section>
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    {isClubAuth && (
+                        <button
+                            className={styles.joinButton}
+                            style={{ width: '10%', margin: '3%', fontSize: '100%', backgroundColor: 'red' }}
+                            onClick={() => handleDeleteClub()}
                         >
-                            <img
-                                src={post.postImgs[0] || basicProfileImg}
-                                alt={post.title}
-                                className={styles.boardImage}
-                            />
-                            <h4
-                                className={styles.boardTitle}
-                                style={{ WebkitLineClamp: '1', overflow: 'hidden', textOverflow: 'ellipsis' }}
-                            >
-                                {post.title}
-                            </h4>
-                            <p
-                                className={styles.boardContent}
-                                style={{ WebkitLineClamp: '3', overflow: 'hidden', textOverflow: 'ellipsis' }}
-                            >
-                                {post.content}
-                            </p>
-
-                            {isClubAuth && (
-                                <div style={{ marginTop: '10px' }}>
-                                    <button
-                                        className={styles.editButton}
-                                        style={{
-                                            marginRight: '5px',
-                                            backgroundColor: '#4CAF50',
-                                            color: 'white',
-                                            padding: '5px 10px',
-                                            border: 'none',
-                                            borderRadius: '4px',
-                                            cursor: 'pointer',
-                                        }}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleEditPost(post);
-                                        }}
-                                    >
-                                        수정
-                                    </button>
-                                    <button
-                                        className={styles.deleteButton}
-                                        style={{
-                                            backgroundColor: '#f44336',
-                                            color: 'white',
-                                            padding: '5px 10px',
-                                            border: 'none',
-                                            borderRadius: '4px',
-                                            cursor: 'pointer',
-                                        }}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleDeletePost(post._id);
-                                        }}
-                                    >
-                                        삭제
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    ))}
+                            동아리삭제
+                        </button>
+                    )}
                 </div>
-            </section>
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                {isClubAuth && (
-                    <button
-                        className={styles.joinButton}
-                        style={{ width: '10%', margin: '3%', fontSize: '100%', backgroundColor: 'red' }}
-                        onClick={() => handleDeleteClub()}
-                    >
-                        동아리삭제
-                    </button>
-                )}
             </div>
             <Footer />
         </div>
