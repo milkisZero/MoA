@@ -93,7 +93,7 @@ io.on('connection', (socket) => {
 
             await MsgRoom.findByIdAndUpdate(msgRoomId, { $push: { messages: newMsg._id } });
 
-            socket.emit('receiveMsg', newMsg);
+            io.to(msgRoomId).emit('receiveMsg', newMsg);
             console.log(`Message sent to ${msgRoomId}: ${content}`);
         } catch (e) {
             console.log('Message send error:', e);
