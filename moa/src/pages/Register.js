@@ -11,11 +11,21 @@ function Register() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [verifyMail, setVerifyMail] = useState('');
     const navigate = useNavigate();
+
+    const [verifyCode, setVerifyCode] = useState('');
+    const [isVerified, setIsVerified] = useState(false);
+    const [timer, setTimer] = useState(null);
+    const [isTimerActive, setIsTimerActive] = useState(false);
+    const [token, setToken] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isVerified === false) {
+            alert('메일을 인증해주세요');
+            return;
+        }
+
         console.log('회원가입 정보:', { name, email, password, confirmPassword });
 
         if (password !== confirmPassword) {
@@ -34,13 +44,19 @@ function Register() {
 
     const handleVerify = async () => {
         console.log('인증시작');
-        const URL = 'http://localhost:8080/api';
-
-        let token;
         if (!email) {
             alert('이메일 없음');
         }
+        if (email.split('@')[1] !== 'ajou.ac.kr') {
+            alert('아주대 메일을 사용해주세요');
+            return;
+        }
 
+        setIsVerified(false);
+        setTimer(300); // 5분 = 300초
+        setIsTimerActive(true);
+
+        const URL = 'http://localhost:8080/api';
         try {
             const response = await fetch(URL + '/verifyMail/verificationRequest', {
                 method: 'POST',
@@ -52,10 +68,42 @@ function Register() {
                 }),
             });
             const data = await response.json();
-            token = data.token;
+            setToken(data.token);
         } catch (error) {
             console.log(error.message);
         }
+    };
+
+    const handleVerifyCode = async () => {
+        console.log(token);
+        if (Number(verifyCode) === token) {
+            alert('인증되었습니다.');
+            setIsVerified(true);
+            setIsTimerActive(false);
+        } else {
+            alert('틀린 코드입니다');
+        }
+    };
+
+    useEffect(() => {
+        let interval = null;
+        if (isTimerActive && timer > 0) {
+            interval = setInterval(() => {
+                setTimer((prevTimer) => prevTimer - 1);
+            }, 1000);
+        } else if (timer === 0) {
+            setIsTimerActive(false);
+            setTimer(null);
+            setToken('');
+            alert('인증 시간이 만료되었습니다. 다시 요청해주세요.');
+        }
+        return () => clearInterval(interval);
+    }, [isTimerActive, timer]);
+
+    const formatTime = () => {
+        const minutes = Math.floor(timer / 60);
+        const seconds = timer % 60;
+        return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
     };
 
     return (
@@ -82,21 +130,29 @@ function Register() {
                                 required
                                 style={{ width: '100%' }}
                             />
-                            <button type="button" onClick={() => handleVerify()} style={{ width: '20%' }}>
-                                인증
+                            <button
+                                type="button"
+                                onClick={!isTimerActive ? () => handleVerify() : () => {}}
+                                style={{ width: '20%' }}
+                            >
+                                {!isTimerActive ? '인증' : formatTime()}
                             </button>
                         </div>
                         <div style={{ width: '70%', display: 'flex', flexDirection: 'row' }}>
                             <input
                                 type="text"
                                 placeholder="인증번호 확인"
-                                value={verifyMail}
-                                onChange={(e) => setVerifyMail(e.target.value)}
+                                value={verifyCode}
+                                onChange={(e) => setVerifyCode(e.target.value)}
                                 required
                                 style={{ width: '100%' }}
                             />
-                            <button type="button" onClick={() => handleVerify()} style={{ width: '20%' }}>
-                                확인
+                            <button
+                                type="button"
+                                onClick={!isVerified ? () => handleVerifyCode() : () => {}}
+                                style={!isVerified ? { width: '20%' } : { backgroundColor: '#4CAF50', width: '20%' }}
+                            >
+                                {!isVerified ? ' 확인' : '완료'}
                             </button>
                         </div>
                         <input
