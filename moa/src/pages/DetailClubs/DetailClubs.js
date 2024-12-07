@@ -464,7 +464,7 @@ const Detail_club = () => {
                             style={{ cursor: 'pointer' }}
                         >
                             <img
-                                src={post.postImgs[0] || 'https://dummyimage.com/300x300/cccccc/000000?text=none'}
+                                src={post.postImgs[0] || basicProfileImg}
                                 alt={post.title}
                                 className={styles.boardImage}
                             />

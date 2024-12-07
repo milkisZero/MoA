@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import '../css/Pages.css';
 import Detail_club from '../pages/DetailClubs/DetailClubs';
 import { useNavigate } from 'react-router-dom';
+import basicProfileImg from '../assets/hi.png';
 
 function ClubItem({ club, button_text }) {
     const navigate = useNavigate();
@@ -17,7 +18,7 @@ function ClubItem({ club, button_text }) {
 
     return (
         <div className="club-item">
-            <img src={club.clubImg || 'https://dummyimage.com/300x300/cccccc/000000?text=none'}></img>
+            <img src={club.clubImg || basicProfileImg}></img>
             <div>
                 <h3>{club.name}</h3>
                 <p>{club.description}</p>
