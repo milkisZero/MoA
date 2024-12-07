@@ -1,0 +1,42 @@
+{
+    "config": {
+        "target": "http://localhost:8080",
+        "phases": [
+            {
+                "duration": 10,
+                "arrivalRate": 5
+            }
+        ]
+    },
+    "scenarios": [
+        {
+            "flow": [
+                {
+                    "get": {
+                        "url" : "/api/club/total_club?page=1&limit=5"
+                    }
+                },
+                {
+                    "get": {
+                        "url" : "/api/club/total_club?page=2&limit=5"
+                    }
+                },
+                {
+                    "get": {
+                        "url" : "/api/club/total_club?page=3&limit=5"
+                    }
+                },
+                {
+                    "get": {
+                        "url" : "/api/club/total_club?page=4&limit=5"
+                    }
+                },
+                {
+                    "get": {
+                        "url" : "/api/club/total_club?page=5&limit=5"
+                    }
+                }
+            ]
+        }
+    ]
+}

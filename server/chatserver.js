@@ -41,11 +41,12 @@ io.on('connection', (socket) => {
                 msgRoomId,
                 content,
             });
-            await newMsg.save();
-
-            await MsgRoom.findByIdAndUpdate(msgRoomId, { $push: { messages: newMsg._id } });
 
             io.to(msgRoomId).emit('receiveMsg', newMsg);
+            
+            await newMsg.save();
+            await MsgRoom.findByIdAndUpdate(msgRoomId, { $push: { messages: newMsg._id } });
+            
             console.log(`Message sent to ${msgRoomId}: ${content}`);
         } catch (e) {
             console.log('Message send error:', e);
