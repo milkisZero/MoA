@@ -17,7 +17,7 @@ function Message() {
     const [page, setPage] = useState(0);
     const [isFetching, setIsFetching] = useState(false); // 데이터가 로딩 중인지 체크
     const { userAuth } = useAuth();
-    const URL = 'http://localhost:8080';
+    const URL = 'http://localhost:8081';
     const { roomId } = useParams();
     const [roomTitle, setRoomTitle] = useState('');
 
