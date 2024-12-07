@@ -37,8 +37,7 @@ const sendVerificationMail = async (to, token) => {
 `,
         };
 
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent:', info.response);
+        await transporter.sendMail(mailOptions);
     } catch (error) {
         console.error('Error sending email:', error);
     }
@@ -47,7 +46,6 @@ const sendVerificationMail = async (to, token) => {
 // 이메일 인증 요청
 router.post('/verificationRequest', async (req, res) => {
     const { email } = req.body;
-    console.log('메일');
 
     if (!email) {
         return res.status(400).send({ message: 'Email is required' });
@@ -56,7 +54,6 @@ router.post('/verificationRequest', async (req, res) => {
     const token = (parseInt(crypto.randomBytes(3).toString('hex'), 16) % 900000) + 100000;
     await sendVerificationMail(email, token);
 
-    console.log('메일발송');
     res.send({ message: 'Verification email sent!', token: token });
 });
 

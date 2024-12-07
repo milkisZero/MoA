@@ -47,6 +47,7 @@ const postRoutes = require('./router/post');
 const eventRoutes = require('./router/event');
 const msgRoomRoutes = require('./router/msgRoom');
 const messageRoutes = require('./router/message');
+const verifyMailRoutes = require('./router/verifyMail');
 
 async function connect() {
     try {
@@ -123,8 +124,6 @@ app.use('/api/post', postRoutes);
 app.use('/api/event', eventRoutes);
 app.use('/api/msgRoom', msgRoomRoutes);
 app.use('/api/msg', messageRoutes);
-
-const verifyMailRoutes = require('./router/verifyMail');
 app.use('/api/verifyMail', verifyMailRoutes);
 
 connect();
