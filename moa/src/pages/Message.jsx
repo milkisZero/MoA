@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./Message.module.css"; // 모듈화된 CSS import
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -20,6 +20,7 @@ function Message() {
   const URL = "http://localhost:8081";
   const { roomId } = useParams();
   const [roomTitle, setRoomTitle] = useState("");
+  const msgScreenRef = useRef(null);
 
   const userId = userAuth ? userAuth._id : null;
   const userName = userAuth ? userAuth.name : null;
@@ -107,6 +108,16 @@ function Message() {
     return found ? found.profileImg : null;
   };
 
+  const scrollToBottom = () => {
+    if (msgScreenRef.current) {
+      msgScreenRef.current.scrollTop = msgScreenRef.current.scrollHeight;
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [totalMsg]);
+
   return (
     <div>
       <Header />
@@ -123,17 +134,20 @@ function Message() {
               />
             ))}
           </div>
-          <div className={styles.msgScreen}>
-            {totalMsg.map((msg, index) => (
-              <div key={index}>
-                <MessageBox
-                  senderName={msg.senderName}
-                  content={msg.content}
-                  timestamp={msg.timestamp}
-                  profileImg={findProfile(msg.senderId)}
-                />
-              </div>
-            ))}
+          <div className={styles.msgScreen} ref={msgScreenRef}>
+            {totalMsg
+              .slice()
+              .reverse()
+              .map((msg, index) => (
+                <div key={index}>
+                  <MessageBox
+                    senderName={msg.senderName}
+                    content={msg.content}
+                    timestamp={msg.timestamp}
+                    profileImg={findProfile(msg.senderId)}
+                  />
+                </div>
+              ))}
             <div id="observer">_</div>
           </div>
         </div>
