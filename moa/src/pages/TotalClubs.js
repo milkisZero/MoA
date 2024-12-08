@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../css/Pages.css";
+import styles from "./TotalClubs.module.css"; // 수정된 스타일 파일 import
 
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -19,7 +19,7 @@ function TotalClubs() {
 }
 
 function ListSection() {
-  const [clubList, setclubList] = useState([]);
+  const [clubList, setClubList] = useState([]);
   const { page: urlPage } = useParams();
   const [page, setPage] = useState(Number(urlPage));
   const [pageNumbers, setPageNumbers] = useState([1, 2, 3, 4, 5]);
@@ -30,7 +30,7 @@ function ListSection() {
   const fetchData = async () => {
     const data = await getClubPage({ page, limit });
     if (data) {
-      setclubList(data.club);
+      setClubList(data.club);
       setTotalPage(Math.ceil(data.totalNum / limit));
     }
   };
@@ -57,23 +57,19 @@ function ListSection() {
   };
 
   return (
-    <section className="list-section">
+    <section className={styles["list-section"]}>
       <header>
         <h3>전체 동아리 목록</h3>
-        <h4 className="clickable">
+        <h4 className={styles["clickable"]}>
           <Link to="/MakeClub">동아리 개설하기</Link>
         </h4>
       </header>
-      <div className="club-list">
+      <div className={styles["club-list"]}>
         {clubList.map((item, index) => (
-          <ClubItem
-            key={index}
-            club={item}
-            button_text={"동아리 이동하기"}
-          ></ClubItem>
+          <ClubItem key={index} club={item} button_text={"동아리 이동하기"} />
         ))}
       </div>
-      <div className="page-Move">
+      <div className={styles["page-Move"]}>
         <div onClick={() => changePageNum(-5)}>{"<"}</div>
         {pageNumbers.map((item, index) => (
           <div
