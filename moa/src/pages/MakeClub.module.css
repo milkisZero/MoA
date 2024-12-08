@@ -47,7 +47,7 @@
   border-radius: 5px;
 }
 
-.register-inside button {
+.submitButton {
   width: 50%;
   padding: 12px;
   background-color: #2141ab;
@@ -58,7 +58,7 @@
   cursor: pointer;
 }
 
-.register-inside button:hover {
+.submitButton:hover {
   background-color: #172d8b;
 }
 

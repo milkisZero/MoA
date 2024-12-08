@@ -81,7 +81,6 @@ function MakeClub() {
               <div style={{ position: "relative", display: "inline-block" }}>
                 {preview && (
                   <button
-                    type="button"
                     onClick={handleImgDelete}
                     className={styles["delete-btn"]} // CSS 모듈 클래스명
                   >
@@ -140,7 +139,9 @@ function MakeClub() {
               value={sns}
               onChange={(e) => setSns(e.target.value)}
             />
-            <button type="submit">등록</button>
+            <button type="submit" className={styles.submitButton}>
+              등록
+            </button>
           </form>
         </div>
       </section>
