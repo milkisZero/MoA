@@ -1,288 +1,220 @@
-.profile-section {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0px 0px 20px 0px;
-}
-
-.profile-container {
-    display: flex;
-    align-items: center;
-    width: 50%;
-    background: #ffffff;
-    box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.25);
-    border-radius: 20px;
-    text-align: center; /* 텍스트 가운데 정렬 */
-    margin: 2%;
-    padding: 3%;
-}
-
-.profile-container h1 {
-    font-size: 1.8rem; /* 제목 크기 증가 */
-    color: #333;
-    margin-bottom: 10px; /* 제목과 내용 간 간격 */
-}
-
-.profile-img {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%; /* 원형 유지 */
-    object-fit: cover;
-    border: 3px solid #007bff; /* 강조 테두리 */
-}
-
-.profile-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* 텍스트 가운데 정렬 */
-    gap: 10px;
-    margin-left: 5%;
-}
-
-.profile-info h1, .profile-info h2 {
-    font-size: 1.5rem;
-    font-weight: bold; /* 이름 강조 */
-    margin: 0;
-    color: #333;
-}
-
-.profile-info p {
-    font-size: 1rem;
-    margin: 0;
-    color: #555;
-}
-
-.profile-info button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: background-color 0.2s;
-}
-
-.profile-info button:hover {
-    background-color: #0056b3;
-}
-
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
 .modal-container {
-    background-color: #fff;
-    border-radius: 10px;
-    padding: 20px;
-    width: 400px;
-    text-align: center;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  width: 400px;
+  text-align: center;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .preview-img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin: 10px 0;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 10px 0;
 }
 
 .modal-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
 }
 
 .save-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .save-button:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
 
 .cancel-button {
-    background-color: #ddd;
-    color: black;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
+  background-color: #ddd;
+  color: black;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .cancel-button:hover {
-    background-color: #bbb;
+  background-color: #bbb;
 }
 
 .mypage-list-horizontal {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    background-color: #f9f9f9; /* 전체 배경색 */
-    padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  background-color: #f9f9f9; /* 전체 배경색 */
+  padding: 20px;
 }
 
 .mypage-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 300px;
-    height: 30%;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 10px;
-    text-align: center;
-    background-color: #fff;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
-    cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 300px;
+  height: 30%;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  background-color: #fff;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
 }
 
 .mypage-item:hover {
-    transform: scale(1.05);
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .mypage-item img {
-    width: 90%;
-    max-height: 150px; /* 최대 높이 제한 */
-    border-radius: 10px;
-    object-fit: cover; /* 이미지 잘리지 않도록 */
-    margin-top: 10px;
-    margin-bottom: 10px; /* 이미지와 텍스트 간격 */
+  width: 90%;
+  max-height: 150px; /* 최대 높이 제한 */
+  border-radius: 10px;
+  object-fit: cover; /* 이미지 잘리지 않도록 */
+  margin-top: 10px;
+  margin-bottom: 10px; /* 이미지와 텍스트 간격 */
 }
 
 .mypage-item h3 {
-    font-size: 1.2rem;
-    margin: 10px 0;
+  font-size: 1.2rem;
+  margin: 10px 0;
 }
 
 .mypage-item p {
-    font-size: 0.9rem;
-    color: #555;
-    margin-bottom: 10px;
-    width: 100%; /* 버튼과 겹치지 않도록 전체 너비 설정 */
-    display: -webkit-box; /* 오버플로우 설정하기 위한 flexbox*/
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-    overflow: hidden;
-    textOverflow: ellipsis;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 10px;
+  width: 100%; /* 버튼과 겹치지 않도록 전체 너비 설정 */
+  display: -webkit-box; /* 오버플로우 설정하기 위한 flexbox*/
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  overflow: hidden;
+  textoverflow: ellipsis;
 }
 
 .mypage-item button {
-    background-color: #6493c6;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
-    width: auto; /* 버튼 너비 자동 */
-    height: auto;
-    margin-top: 10px; /* 버튼 위 여백 추가 */
+  background-color: #6493c6;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  width: auto; /* 버튼 너비 자동 */
+  height: auto;
+  margin-top: 10px; /* 버튼 위 여백 추가 */
 }
 
 .mypage-item button:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
 
 .msgroom-list-horizontal {
-    display: flex;
-    flex-wrap: wrap; /* 여러 줄로 나열 */
-    gap: 15px; /* 각 아이템 간격 */
-    justify-content: center; /* 중앙 정렬 */
-    padding: 20px;
-    background-color: #f9f9f9; /* 전체 배경색 */
+  display: flex;
+  flex-wrap: wrap; /* 여러 줄로 나열 */
+  gap: 15px; /* 각 아이템 간격 */
+  justify-content: center; /* 중앙 정렬 */
+  padding: 20px;
+  background-color: #f9f9f9; /* 전체 배경색 */
 }
 
 .msgroom-item {
-    display: flex;
-    align-items: center; /* 텍스트 중앙 정렬 */
-    justify-content: center; /* 텍스트 중앙 정렬 */
-    width: 150px; /* 카드의 너비 */
-    height: 80px; /* 카드의 높이 */
-    border: 1px solid #ddd; /* 테두리 */
-    border-radius: 8px; /* 둥근 테두리 */
-    background-color: #fff; /* 카드 배경색 */
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
-    cursor: pointer; /* 클릭 가능 */
-    transition: transform 0.2s, box-shadow 0.2s; /* 부드러운 애니메이션 */
+  display: flex;
+  align-items: center; /* 텍스트 중앙 정렬 */
+  justify-content: center; /* 텍스트 중앙 정렬 */
+  width: 150px; /* 카드의 너비 */
+  height: 80px; /* 카드의 높이 */
+  border: 1px solid #ddd; /* 테두리 */
+  border-radius: 8px; /* 둥근 테두리 */
+  background-color: #fff; /* 카드 배경색 */
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  cursor: pointer; /* 클릭 가능 */
+  transition: transform 0.2s, box-shadow 0.2s; /* 부드러운 애니메이션 */
 }
 
 .msgroom-item:hover {
-    transform: scale(1.05); /* 호버 시 확대 */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* 호버 시 그림자 효과 */
+  transform: scale(1.05); /* 호버 시 확대 */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* 호버 시 그림자 효과 */
 }
 
 .msgroom-item h3 {
-    font-size: 1rem; /* 적절한 글꼴 크기 */
-    margin: 0; /* 기본 여백 제거 */
-    color: #333; /* 텍스트 색상 */
-    text-align: center; /* 텍스트 가운데 정렬 */
-}   
+  font-size: 1rem; /* 적절한 글꼴 크기 */
+  margin: 0; /* 기본 여백 제거 */
+  color: #333; /* 텍스트 색상 */
+  text-align: center; /* 텍스트 가운데 정렬 */
+}
 
 .event-list-horizontal {
-    display: flex;
-    flex-wrap: wrap; /* 여러 줄로 나열 가능 */
-    gap: 20px; /* 각 카드 간 간격 */
-    justify-content: center; /* 중앙 정렬 */
-    padding: 20px; /* 전체 여백 */
-    background-color: #f9f9f9; /* 배경색 */
+  display: flex;
+  flex-wrap: wrap; /* 여러 줄로 나열 가능 */
+  gap: 20px; /* 각 카드 간 간격 */
+  justify-content: center; /* 중앙 정렬 */
+  padding: 20px; /* 전체 여백 */
+  background-color: #f9f9f9; /* 배경색 */
 }
 
 .event-item {
-    display: flex;
-    flex-direction: column; /* 세로로 정렬 */
-    align-items: flex-start; /* 왼쪽 정렬 */
-    width: 250px; /* 카드 너비 */
-    border: 1px solid #ddd; /* 테두리 */
-    border-radius: 10px; /* 둥근 테두리 */
-    padding: 15px;
-    background-color: #fff; /* 카드 배경색 */
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
-    transition: transform 0.2s, box-shadow 0.2s; /* 호버 효과 */
-    cursor: pointer; /* 클릭 가능 */
+  display: flex;
+  flex-direction: column; /* 세로로 정렬 */
+  align-items: flex-start; /* 왼쪽 정렬 */
+  width: 250px; /* 카드 너비 */
+  border: 1px solid #ddd; /* 테두리 */
+  border-radius: 10px; /* 둥근 테두리 */
+  padding: 15px;
+  background-color: #fff; /* 카드 배경색 */
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  transition: transform 0.2s, box-shadow 0.2s; /* 호버 효과 */
+  cursor: pointer; /* 클릭 가능 */
 }
 
 .event-item:hover {
-    transform: scale(1.05); /* 호버 시 확대 */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* 호버 시 그림자 강조 */
+  transform: scale(1.05); /* 호버 시 확대 */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* 호버 시 그림자 강조 */
 }
 
 .event-item h3 {
-    font-size: 1.2rem; /* 제목 크기 */
-    font-weight: bold; /* 굵게 표시 */
-    margin: 0 0 10px; /* 아래 여백 추가 */
-    overflow: hidden; /* 텍스트 오버플로 처리 */
-    text-overflow: ellipsis; /* 말줄임 처리 */
-    white-space: nowrap; /* 한 줄로 제한 */
-    color: #333; /* 텍스트 색상 */
+  font-size: 1.2rem; /* 제목 크기 */
+  font-weight: bold; /* 굵게 표시 */
+  margin: 0 0 10px; /* 아래 여백 추가 */
+  overflow: hidden; /* 텍스트 오버플로 처리 */
+  text-overflow: ellipsis; /* 말줄임 처리 */
+  white-space: nowrap; /* 한 줄로 제한 */
+  color: #333; /* 텍스트 색상 */
 }
 
 .event-item p {
-    font-size: 0.9rem; /* 내용 텍스트 크기 */
-    color: #555; /* 약간 흐린 텍스트 색상 */
-    margin: 0 0 8px; /* 각 항목 간 간격 */
-    overflow: hidden; /* 텍스트 오버플로 처리 */
-    text-overflow: ellipsis; /* 말줄임 처리 */
-    white-space: nowrap; /* 한 줄로 제한 */
+  font-size: 0.9rem; /* 내용 텍스트 크기 */
+  color: #555; /* 약간 흐린 텍스트 색상 */
+  margin: 0 0 8px; /* 각 항목 간 간격 */
+  overflow: hidden; /* 텍스트 오버플로 처리 */
+  text-overflow: ellipsis; /* 말줄임 처리 */
+  white-space: nowrap; /* 한 줄로 제한 */
 }
 
 .event-item p:last-child {
-    margin-bottom: 0; /* 마지막 항목 아래 여백 제거 */
+  margin-bottom: 0; /* 마지막 항목 아래 여백 제거 */
 }

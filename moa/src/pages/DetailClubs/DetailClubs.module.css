@@ -7,6 +7,72 @@
   align-items: center;
 }
 
+.profileSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 0 20px 0;
+}
+
+.profileContainer {
+  display: flex;
+  align-items: center;
+  width: 50%;
+  background: #ffffff;
+  box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.25);
+  border-radius: 20px;
+  text-align: center;
+  margin: 2%;
+  padding: 3%;
+}
+
+.profileImg {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #007bff;
+}
+
+.profileInfo {
+  display: flex;
+  width: auto;
+  flex-direction: row;
+  align-items: center;
+  text-wrap: nowrap;
+  gap: 10px;
+  margin-left: 5%;
+}
+
+.profileInfo h1,
+.profileInfo h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+  color: #333;
+}
+
+.profileInfo p {
+  font-size: 1rem;
+  margin: 0;
+  color: #555;
+}
+
+.profileButton {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.profileButton:hover {
+  background-color: #0056b3;
+}
+
 .contentSection {
   display: flex;
   flex-direction: column;

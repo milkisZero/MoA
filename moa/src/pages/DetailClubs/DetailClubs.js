@@ -233,7 +233,6 @@ const Detail_club = () => {
             alert('동아리가 삭제되었습니다');
             navigate('/');
         } else {
-            console.log(data);
             alert('동아리 삭제에 실패했습니다');
         }
     };

@@ -291,6 +291,67 @@
   margin-bottom: 0;
 }
 
+.activitySection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h2 {
+  margin-top: 28px;
+  font-size: 1.5rem;
+}
+
+.boardGrid {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.eventSection {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 60px;
+  gap: 8px;
+}
+
+.eventBox {
+  width: auto;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 12px;
+  background: linear-gradient(to top left, #c8c8c8, black);
+  color: white;
+  border-radius: 8px;
+}
+
+.eventBox1 {
+  font-size: 2rem;
+  font-weight: 900;
+}
+.eventBox2 {
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+.eventSchedule {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+.eventDesc {
+  font-size: 1rem;
+  margin-bottom: 0.8rem;
+  font-weight: 400;
+}
+.eventPlace {
+  font-size: 1rem;
+  font-weight: 400;
+}
+
 /* DatePicker Section */
 .datepickerContainer {
   display: flex;
@@ -316,6 +377,7 @@
 /* Media Queries for responsiveness */
 @media (max-width: 768px) {
   .profileContainer {
+    gap: 12px;
     flex-direction: column;
     width: 90%;
   }
@@ -350,5 +412,16 @@
 
   .datepickerLabel {
     margin-bottom: 10px;
+  }
+
+  .boardGrid {
+    grid-template-columns: repeat(1, 1fr);
+    gap: 12px;
+  }
+
+  .eventSection {
+    flex-direction: row;
+    gap: 12px;
+    margin-bottom: auto;
   }
 }

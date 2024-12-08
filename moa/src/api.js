@@ -356,6 +356,7 @@ export async function deleteClub({ clubId }) {
             const data = await response.json();
             return data;
         }
+        console.log(response);
     } catch (error) {
         console.log(error.message);
     }
