@@ -1,0 +1,120 @@
+/* Register.module.css */
+.registerSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  min-height: 100vh;
+  background-color: #f4f4f9;
+}
+
+.registerContainer {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.registerInside {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+input {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+}
+
+button {
+  padding: 10px;
+  font-size: 14px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button:disabled {
+  background-color: #d6d6d6;
+}
+
+button[type="submit"] {
+  background-color: #28a745;
+}
+
+button[type="submit"]:hover {
+  background-color: #218838;
+}
+
+/* 인증버튼 컨테이너 */
+.verifyContainer {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.verifyButton {
+  width: 30%;
+  background-color: #28a745;
+  color: white;
+  border-radius: 4px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.verifyButton.active {
+  background-color: #4caf50;
+}
+
+/* 미디어쿼리 */
+@media (max-width: 768px) {
+  .registerContainer {
+    padding: 20px;
+    width: 100%;
+  }
+
+  input,
+  button {
+    font-size: 16px;
+  }
+
+  .verifyContainer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .verifyButton {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .registerContainer {
+    padding: 15px;
+  }
+
+  input,
+  button {
+    font-size: 14px;
+  }
+
+  button[type="submit"] {
+    width: 100%;
+  }
+}

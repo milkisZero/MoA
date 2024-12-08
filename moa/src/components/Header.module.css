@@ -1,0 +1,63 @@
+.header {
+  color: black;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  margin: 0 auto;
+  width: 80%;
+}
+
+.logo {
+  width: 186px; /* 원하는 로고 크기 */
+}
+
+.MOA {
+  font-size: larger;
+}
+
+.nav-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.clickable {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.clickable a {
+  margin: 12px;
+}
+
+/* ===== Media Queries ===== */
+
+/* For screens smaller than 768px */
+@media (max-width: 768px) {
+  .header {
+    align-items: center;
+    width: 80%;
+    padding: 10px 20px;
+  }
+
+  .clickable a {
+    font-size: 14px;
+  }
+
+  .logo {
+    width: 98px; /* 원하는 로고 크기 */
+  }
+}
+
+/* For screens smaller than 480px */
+@media (max-width: 480px) {
+  .header {
+    padding: 10px;
+    width: 90%;
+  }
+
+  .clickable a {
+    font-size: 12px;
+  }
+}

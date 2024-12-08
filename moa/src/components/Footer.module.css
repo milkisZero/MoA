@@ -1,0 +1,57 @@
+/* Footer.module.css */
+
+.footer {
+  background-color: #000000;
+  color: #ddd;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footerContent {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.logo {
+  width: 20%; /* 로고 크기 */
+  height: auto;
+  object-fit: contain;
+}
+
+.textContent {
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.textContent h4 {
+  margin: 0 0 5px 0;
+}
+
+.textContent p {
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+/* 미디어 쿼리: 모바일 대응 */
+@media (max-width: 768px) {
+  .footerContent {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .textContent {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .textContent {
+    font-size: 0.7rem; /* 더 작은 폰트 크기 */
+  }
+}

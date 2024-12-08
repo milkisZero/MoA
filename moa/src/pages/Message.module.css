@@ -1,0 +1,110 @@
+/* Message.module.css */
+
+/* 기본 레이아웃 스타일 */
+.msgSection {
+  padding: 20px;
+  font-family: "Pretendard", sans-serif;
+}
+
+.msgInfo {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.userList {
+  width: 20%;
+  background-color: #f7f7f7;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.msgScreen {
+  width: 75%;
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  max-height: 500px;
+}
+
+.msgInput {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.msgInput input {
+  width: 90%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.sendButton {
+  background: transparent;
+  border: none;
+  color: #007bff;
+  font-size: 20px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.userBox {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.userIcon {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.userInfo {
+  font-weight: 500;
+}
+
+.msgMessage {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.msgMessage p {
+  margin: 5px 0;
+}
+
+/* 미디어 쿼리 */
+@media (max-width: 768px) {
+  .msgSection {
+    padding: 10px;
+  }
+
+  .msgInfo {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .userList {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .msgScreen {
+    width: 100%;
+  }
+
+  .msgInput input {
+    width: 80%;
+  }
+
+  .sendButton {
+    font-size: 18px;
+  }
+}

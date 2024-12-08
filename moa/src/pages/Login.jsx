@@ -1,0 +1,55 @@
+import React, { useState } from "react";
+import styles from "./Login.module.css";
+import { useNavigate } from "react-router-dom";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import { useAuth } from "../context/AuthContext";
+
+function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { userLogin } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const data = await userLogin({ email, password });
+    if (data) navigate("/");
+  };
+
+  return (
+    <div>
+      <Header />
+      <div className={styles["login-section"]}>
+        <section className={styles["login-logo-section"]}></section>
+        <div className={styles["login-container"]}>
+          <form onSubmit={handleLogin}>
+            <div className={styles["login-inside"]}>
+              <h2>모아 로그인</h2>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="이메일 입력"
+                required
+              />
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="비밀번호 입력"
+                required
+              />
+              <button type="submit">로그인</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+export default Login;

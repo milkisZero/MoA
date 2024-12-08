@@ -1,0 +1,354 @@
+/* Profile Section */
+.profileSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 0 20px 0;
+}
+
+.profileContainer {
+  display: flex;
+  align-items: center;
+  width: 50%;
+  background: #ffffff;
+  box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.25);
+  border-radius: 20px;
+  text-align: center;
+  margin: 2%;
+  padding: 3%;
+}
+
+.profileContainer h1 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.profileImg {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #007bff;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-left: 5%;
+}
+
+.profileInfo h1,
+.profileInfo h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+  color: #333;
+}
+
+.profileInfo p {
+  font-size: 1rem;
+  margin: 0;
+  color: #555;
+}
+
+.profileInfo button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.profileInfo button:hover {
+  background-color: #0056b3;
+}
+
+/* Modal Section */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContainer {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  width: 400px;
+  text-align: center;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.previewImg {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 10px 0;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.saveButton {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.saveButton:hover {
+  background-color: #0056b3;
+}
+
+.cancelButton {
+  background-color: #ddd;
+  color: black;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cancelButton:hover {
+  background-color: #bbb;
+}
+
+/* Club Section */
+.mypageListHorizontal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  background-color: #f9f9f9;
+  padding: 20px;
+}
+
+.mypageItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 300px;
+  height: 30%;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  background-color: #fff;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.mypageItem:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.mypageItem img {
+  width: 90%;
+  max-height: 150px;
+  border-radius: 10px;
+  object-fit: cover;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.mypageItem h3 {
+  font-size: 1.2rem;
+  margin: 10px 0;
+}
+
+.mypageItem p {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 10px;
+  width: 100%;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mypageItem button {
+  background-color: #6493c6;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  width: auto;
+  margin-top: 10px;
+}
+
+.mypageItem button:hover {
+  background-color: #0056b3;
+}
+
+/* Message Room Section */
+.msgroomListHorizontal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.msgroomItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  height: 80px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.msgroomItem:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.msgroomItem h3 {
+  font-size: 1rem;
+  margin: 0;
+  color: #333;
+  text-align: center;
+}
+
+/* Event Section */
+.eventListHorizontal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.eventItem {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 250px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  background-color: #fff;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.eventItem:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.eventItem h3 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0 0 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #333;
+}
+
+.eventItem p {
+  font-size: 0.9rem;
+  color: #555;
+  margin: 0 0 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.eventItem p:last-child {
+  margin-bottom: 0;
+}
+
+/* DatePicker Section */
+.datepickerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.datepickerWrapper {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  align-items: center;
+}
+
+.datepickerLabel {
+  font-size: 1.1rem;
+  color: #333;
+}
+
+/* Media Queries for responsiveness */
+@media (max-width: 768px) {
+  .profileContainer {
+    flex-direction: column;
+    width: 90%;
+  }
+
+  .profileSection {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  .mypageListHorizontal,
+  .msgroomListHorizontal,
+  .eventListHorizontal {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  .mypageItem,
+  .msgroomItem,
+  .eventItem {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .profileInfo {
+    margin-left: 0;
+  }
+
+  .datepickerWrapper {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .datepickerLabel {
+    margin-bottom: 10px;
+  }
+}

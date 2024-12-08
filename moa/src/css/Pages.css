@@ -1,13 +1,3 @@
-header {
-  color: black;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 30px;
-  margin: 0 auto;
-  width: 80%;
-}
-
 .main-section {
   position: relative;
   text-align: center;
@@ -21,6 +11,8 @@ header {
 .main-clubs-section {
   display: flex;
   justify-content: center;
+  gap: 32px;
+  margin-bottom: 48px;
 }
 
 .main-clubs {
@@ -54,11 +46,11 @@ header {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
   overflow: hidden;
-  textOverflow: ellipsis;
+  textoverflow: ellipsis;
 }
 
 .list-section {
-  background-color: #f3f3f3;
+  background-color: #e5e5e5;
   padding: 0px 0px 20px 0px;
 }
 
@@ -67,7 +59,6 @@ header {
 }
 
 .club-list {
-  max-width: 1000px;
   margin: 0 auto;
 }
 
@@ -124,307 +115,6 @@ header {
   background-color: grey;
 }
 
-.Footer {
-  background-color: #333;
-  color: #ddd;
-  padding: 20px;
-  font-size: 0.9rem;
-  display: flex;
-  justify-content: center;
-  height: 150px;
-}
-
-.Footer div {
-  max-width: 500px;
-}
-
-.Footer h4 {
-  text-align: left;
-}
-
-.Footer p {
-  text-align: left;
-  font-size: 0.8rem;
-  margin: 0;
-}
-
-.clickable {
-  cursor: pointer;
-}
-
-.clickable a {
-  text-decoration: none;
-  color: inherit;
-  margin: 10px;
-}
-
-.login-section {
-  /* Frame 1000004344 */
-  /* Auto layout */
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 0px;
-
-  left: calc(50% - 1200px / 2);
-  top: calc(50% - 649px / 2 - 67px);
-}
-
-.login-logo-section {
-  /* 29.인사 1 */
-
-  width: 500px;
-  height: 500px;
-
-  background: url("../assets/hi.png");
-
-  /* Inside auto layout */
-  flex: none;
-  order: 0;
-  flex-grow: 0;
-  background-size: contain;
-}
-
-.logo-section {
-  background: url("../assets/Ajou.png");
-}
-
-.login-container {
-  /* Frame 1000004343 */
-
-  /* Auto layout */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  padding: 50px 10px;
-  gap: 10px;
-
-  width: 50%;
-
-  background: #ffffff;
-  box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.25);
-  border-radius: 20px;
-
-  /* Inside auto layout */
-  flex: none;
-  order: 1;
-  flex-grow: 0;
-}
-
-.login-inside {
-  /* Frame 1000004342 */
-
-  /* Auto layout */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 0px;
-  gap: 11px;
-
-  margin: 0 auto;
-  width: 446px;
-  height: 247px;
-
-  /* Inside auto layout */
-  flex: none;
-  order: 0;
-  flex-grow: 0;
-}
-
-.login-inside h2 {
-  /* 모아 로그인하기 */
-
-  margin: 0 auto;
-  width: 446px;
-  height: 42px;
-
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 700;
-  font-size: 32px;
-  line-height: 130%;
-  /* identical to box height, or 42px */
-
-  color: #000000;
-
-  /* Inside auto layout */
-  flex: none;
-  order: 0;
-  align-self: stretch;
-  flex-grow: 0;
-}
-
-.login-inside input {
-  /* Frame 1000004340 */
-
-  box-sizing: border-box;
-
-  /* Auto layout */
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 8px 20px;
-  gap: 10px;
-
-  margin: 0 auto;
-  width: 446px;
-  height: 48px;
-
-  background: #ffffff;
-  border: 1px solid #c8c8c8;
-
-  /* Inside auto layout */
-  flex: none;
-  order: 1;
-  align-self: stretch;
-  flex-grow: 0;
-}
-
-.login-inside button {
-  /* Frame 1000004342 */
-
-  /* Auto layout */
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 8px 20px;
-  gap: 10px;
-
-  margin: 0 auto;
-  width: 446px;
-  height: 48px;
-
-  background: #2141ab;
-  color: white;
-  font-size: 18px;
-
-  /* Inside auto layout */
-  flex: none;
-  order: 3;
-  align-self: stretch;
-  flex-grow: 0;
-}
-
-.login-inside button:hover {
-  background-color: #172d8b;
-}
-
-.register-section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0px 0px 20px 0px;
-  width: 100%;
-}
-
-.register-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 50px 20px;
-  gap: 15px;
-  width: 50%;
-  background: #ffffff;
-  box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.25);
-  border-radius: 20px;
-}
-
-.register-inside {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  gap: 10px;
-}
-
-.register-inside textarea {
-  height: 100px;
-  width: 70%;
-  resize: none;
-  font-family: "Arial", sans-serif;
-  /* 기본 폰트: input과 동일 */
-  font-size: 14px;
-  /* 기본 폰트 크기: input과 동일 */
-  line-height: 1.4;
-  /* 기본 줄 높이: input과 동일 */
-  padding: 10px 9px;
-  /* 기본 입력 패딩: input과 동일 */
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-sizing: border-box;
-}
-
-.register-inside input {
-  width: 70%;
-  padding: 10px;
-  border: 1px solid #c8c8c8;
-  border-radius: 5px;
-}
-
-.register-inside button {
-  width: 50%;
-  padding: 12px;
-  background-color: #2141ab;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 18px;
-  cursor: pointer;
-}
-
-.register-inside button:hover {
-  background-color: #172d8b;
-}
-
-.register-container h2 {
-  font-size: 32px;
-  color: #000;
-  margin-bottom: 20px;
-}
-
-.msg-section {
-  height: 650px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.msg-section #observer {
-  height: 20vh;
-  background-color: transparent;
-  color: transparent;
-}
-
-.msg-info {
-  width: 80%;
-  height: 70%;
-  display: flex;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.user-list {
-  background-color: lightgray;
-  display: flex;
-  flex-direction: column;
-  width: 20%;
-  height: 100%;
-  overflow-y: auto;
-  padding: 0px 20px 0px 0px;
-  border: none;
-  /* 스크롤바 숨기기 */
-  -ms-overflow-style: none;
-  /* IE and Edge */
-  scrollbar-width: none;
-  /* Firefox */
-  padding-left: 20px;
-}
-
 .user-box {
   display: flex;
   direction: row;
@@ -433,10 +123,10 @@ header {
 }
 
 .user-icon {
-    width: 33px;
-    height: 33px;
-    border-radius: 50%; /* 원형으로 만들기 */
-    object-fit: cover;
+  width: 33px;
+  height: 33px;
+  border-radius: 50%; /* 원형으로 만들기 */
+  object-fit: cover;
 }
 
 .user-info {
@@ -452,37 +142,6 @@ header {
   /* Chrome , Safari , Opera */
 }
 
-.msg-screen {
-  /* 빈 영역을 씹는다??????? */
-  display: flex;
-  flex-direction: column-reverse;
-  /* //////////////////////// */
-  width: 80%;
-  overflow-y: auto;
-  border: none;
-}
-
-.msg-screen #obsever {
-  background-color: red;
-  height: 10px;
-  min-height: 10px;
-}
-
-.msg-input {
-  width: 100%;
-  height: 20%;
-  display: flex;
-  justify-content: center;
-  border: none;
-  /* padding-top: 2%; */
-  flex-shrink: 0;
-}
-
-.msg-input input {
-  width: 50%;
-  font-size: 20px;
-}
-
 .send-button {
   width: 5%;
   background-color: lightgray;
@@ -491,25 +150,8 @@ header {
   cursor: pointer;
 }
 
-.msg-section input, .msg-section button {
-  height: 40%;
-  box-sizing: border-box;
-  border-radius: 5px;
-}
-
 .send-button:hover {
   background-color: grey;
-}
-
-.msg-message {
-  color: black;
-  /* border:2px solid black; */
-  margin: 10px;
-  padding-left: 20px;
-}
-
-.msg-message p {
-  margin: 0px;
 }
 
 .page-Move {
@@ -528,70 +170,6 @@ header {
   color: white;
   background-color: grey;
   cursor: pointer;
-}
-
-.mypage-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 2% 2%;
-    gap: 15px;
-    width: 60%;
-    background: #ffffff;
-    box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.25);
-    border-radius: 20px;
-    overflow-x: auto;
-}
-
-.mypage-container ItemCompo {
-  width: 10%;
-  border-radius: 20px;
-}
-
-.mypage-container Img {
-  width: 80%;
-  border-radius: 100px;
-}
-
-.mypage-container .main-clubs {
-  height: 20%;
-  width: 20%;
-  border-radius: 100px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 0px;
-  margin: 0px;
-}
-
-.mypage-clubs {
-  /* display: flex;
-    flex-wrap: wrap;
-     align-items: center;
-       width: 90%;
-    justify-content: center; */
-}
-
-#mypage_msg  {
-    height: 500px;
-    overflow-y: auto;
-}
-
-#mypage_msg .club-item{
-    /* background-color: red; */
-}
-
-#mypage_msg Img {
-    height: 100px !important;
-    width: 100px !important;
-}
-
-#mypage_msg button {
-    position:relative;
-    left: 70%;
-    bottom: 50%;
 }
 
 .EventModal form {
@@ -613,7 +191,8 @@ header {
   color: #333;
 }
 
-.EventModal label input, .EventModal label textarea {
+.EventModal label input,
+.EventModal label textarea {
   display: block;
   width: 100%;
   padding: 10px;
@@ -628,7 +207,8 @@ header {
   min-height: 80px;
 }
 
-.EventModal input:focus, .EventModal textarea:focus {
+.EventModal input:focus,
+.EventModal textarea:focus {
   border-color: #007bff;
   outline: none;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
@@ -655,66 +235,5 @@ header {
 }
 
 .EventModal button:hover {
-  opacity: 0.9;
-}
-
-.makePost {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.makePost form {
-  width: 80%;
-  margin: 5%;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  font-family: Arial, sans-serif;
-}
-
-.makePost label, .makePost p{
-  margin-bottom: 15px;
-  margin-top: 15px;
-  font-weight: bold;
-  color: #333;
-}
-
-.makePost input, .makePost textarea {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 14px;
-}
-
-.makePost textarea {
-  min-height: 200px;
- }
-
-.makePost input:focus, .makePost textarea:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
- 
-.makePost button[type="submit"] {
-  background-color: #007bff;
-  color: white;
-  padding: 10px 20px;
-  margin-top: 5%;
- width: 20%;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.makePost button:hover {
   opacity: 0.9;
 }
