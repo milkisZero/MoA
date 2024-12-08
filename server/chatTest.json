@@ -1,22 +1,23 @@
 {
     "config": {
         "target": "ws://localhost:8081",
+        "socketio": {
+            "transports": ["websocket"]
+        },
         "phases": [
             {
                 "duration": 10,
                 "arrivalRate": 10
             }
-        ],
-        "ws": {
-            "timeout": 30000               
-        }
+        ]
     },
     "scenarios": [
         {   
+            "engine": "socketio",
             "flow": [
                 {
                     "emit": {                 
-                        "event": "joinRoom",
+                        "channel": "joinRoom",
                         "data": { "msgRoomId": "67543616114b02c8aa91ee80" }
                     }
                 },
@@ -25,7 +26,7 @@
                 },
                 {
                     "emit": {                  
-                        "event": "sendMsg",
+                        "channel": "sendMsg",
                         "data": {
                             "senderName": "kkkkkk",
                             "senderId": "6746ff849cb890fe9e123acc", 
@@ -39,13 +40,13 @@
                 },
                 {
                     "emit": {                  
-                      "event": "sendMsg",
-                      "data": {
-                        "senderName": "하아",
-                        "senderId": "674d3ce894f558cbe8adc135", 
-                        "msgRoomId": "67543616114b02c8aa91ee80",
-                        "content": "하아"
-                      }
+                        "channel": "sendMsg",
+                        "data": {
+                            "senderName": "하아",
+                            "senderId": "674d3ce894f558cbe8adc135", 
+                            "msgRoomId": "67543616114b02c8aa91ee80",
+                            "content": "하아"
+                        }
                     }
                 },
                 {   

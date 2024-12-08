@@ -4,6 +4,7 @@ const { swaggerUi, specs } = require('./swagger.js');
 const MongoStore = require('connect-mongo');
 const mongoose = require('mongoose');
 const session = require('express-session');
+const redisClient = require('./redis');
 const express = require('express');
 const cors = require('cors');
 

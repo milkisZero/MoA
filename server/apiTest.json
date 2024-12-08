@@ -3,10 +3,11 @@
         "target": "http://localhost:8080",
         "phases": [
             {
-                "duration": 10,
-                "arrivalRate": 5
+                "duration": 60,
+                "arrivalRate": 30
             }
-        ]
+        ],
+        "httpTimeout": 60000
     },
     "scenarios": [
         {

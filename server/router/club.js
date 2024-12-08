@@ -11,6 +11,7 @@ const { MsgRoom } = require('../model/MsgRoom');
 const { Message } = require('../model/Message');
 
 const router = express.Router();
+const redisClient = require('../redis');
 
 const s3 = new S3Client({
     region: 'ap-northeast-2',
@@ -81,6 +82,11 @@ router.get('/total_club', async (req, res) => {
     try {
         const { page, limit } = req.query;
 
+        const cacheKey = `total_club:page=${page}:limit=${limit}`;
+        const cachedData = await redisClient.get(cacheKey);
+        if (cachedData) 
+            return res.status(200).json(JSON.parse(cachedData));
+        
         const [totalClubs, club] = await Promise.all([
             Club.countDocuments(),
             Club.aggregate([
@@ -94,11 +100,15 @@ router.get('/total_club', async (req, res) => {
         if (!club || totalClubs === 0)
             return res.status(404).json({ message: 'cannot found club list' });
 
-        return res.status(200).json({
+        const responseData = {
             message: `조회수 ${(page - 1) * limit + 1}위 부터 ${limit}개 list`,
             club,
             totalClubs
-        });
+        };
+
+        await redisClient.set(cacheKey, JSON.stringify(responseData), { EX: 3600 });
+        console.log('cacheKey: ', cacheKey);
+        return res.status(200).json(responseData);
     } catch (e) {
         console.log('get error in /club/total_club: ', e);
         return res.status(500).json({ message: 'Server get error in /club/total_club' });
