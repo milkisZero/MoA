@@ -336,25 +336,19 @@ const Detail_club = () => {
         <div>
             <Header />
             <div className={styles.container}>
-                <div className={styles.contentSection}>
-                    <h1 className={styles.clubName}>{clubInfo.name}</h1>
-                    <p className={styles.clubDescription}>{clubInfo.description}</p>
-                    <div className="profile-container" style={isClubAuth ? { width: '80%' } : {}}>
-                        <img src={admin?.profileImg || basicProfileImg} alt="Profile" className="profile-img" />
-                        <div className="profile-info">
+                <div className={styles.profileSection}>
+                    <div className={`${styles.profileContainer}`} style={isClubAuth ? { width: '80%' } : {}}>
+                        <img src={admin?.profileImg || basicProfileImg} alt="Profile" className={styles.profileImg} />
+                        <div className={styles.profileInfo}>
                             <h1>회장</h1>
                             <h2>{admin?.name}</h2>
                             <p>{admin?.email}</p>
                         </div>
-                        <div className="profile-info">
+                        <div className={styles.profileInfo}>
                             {isClubAuth && <MemListModal clubId={clubId} userList={clubInfo.members}></MemListModal>}
                             {isClubAuth && <ProposeModal clubId={clubId} userList={clubInfo.proposers}></ProposeModal>}
                             {isClubAuth && (
-                                <button
-                                    className={styles.joinButton}
-                                    style={{ width: '100%', margin: '0%', fontSize: '100%' }}
-                                    onClick={() => handleUpdateClub()}
-                                >
+                                <button className={styles.profileButton} onClick={() => handleUpdateClub()}>
                                     정보 수정
                                 </button>
                             )}
