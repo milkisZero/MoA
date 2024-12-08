@@ -7,6 +7,7 @@ import ClubItem from '../components/ClubItem';
 import { getClubPage } from '../api';
 import { Link } from 'react-router-dom';
 import { useParams, useNavigate } from 'react-router-dom';
+import loading from '../assets/loading.gif';
 
 function TotalClubs() {
     return (
@@ -26,18 +27,21 @@ function ListSection() {
     const limit = 5;
     const [totalPage, setTotalPage] = useState(5);
     const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(true);
 
     const fetchData = async () => {
         const data = await getClubPage({ page, limit });
         if (data) {
             setClubList(data.club);
             setTotalPage(Math.ceil(data.totalNum / limit));
+            setIsLoading(false);
         }
     };
 
     useEffect(() => {
         fetchData();
         if (Number(urlPage) !== page) {
+            setIsLoading(true);
             navigate(`/TotalClubs/${page}`); // URL 업데이트
         }
     }, [page]);
@@ -56,7 +60,11 @@ function ListSection() {
         }
     };
 
-    return (
+    return isLoading ? (
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <img src={loading} style={{ marginTop: '100px' }} />
+        </div>
+    ) : (
         <section className={styles['list-section']}>
             <header>
                 <h3>전체 동아리 목록</h3>

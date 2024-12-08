@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 
 const URL = 'http://localhost:8080/api/';
@@ -8,6 +9,7 @@ export const useAuth = () => useContext(AuthContext);
 
 function AuthProvider({ children }) {
     const [userAuth, setUserAuth] = useState(null);
+    const navigate = useNavigate();
 
     const checkSession = async () => {
         try {
@@ -74,6 +76,7 @@ function AuthProvider({ children }) {
                 credentials: 'include',
             });
             setUserAuth(null);
+            navigate('/');
         } catch (error) {
             alert(error.message);
         }

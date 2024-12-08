@@ -10,6 +10,7 @@ import { getClubPage } from "../api";
 
 import image1 from "../assets/banner.png";
 import image2 from "../assets/ajou.jpg";
+import loading from '../assets/loading.gif';
 
 function Main() {
   return (
@@ -62,11 +63,13 @@ function MainClubs() {
   const [clubList, setclubList] = useState([]);
   const page = 1;
   const limit = 3;
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchData = async () => {
     const data = await getClubPage({ page, limit });
     if (data) {
       setclubList(data.club);
+      setIsLoading(false);
     }
   };
 
@@ -74,7 +77,11 @@ function MainClubs() {
     fetchData();
   }, []);
 
-  return (
+  return isLoading ? (
+    <div style={{ display: "flex", justifyContent: "center" }}>
+      <img src={loading} style={{ marginTop: "100px" }} />
+    </div>
+  ) :(
     <div className="main-clubs-section">
       {clubList.map((item, index) => (
         <ItemCompo key={index} item={item}></ItemCompo>
@@ -87,17 +94,19 @@ function ListSection() {
   const [clubList, setclubList] = useState([]);
   const page = 1;
   const limit = 5;
-
+ 
   const fetchData = async () => {
     const data = await getClubPage({ page, limit });
-    if (data) setclubList(data.club);
+    if (data) {
+      setclubList(data.club);
+     }
   };
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  return (
+  return   (
     <section className="list-section">
       <div className="list-container">
         <header>
