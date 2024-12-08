@@ -109,8 +109,9 @@ function Register() {
     <div>
       <Header />
       <section className={styles.registerSection}>
+        <section className={styles.RegisterLogoSection}></section>
         <div className={styles.registerContainer}>
-          <h2>회원가입</h2>
+          <h2>모아 회원가입</h2>
           <form onSubmit={handleSubmit} className={styles.registerInside}>
             <input
               type="text"

@@ -1,14 +1,16 @@
-.login-section {
+.loginSection {
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   width: 100%;
+  height: 85vh;
   padding: 20px;
+  background-color: #f4f4f9;
   box-sizing: border-box;
 }
 
-.login-logo-section {
+.loginLogoSection {
   width: 500px;
   height: 500px;
   background: url("../assets/hi.png");
@@ -16,7 +18,7 @@
   background-repeat: no-repeat;
 }
 
-.login-container {
+.loginContainer {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -30,7 +32,7 @@
   box-sizing: border-box;
 }
 
-.login-inside {
+.loginInside {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -39,7 +41,7 @@
   width: 100%;
 }
 
-.login-inside h2 {
+.loginInside h2 {
   font-size: 32px;
   font-weight: 700;
   line-height: 1.3;
@@ -47,7 +49,7 @@
   margin-bottom: 20px;
 }
 
-.login-inside input {
+.loginInside input {
   width: 100%;
   padding: 10px;
   border: 1px solid #c8c8c8;
@@ -55,7 +57,7 @@
   font-size: 16px;
 }
 
-.login-inside button {
+.loginInside button {
   width: 100%;
   padding: 10px;
   background-color: #2141ab;
@@ -67,7 +69,7 @@
   font-weight: bold;
 }
 
-.login-inside button:hover {
+.loginInside button:hover {
   background-color: #172d8b;
 }
 
@@ -75,55 +77,55 @@
 
 /* For screens smaller than 768px */
 @media (max-width: 768px) {
-  .login-section {
+  .loginSection {
     flex-direction: column;
   }
 
-  .login-logo-section {
+  .loginLogoSection {
     width: 300px;
     height: 300px;
     margin-bottom: 20px;
   }
 
-  .login-container {
+  .loginContainer {
     width: 90%;
     padding: 30px 15px;
   }
 
-  .login-inside h2 {
+  .loginInside h2 {
     font-size: 28px;
   }
 
-  .login-inside input {
+  .loginInside input {
     font-size: 14px;
   }
 
-  .login-inside button {
+  .loginInside button {
     font-size: 16px;
   }
 }
 
 /* For screens smaller than 480px */
 @media (max-width: 480px) {
-  .login-logo-section {
+  .loginLogoSection {
     width: 200px;
     height: 200px;
   }
 
-  .login-container {
+  .loginContainer {
     padding: 20px 10px;
   }
 
-  .login-inside h2 {
+  .loginInside h2 {
     font-size: 24px;
   }
 
-  .login-inside input {
+  .loginInside input {
     padding: 8px;
     font-size: 12px;
   }
 
-  .login-inside button {
+  .loginInside button {
     padding: 8px;
     font-size: 14px;
   }
