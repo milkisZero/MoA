@@ -110,21 +110,21 @@ function MyPage() {
       <Header />
       <section>
         <h2 style={{ textAlign: "center" }}>My프로필</h2>
-        <div className="profile-section">
-          <div className="profile-container">
+        <div className={styles.profileSection}>
+          <div className={styles.profileContainer}>
             <img
               src={profileImg || basicProfileImg}
               alt="Profile"
-              className="profile-img"
+              className={styles.profileImg}
             />
-            <div className="profile-info">
+            <div className={styles.profileInfo}>
               <h2>{name}</h2>
               <p>{email}</p>
               <button onClick={() => setIsModalOpen(true)}>
                 프로필 사진 변경하기
               </button>
             </div>
-            <div className="profile-info" style={{ marginLeft: "10%" }}>
+            <div className={styles.profileInfo}>
               {userAuth && (
                 <h3>
                   가입일 : {new Date(userAuth.createdAt).toLocaleDateString()}
@@ -192,7 +192,7 @@ function MyPage() {
         </div>
       </section>
 
-      <section>
+      <section className={styles.activitySection}>
         <h2 className={styles.sectionTitle}>동아리 활동 일정</h2>
         <div className={styles.calendarSection}>
           <DatePicker
@@ -209,16 +209,26 @@ function MyPage() {
                 new Date(event.date).getDate() === selectedDate.getDate()
             )
             .map((activity) => (
-              <div key={activity._id} className={styles.eventBox}>
-                <div>
-                  <p>{getDayOfWeek(new Date(activity.date))}</p>
-                  <p>{getTime(new Date(activity.date))}</p>
-                  <p>날짜: {new Date(activity.date).toLocaleDateString()}</p>
+              <div key={activity._id} className={styles.eventSection}>
+                <div className={styles.eventBox}>
+                  <p className={styles.eventBox1}>
+                    {getDayOfWeek(new Date(activity.date))}
+                  </p>
+                  <p className={styles.eventBox2}>
+                    {getTime(new Date(activity.date))}
+                  </p>
+                  <p className={styles.eventBox3}>
+                    {new Date(activity.date).toLocaleDateString()}
+                  </p>
                 </div>
                 <div>
-                  <h3>제목: {activity.title}</h3>
-                  <p>설명: {activity.description}</p>
-                  <p>장소: {activity.location}</p>
+                  <h3 className={styles.eventSchedule}>
+                    일정: {activity.title}
+                  </h3>
+                  <p className={styles.eventDesc}>
+                    내용: {activity.description}
+                  </p>
+                  <p className={styles.eventPlace}>장소: {activity.location}</p>
                 </div>
               </div>
             ))}
