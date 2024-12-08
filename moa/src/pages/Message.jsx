@@ -141,7 +141,7 @@ function Message() {
                   />
                 </div>
               ))}
-            <div id="observer">_</div>
+            <div id="observer" style={{color:'transparent'}}>_</div>
           </div>
         </div>
         <form onSubmit={handleSubmit} className={styles.msgInput}>
