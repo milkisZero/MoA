@@ -3,7 +3,7 @@
   max-width: 300px;
   display: flex;
   flex-direction: column;
-  align-items: start;
+  align-items: flex-start;
   background-color: #ffffff;
   cursor: pointer;
   gap: 12px;
@@ -29,10 +29,9 @@
 }
 
 .description {
-  color: #505050;
-  font-size: 16px;
+  color: #555;
+  font-size: 1rem;
   font-weight: 400;
-  text-align: center;
   line-height: 1.4;
   max-height: calc(1.4em * 3); /* 3줄로 제한 */
   overflow: hidden;
@@ -40,4 +39,60 @@
   display: -webkit-box;
   -webkit-line-clamp: 3; /* 3줄로 클램프 */
   -webkit-box-orient: vertical;
+}
+
+@media (max-width: 1024px) {
+  .container {
+    max-width: 280px;
+  }
+
+  .image {
+    height: 180px; /* 이미지 높이를 조금 줄임 */
+  }
+
+  .title {
+    font-size: 18px;
+  }
+
+  .description {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    max-width: 250px;
+    gap: 14px;
+  }
+
+  .image {
+    height: 160px;
+  }
+
+  .title {
+    font-size: 16px;
+  }
+
+  .description {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    max-width: 100%;
+    gap: 16px;
+  }
+
+  .image {
+    height: 140px;
+  }
+
+  .title {
+    font-size: 14px;
+  }
+
+  .description {
+    font-size: 0.85rem;
+  }
 }

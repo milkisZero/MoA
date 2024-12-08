@@ -22,12 +22,14 @@ function ClubItem({ club, button_text }) {
         className={styles.clubItemImg}
       />
       <div className={styles.clubItemContent}>
-        <h3 className={styles.clubItemTitle}>{club.name}</h3>
-        <p className={styles.clubItemDescription}>{club.description}</p>
+        <div className={styles.clubItemMain}>
+          <h3 className={styles.clubItemTitle}>{club.name}</h3>
+          <p className={styles.clubItemDescription}>{club.description}</p>
+        </div>
+        <button onClick={goDetailPage} className={styles.clubItemButton}>
+          {button_text}
+        </button>
       </div>
-      <button onClick={goDetailPage} className={styles.clubItemButton}>
-        {button_text}
-      </button>
     </div>
   );
 }

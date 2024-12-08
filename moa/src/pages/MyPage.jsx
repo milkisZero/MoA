@@ -1,182 +1,234 @@
 import React, { useState, useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperPlane, faUserCircle } from "@fortawesome/free-solid-svg-icons";
-import { io } from "socket.io-client";
-import { getMessage, getMsgUser } from "../api";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useParams } from "react-router-dom";
+import { getMyPage, getMyEvents } from "../api";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import styles from "./Message.module.css"; // CSS 모듈을 import
+import ProfileImgModal from "../components/ProfileImgModal.js";
+import DatePicker from "../components/DatePicker/DatePicker";
+import basicProfileImg from "../assets/hi.png";
+import styles from "./DetailClubs/DetailClubs.module.css";
+import "../css/Mypage.css";
+import loading from "../assets/loading.gif";
 
-function Message() {
-  const [sendMsg, setSendMsg] = useState("");
-  const [totalMsg, setTotalMsg] = useState([]);
-  const [totalUser, setTotalUser] = useState([]);
-  const [socket, setSocket] = useState(null);
-  const [page, setPage] = useState(0);
-  const [isFetching, setIsFetching] = useState(false);
+function MyPage() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [profileImg, setProfileImg] = useState("");
+  const [clubs, setClubs] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [msgRooms, setMsgRooms] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { userAuth } = useAuth();
-  const URL = "http://localhost:8080";
-  const { roomId } = useParams();
-  const [roomTitle, setRoomTitle] = useState("");
+  const navigate = useNavigate();
 
-  const userId = userAuth ? userAuth._id : null;
-  const userName = userAuth ? userAuth.name : null;
+  const [selectedDate, setSelectedDate] = useState(new Date()); // 초기값을 현재 날짜로 설정
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleObserver = (entries) => {
-    const target = entries[0];
-    if (target.isIntersecting && !isFetching) {
-      setPage((prevPage) => prevPage + 1);
-    }
+  const getDayOfWeek = (date) => {
+    const days = [
+      "일요일",
+      "월요일",
+      "화요일",
+      "수요일",
+      "목요일",
+      "금요일",
+      "토요일",
+    ];
+    return days[date.getDay()];
+  };
+  const getTime = (date) => {
+    const time = date.toLocaleTimeString("ko-KR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+    return time;
   };
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(handleObserver, {
-      threshold: 0,
-    });
-    const observerTarget = document.getElementById("observer");
-    if (observerTarget) {
-      observer.observe(observerTarget);
-    }
-
-    return () => {
-      observer.disconnect(); // 기존 관찰자 해제
-    };
-  }, []);
+  const fetchEvent = async () => {
+    if (!userAuth || !userAuth._id) return;
+    const [year, month] = [
+      selectedDate.getFullYear(),
+      selectedDate.getMonth() + 1,
+    ];
+    const event_data = await getMyEvents({ userId: userAuth._id, year, month });
+    setEvents(event_data);
+  };
 
   const fetchData = async () => {
-    if (isFetching) return;
-    setIsFetching(true);
-
-    const msgId = totalMsg.length > 0 ? totalMsg[totalMsg.length - 1]._id : "";
-    const data = await getMessage({ roomId, msgId });
-
-    if (data) setTotalMsg((prev) => [...prev, ...data]);
-
-    setIsFetching(false);
+    if (!userAuth?._id) return;
+    try {
+      const data = await getMyPage({ userId: userAuth._id });
+      setName(data.user.name);
+      setEmail(data.user.email);
+      setProfileImg(data.user.profileImg);
+      setClubs(data.clubs);
+      setMsgRooms(data.msgRooms);
+      if (userAuth) setIsLoading(false);
+    } catch (e) {
+      console.error("Failed to fetch MyPage data:", e);
+    }
   };
 
-  useEffect(() => {
-    if (page > 0) fetchData();
-  }, [page]);
-
-  const fetchUser = async () => {
-    const data = await getMsgUser({ roomId });
-    setTotalUser(data.members);
-    setRoomTitle(data.roomTitle);
-  };
-
-  useEffect(() => {
-    fetchUser();
-
-    const newSocket = io(URL);
-    setSocket(newSocket);
-    newSocket.emit("joinRoom", { msgRoomId: roomId });
-    newSocket.on("receiveMsg", (newMsg) => {
-      if (newMsg.msgRoomId === roomId) {
-        setTotalMsg((prev) => [newMsg, ...prev]);
-      }
-      fetchUser();
-    });
-
-    return () => {
-      newSocket.off("receiveMsg");
-      newSocket.disconnect();
-    };
-  }, [roomId]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!userAuth) {
-      alert("로그인이 필요합니다");
+  const goDetailPage = (clubId) => {
+    if (!clubId) {
+      alert("NULL found");
       return;
     }
+    navigate(`/Detail_club/${clubId}`);
+  };
 
-    if (sendMsg.trim()) {
-      socket.emit("sendMsg", {
-        msgRoomId: roomId,
-        senderId: userId,
-        content: sendMsg,
-        senderName: userName,
-      });
-      setSendMsg("");
+  const goMsgRoom = (msgRoomId) => {
+    if (!msgRoomId) {
+      alert("NULL found");
+      return;
     }
+    navigate(`/Message/${msgRoomId}`);
   };
 
-  const findProfile = (id) => {
-    const found = totalUser.find((user) => user._id === id);
-    return found ? found.profileImg : null;
-  };
+  useEffect(() => {
+    fetchEvent();
+  }, [selectedDate.getMonth(), userAuth]);
 
-  return (
+  useEffect(() => {
+    console.log(userAuth);
+    // if (!userAuth) {
+    //     alert('로그인이 필요합니다');
+    //     navigate('/Login');
+    // }
+    fetchData();
+  }, [userAuth]);
+
+  useEffect(() => {}, [isModalOpen]);
+
+  return isLoading ? (
+    <div style={{ display: "flex", justifyContent: "center" }}>
+      <img src={loading} style={{ marginTop: "100px" }} />
+    </div>
+  ) : (
     <div>
       <Header />
-      <section className={styles.msgSection}>
-        <h2>{roomTitle}</h2>
-
-        <div className={styles.msgInfo}>
-          <div className={styles.userList}>
-            {totalUser.map((user, index) => (
-              <UserBox
-                key={index}
-                name={user.name}
-                profileImg={user.profileImg}
-              />
-            ))}
+      <section>
+        <h2 style={{ textAlign: "center" }}>My프로필</h2>
+        <div className="profile-section">
+          <div className="profile-container">
+            <img
+              src={profileImg || basicProfileImg}
+              alt="Profile"
+              className="profile-img"
+            />
+            <div className="profile-info">
+              <h2>{name}</h2>
+              <p>{email}</p>
+              <button onClick={() => setIsModalOpen(true)}>
+                프로필 사진 변경하기
+              </button>
+            </div>
+            <div className="profile-info" style={{ marginLeft: "10%" }}>
+              {userAuth && (
+                <h3>
+                  가입일 : {new Date(userAuth.createdAt).toLocaleDateString()}
+                </h3>
+              )}
+              <h3>내 동아리 수 : {clubs.length}</h3>
+              {userAuth && (
+                <h3>대기 중인 동아리 수 : {userAuth.waitingClubs.length}</h3>
+              )}
+            </div>
           </div>
-          <div className={styles.msgScreen}>
-            {totalMsg.map((msg, index) => (
-              <div key={index}>
-                <MessageBox
-                  senderName={msg.senderName}
-                  content={msg.content}
-                  timestamp={msg.timestamp}
-                  profileImg={findProfile(msg.senderId)}
-                />
+          {isModalOpen && (
+            <ProfileImgModal
+              currentImg={profileImg || basicProfileImg}
+              onClose={() => setIsModalOpen(false)}
+              onSave={(newImg) => {
+                setProfileImg(newImg);
+                setIsModalOpen(false);
+              }}
+            />
+          )}
+        </div>
+      </section>
+
+      <section>
+        <h2 style={{ textAlign: "center" }}>내가 속한 동아리</h2>
+        <div className="mypage-list-horizontal">
+          {clubs.map((club) => (
+            <div
+              key={club._id}
+              className="mypage-item"
+              onClick={() => goDetailPage(club._id)}
+            >
+              <img src={club.clubImg || basicProfileImg} alt="Club" />
+              <h3>{club.name}</h3>
+              <p>{club.description}</p>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  goMsgRoom(club.msgRoomId);
+                }}
+              >
+                단체 채팅방 이동하기
+              </button>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h2 style={{ textAlign: "center" }}>내가 속한 문의방</h2>
+        <div className="msgroom-list-horizontal">
+          {msgRooms.map((msgRoom) => (
+            <div
+              key={msgRoom._id}
+              className="msgroom-item"
+              onClick={(e) => {
+                e.stopPropagation();
+                goMsgRoom(msgRoom._id);
+              }}
+            >
+              <h3>{msgRoom.name}</h3>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h2 className={styles.sectionTitle}>동아리 활동 일정</h2>
+        <div className={styles.calendarSection}>
+          <DatePicker
+            selectedDate={selectedDate} // 선택된 날짜
+            setSelectedDate={setSelectedDate} // 날짜 업데이트 함수
+            totalEvents={events}
+          />
+        </div>
+        <div className={styles.boardGrid} style={{ marginBottom: "5%" }}>
+          {events
+            .filter(
+              (event) =>
+                new Date(event.date).getMonth() === selectedDate.getMonth() &&
+                new Date(event.date).getDate() === selectedDate.getDate()
+            )
+            .map((activity) => (
+              <div key={activity._id} className={styles.eventBox}>
+                <div>
+                  <p>{getDayOfWeek(new Date(activity.date))}</p>
+                  <p>{getTime(new Date(activity.date))}</p>
+                  <p>날짜: {new Date(activity.date).toLocaleDateString()}</p>
+                </div>
+                <div>
+                  <h3>제목: {activity.title}</h3>
+                  <p>설명: {activity.description}</p>
+                  <p>장소: {activity.location}</p>
+                </div>
               </div>
             ))}
-            <div id="observer">_</div>
-          </div>
         </div>
-        <form onSubmit={handleSubmit} className={styles.msgInput}>
-          <input
-            type="text"
-            value={sendMsg}
-            onChange={(e) => setSendMsg(e.target.value)}
-          />
-          <button type="submit" className={styles.sendButton}>
-            <FontAwesomeIcon icon={faPaperPlane} />
-          </button>
-        </form>
       </section>
+
       <Footer />
     </div>
   );
 }
 
-function UserBox({ name, profileImg }) {
-  return (
-    <div className={styles.userBox}>
-      {profileImg ? (
-        <img src={profileImg} alt={name} className={styles.userIcon} />
-      ) : (
-        <FontAwesomeIcon icon={faUserCircle} size="2x" />
-      )}
-      <div className={styles.userInfo}>{name}</div>
-    </div>
-  );
-}
-
-function MessageBox({ senderName, content, timestamp, profileImg }) {
-  const time = new Date(timestamp).toLocaleTimeString();
-  return (
-    <div className={styles.msgMessage}>
-      <UserBox name={senderName} profileImg={profileImg} />
-      <p>{content}</p>
-      <p>{time}</p>
-    </div>
-  );
-}
-
-export default Message;
+export default MyPage;

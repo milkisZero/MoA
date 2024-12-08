@@ -20,8 +20,8 @@ function Main() {
         style={{
           textAlign: "center",
           marginTop: "2%",
-          fontSize: "0.8rem",
-          fontWeight: "700",
+          fontSize: "1.5rem",
+          fontWeight: "600",
         }}
       >
         이달의 우수 동아리 Top3
@@ -99,20 +99,22 @@ function ListSection() {
 
   return (
     <section className="list-section">
-      <header>
-        <h3>이런 동아리는 어떠신가요</h3>
-        <h4 className="clickable">
-          <Link to="/TotalClubs/1">더보기</Link>
-        </h4>
-      </header>
-      <div className="club-list">
-        {clubList.map((item, index) => (
-          <ClubItem
-            key={index}
-            club={item}
-            button_text={"동아리 이동하기"}
-          ></ClubItem>
-        ))}
+      <div className="list-container">
+        <header>
+          <h3>이런 동아리는 어떠신가요</h3>
+          <h4 className="clickable">
+            <Link to="/TotalClubs/1">더보기</Link>
+          </h4>
+        </header>
+        <div>
+          {clubList.map((item, index) => (
+            <ClubItem
+              key={index}
+              club={item}
+              button_text={"동아리 이동하기"}
+            ></ClubItem>
+          ))}
+        </div>
       </div>
     </section>
   );
