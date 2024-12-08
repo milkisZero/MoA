@@ -54,15 +54,23 @@ router.post('/', upload.single('img'), async (req, res) => {
         });
 
         newClub.msgRoomId = newMsgRoom._id;
-        
+
         await Promise.all([newClub.save(), newMsgRoom.save()]);
         await User.updateMany(
-            { _id: { $in: members }},
-            { $addToSet: { 
-                    clubs: newClub._id, 
+            { _id: { $in: members } },
+            {
+                $addToSet: {
+                    clubs: newClub._id,
                     msgRooms: newMsgRoom._id,
-            }},
+                },
+            }
         );
+
+        redisClient.zAdd('clubs:sorted:members', {
+            score: 1e18 - newClub.createdAt.getTime(),
+            value: JSON.stringify(newClub),
+        });
+        console.log('캐시 추가 확인');
 
         res.status(200).json({
             message: 'Club and Clubchatroom created successfully',
@@ -82,32 +90,44 @@ router.get('/total_club', async (req, res) => {
     try {
         const { page, limit } = req.query;
 
-        const cacheKey = `total_club:page=${page}:limit=${limit}`;
-        const cachedData = await redisClient.get(cacheKey);
-        if (cachedData) 
-            return res.status(200).json(JSON.parse(cachedData));
-        
+        const totalN = await redisClient.get('totalClubNumber');
+        const cachedData = await redisClient.zRange(
+            'clubs:sorted:members',
+            (Number(page) - parseInt(1, 10)) * Number(limit),
+            (Number(page) - parseInt(1, 10)) * Number(limit) + Number(limit) - 1,
+            { REV: true }
+        );
+        if (cachedData) {
+            const club = cachedData.map((item) => JSON.parse(item));
+            const responseData = {
+                message: `조회수 ${(page - 1) * limit + 1}위 부터 ${limit}개 list`,
+                club,
+                totalClubs: totalN,
+            };
+            return res.status(200).json(responseData);
+        }
+
         const [totalClubs, club] = await Promise.all([
             Club.countDocuments(),
             Club.aggregate([
-                { $addFields: { memberCount: { $size: '$members' } }},
-                { $sort: { memberCount: -1, createdAt: 1 }},
-                { $skip: (Number(page) - parseInt(1, 10)) * Number(limit)},
-                { $limit: Number(limit)},
+                { $addFields: { memberCount: { $size: '$members' } } },
+                { $sort: { memberCount: -1, createdAt: 1 } },
+                { $skip: (Number(page) - parseInt(1, 10)) * Number(limit) },
+                { $limit: Number(limit) },
             ]),
         ]);
 
-        if (!club || totalClubs === 0)
-            return res.status(404).json({ message: 'cannot found club list' });
+        if (!club || totalClubs === 0) return res.status(404).json({ message: 'cannot found club list' });
 
         const responseData = {
             message: `조회수 ${(page - 1) * limit + 1}위 부터 ${limit}개 list`,
             club,
-            totalClubs
+            totalClubs,
         };
 
-        await redisClient.set(cacheKey, JSON.stringify(responseData), { EX: 3600 });
-        console.log('cacheKey: ', cacheKey);
+        // await redisClient.set(cacheKey, JSON.stringify(responseData), { EX: 3600 });
+        // console.log('cacheKey: ', cacheKey);
+
         return res.status(200).json(responseData);
     } catch (e) {
         console.log('get error in /club/total_club: ', e);
@@ -170,10 +190,10 @@ router.put('/changeAdmin/:clubId', async (req, res) => {
 
         club.admin[0] = admin;
         await club.save();
-        
+
         return res.status(200).json({
             message: 'Successfully change admin',
-            club
+            club,
         });
     } catch (e) {
         console.error('put in /club/members/:clubId:', e);
@@ -186,7 +206,7 @@ router.put('/:clubId', upload.single('img'), async (req, res) => {
     try {
         const { name, description, img, location, phone, sns } = req.body;
         const newImg = req.file ? req.file.location : img;
-        
+
         const updatedData = {
             name: name,
             description: description,
@@ -202,7 +222,7 @@ router.put('/:clubId', upload.single('img'), async (req, res) => {
         const club = await Club.findById(req.params.clubId).select('msgRoomId');
         if (name && club.msgRoomId) {
             await MsgRoom.findByIdAndUpdate(club.msgRoomId, { name });
-        };
+        }
 
         res.status(200).json({
             message: 'Club successfully updated',
@@ -229,11 +249,15 @@ router.put('/members/:clubId', async (req, res) => {
 
         await User.updateMany(
             { _id: { $in: newMembers } },
-            { $addToSet: { 
-                    clubs: clubId, 
-                    msgRooms: club.msgRoomId 
-            }},
+            {
+                $addToSet: {
+                    clubs: clubId,
+                    msgRooms: club.msgRoomId,
+                },
+            }
         );
+
+        redisClient.zIncrBy('clubs:sorted:members', 1, club);
 
         return res.status(200).json({
             message: 'Members updated successfully',
@@ -256,19 +280,23 @@ router.delete('/members/:clubId', async (req, res) => {
 
         const deleteMembers = new Set(members.map(String));
         club.members = club.members.filter((member) => !deleteMembers.has(member.toString()));
-        club.admin = club.admin.filter((member => !deleteMembers.has(member.toString())));
+        club.admin = club.admin.filter((member) => !deleteMembers.has(member.toString()));
 
-        if (club.admin.length === 0)
-            return res.status(403).json({ message: 'Club must have at least one admin'});
+        if (club.admin.length === 0) return res.status(403).json({ message: 'Club must have at least one admin' });
 
         await club.save();
         await User.updateMany(
             { _id: { $in: members } },
-            { $pull: {
+            {
+                $pull: {
                     clubs: clubId,
                     msgRooms: club.msgRoomId,
-            }},
+                },
+            }
         );
+
+        redisClient.zIncrBy('clubs:sorted:members', -1, JSON.stringify(club));
+        console.log('캐시 변경 확인');
 
         return res.status(200).json({
             message: 'Members removed successfully',
@@ -313,10 +341,9 @@ router.delete('/admin/:clubId', async (req, res) => {
         if (!club) return res.status(404).json({ message: 'Club not found' });
 
         const deleteAdminSet = new Set(admin.map(String));
-        club.admin = club.admin.filter(adminId => !deleteAdminSet.has(adminId.toString()));
-        
-        if (club.admin.length === 0)
-            return res.status(403).json({ message: 'Club must have at least one admin'});
+        club.admin = club.admin.filter((adminId) => !deleteAdminSet.has(adminId.toString()));
+
+        if (club.admin.length === 0) return res.status(403).json({ message: 'Club must have at least one admin' });
 
         await club.save();
 
@@ -341,13 +368,18 @@ router.delete('/:clubId', async (req, res) => {
 
         await User.updateMany(
             { _id: { $in: club.members } },
-            { $pull: { 
-                clubs: clubId, 
-                msgRooms: msgRoomId, 
-            }}
+            {
+                $pull: {
+                    clubs: clubId,
+                    msgRooms: msgRoomId,
+                },
+            }
         );
 
         await MsgRoom.findByIdAndDelete(msgRoomId);
+
+        await redisClient.zRem('clubs:sorted:members', JSON.stringify(club));
+        console.log('캐시 삭제 확인');
 
         return res.status(200).json({
             message: 'Club successfully deleted',
@@ -370,17 +402,11 @@ router.post('/proposer/:clubId', async (req, res) => {
         if (!club) return res.status(404).json({ message: 'Club cannot found' });
 
         const updateUserPromise = !user.waitingClubs.includes(clubId)
-            ? User.updateOne(
-                  { _id: userId },
-                  { $addToSet: { waitingClubs: clubId } }
-              )
+            ? User.updateOne({ _id: userId }, { $addToSet: { waitingClubs: clubId } })
             : null;
 
         const updateClubPromise = !club.proposers.includes(userId)
-            ? Club.updateOne(
-                  { _id: clubId },
-                  { $addToSet: { proposers: userId } }
-              )
+            ? Club.updateOne({ _id: clubId }, { $addToSet: { proposers: userId } })
             : null;
 
         await Promise.all([updateUserPromise, updateClubPromise]);
@@ -402,8 +428,8 @@ router.get('/proposer/:clubId', async (req, res) => {
 
         res.status(200).json({
             message: 'successfully get proposer list: _id and name',
-            proposers: club.proposers
-        })
+            proposers: club.proposers,
+        });
     } catch (e) {
         console.log('pogetst error in /club/proposer/:clubId: ', e);
         return res.status(500).json({ message: 'Server get error in /club/proposer/:clubId' });
@@ -435,13 +461,18 @@ router.post('/approve/:clubId', async (req, res) => {
 
         const updateMsgRoom = {
             ...(approve && { $addToSet: { members: userId } }),
-        }
+        };
 
         const [uUser, uClub, uMsgRoom] = await Promise.all([
             User.updateOne({ _id: userId }, updateUser),
             Club.updateOne({ _id: clubId }, updateClub),
             MsgRoom.updateOne({ _id: club.msgRoomId }, updateMsgRoom),
         ]);
+
+        if (approve == true) {
+            redisClient.zIncrBy('clubs:sorted:members', 1, JSON.stringify(club));
+            console.log('캐시 변경 확인');
+        }
 
         res.status(200).json({
             message: approve ? 'Successfully approved' : 'Successfully rejected',
