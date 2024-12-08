@@ -1,0 +1,101 @@
+/* 전체 페이지 레이아웃 스타일 */
+.list-section {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px;
+}
+
+.list-section header {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  margin-bottom: 60px;
+}
+
+.list-section h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.clickable a {
+  color: #2141ab;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 1.1rem;
+}
+
+.club-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.page-Move {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  align-items: center;
+}
+
+.page-Move div {
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 5px;
+}
+
+.page-Move div:hover {
+  background-color: #3b5abf;
+  color: white;
+}
+
+.page-Move div[style] {
+  background-color: grey;
+  color: white;
+}
+
+/* ===== Media Queries ===== */
+
+/* For screens smaller than 768px */
+@media (max-width: 768px) {
+  .list-section {
+    padding: 15px;
+  }
+
+  .list-section h3 {
+    font-size: 1.5rem;
+  }
+
+  .club-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .page-Move div {
+    font-size: 1rem;
+    padding: 6px 10px;
+  }
+}
+
+/* For screens smaller than 480px */
+@media (max-width: 480px) {
+  .list-section {
+    padding: 10px;
+  }
+
+  .list-section h3 {
+    font-size: 1.2rem;
+  }
+
+  .club-list {
+    grid-template-columns: 1fr;
+  }
+
+  .page-Move div {
+    font-size: 0.9rem;
+    padding: 4px 8px;
+  }
+}

@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styles from "./MakeClub.module.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { addClub, updateClubInfo } from "../api";
 import { useAuth } from "../context/AuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
-import basicProfileImg from "../assets/hi.png";
 
 function MakeClub() {
   const locate = useLocation();
