@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import styles from "./Message.module.css"; // 모듈화된 CSS import
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import chitoImage from "../assets/amazedchito.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperPlane, faUserCircle } from "@fortawesome/free-solid-svg-icons";
+import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { io } from "socket.io-client";
 import { getMessage, getMsgUser } from "../api";
 import { useAuth } from "../context/AuthContext";
@@ -160,7 +161,7 @@ function UserBox({ name, profileImg }) {
       {profileImg ? (
         <img src={profileImg} alt={name} className={styles.userIcon} />
       ) : (
-        <FontAwesomeIcon icon={faUserCircle} size="2x" />
+        <img src={chitoImage} alt={name} className={styles.userIcon} />
       )}
       <div className={styles.userInfo}>{name}</div>
     </div>

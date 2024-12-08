@@ -28,6 +28,7 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
   max-height: 500px;
+  flex-direction: column-reverse;
 }
 
 .msgInput {
