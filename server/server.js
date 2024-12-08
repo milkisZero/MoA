@@ -1,17 +1,13 @@
 require('dotenv').config();
 
 const { swaggerUi, specs } = require('./swagger.js');
-const { MongoClient } = require('mongodb');
+const MongoStore = require('connect-mongo');
 const mongoose = require('mongoose');
+const session = require('express-session');
 const express = require('express');
 const cors = require('cors');
-const session = require('express-session');
-const MongoStore = require('connect-mongo');
-const { createServer } = require('http');
-const { Server } = require('socket.io');
 
 const app = express();
-const server = createServer(app);
 const PORT = 8080;
 const dburl =
     '[DB_URL] origin: true, credentials: true }));
@@ -34,78 +30,7 @@ app.use(
     })
 );
 
-const { Club } = require('./model/Club');
-const { Post } = require('./model/Post');
 const { User } = require('./model/User');
-const { Event } = require('./model/Event');
-const { Message } = require('./model/Message');
-const { MsgRoom } = require('./model/MsgRoom');
-
-const userRoutes = require('./router/user');
-const clubRoutes = require('./router/club');
-const postRoutes = require('./router/post');
-const eventRoutes = require('./router/event');
-const msgRoomRoutes = require('./router/msgRoom');
-const messageRoutes = require('./router/message');
-const verifyMailRoutes = require('./router/verifyMail');
-
-async function connect() {
-    try {
-        await mongoose.connect(dburl);
-        console.log('Successfully Connected DB');
-
-        server.listen(PORT, () => {
-            console.log(`서버 실행. Port : ${PORT}`);
-        });
-    } catch (e) {
-        console.log('connect error : ', e);
-    }
-}
-
-const io = new Server(server, {
-    cors: {
-        origin: true,
-        methods: ['GET', 'POST'],
-        credentials: true,
-    },
-});
-
-// 실시간 채팅(socket)
-io.on('connection', (socket) => {
-    console.log('connected websocket:', socket.id);
-
-    // 채팅방 입장
-    socket.on('joinRoom', ({ msgRoomId }) => {
-        socket.join(msgRoomId);
-        console.log(`Socket ${socket.id} joined room: ${msgRoomId}`);
-    });
-
-    // 메세지 broadcast
-    socket.on('sendMsg', async ({ senderName, senderId, msgRoomId, content }) => {
-        try {
-            const newMsg = new Message({
-                senderName,
-                senderId,
-                msgRoomId,
-                content,
-            });
-            await newMsg.save();
-
-            await MsgRoom.findByIdAndUpdate(msgRoomId, { $push: { messages: newMsg._id } });
-
-            io.to(msgRoomId).emit('receiveMsg', newMsg);
-            console.log(`Message sent to ${msgRoomId}: ${content}`);
-        } catch (e) {
-            console.log('Message send error:', e);
-            socket.emit('errorMessage', { error: 'Failed to send message.' });
-        }
-    });
-
-    // 채팅방 퇴장
-    socket.on('disconnect', () => {
-        console.log('WebSocket disconnected:', socket.id);
-    });
-});
 
 app.get('/api/session/', async (req, res) => {
     if (!req.session || !req.session.userId) {
@@ -118,6 +43,14 @@ app.get('/api/session/', async (req, res) => {
     });
 });
 
+const userRoutes = require('./router/user');
+const clubRoutes = require('./router/club');
+const postRoutes = require('./router/post');
+const eventRoutes = require('./router/event');
+const msgRoomRoutes = require('./router/msgRoom');
+const messageRoutes = require('./router/message');
+const verifyMailRoutes = require('./router/verifyMail');
+
 app.use('/api/user', userRoutes);
 app.use('/api/club', clubRoutes);
 app.use('/api/post', postRoutes);
@@ -125,5 +58,18 @@ app.use('/api/event', eventRoutes);
 app.use('/api/msgRoom', msgRoomRoutes);
 app.use('/api/msg', messageRoutes);
 app.use('/api/verifyMail', verifyMailRoutes);
+
+async function connect() {
+    try {
+        await mongoose.connect(dburl);
+        console.log('Successfully Connected DB');
+
+        app.listen(PORT, () => {
+            console.log(`서버 실행. Port : ${PORT}`);
+        });
+    } catch (e) {
+        console.log('connect error : ', e);
+    }
+};
 
 connect();

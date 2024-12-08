@@ -1,0 +1,60 @@
+{
+    "config": {
+        "target": "ws://localhost:8081",
+        "phases": [
+            {
+                "duration": 10,
+                "arrivalRate": 10
+            }
+        ],
+        "ws": {
+            "timeout": 30000               
+        }
+    },
+    "scenarios": [
+        {   
+            "flow": [
+                {
+                    "emit": {                 
+                        "event": "joinRoom",
+                        "data": { "msgRoomId": "67543616114b02c8aa91ee80" }
+                    }
+                },
+                {   
+                    "think": 0.1
+                },
+                {
+                    "emit": {                  
+                        "event": "sendMsg",
+                        "data": {
+                            "senderName": "kkkkkk",
+                            "senderId": "6746ff849cb890fe9e123acc", 
+                            "msgRoomId": "67543616114b02c8aa91ee80",
+                            "content": "나는 kkk다!"
+                        }
+                    }
+                },
+                {   
+                    "think": 0.1
+                },
+                {
+                    "emit": {                  
+                      "event": "sendMsg",
+                      "data": {
+                        "senderName": "하아",
+                        "senderId": "674d3ce894f558cbe8adc135", 
+                        "msgRoomId": "67543616114b02c8aa91ee80",
+                        "content": "하아"
+                      }
+                    }
+                },
+                {   
+                    "think": 0.5
+                },
+                {
+                    "disconnect": {}
+                }
+            ]
+        }
+    ]
+}

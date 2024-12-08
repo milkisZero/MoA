@@ -17,7 +17,7 @@ function Message() {
   const [page, setPage] = useState(0);
   const [isFetching, setIsFetching] = useState(false);
   const { userAuth } = useAuth();
-  const URL = "http://localhost:8080";
+  const URL = "http://localhost:8081";
   const { roomId } = useParams();
   const [roomTitle, setRoomTitle] = useState("");
 
