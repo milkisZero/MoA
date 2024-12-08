@@ -7,8 +7,7 @@ import Footer from "../components/Footer";
 import ProfileImgModal from "../components/ProfileImgModal.js";
 import DatePicker from "../components/DatePicker/DatePicker";
 import basicProfileImg from "../assets/hi.png";
-import styles from "./DetailClubs/DetailClubs.module.css";
-import "../css/Mypage.css";
+import styles from "./MyPage.module.css";
 import loading from "../assets/loading.gif";
 
 function MyPage() {
