@@ -58,6 +58,7 @@ function Message() {
   };
 
   useEffect(() => {
+    console.log(page)
     if (page > 0) fetchData();
   }, [page]);
 
@@ -109,15 +110,8 @@ function Message() {
     return found ? found.profileImg : null;
   };
 
-  const scrollToBottom = () => {
-    if (msgScreenRef.current) {
-      msgScreenRef.current.scrollTop = msgScreenRef.current.scrollHeight;
-    }
-  };
-
   useEffect(() => {
-    scrollToBottom();
-  }, [totalMsg]);
+   }, [totalMsg]);
 
   return (
     <div>
@@ -137,9 +131,7 @@ function Message() {
           </div>
           <div className={styles.msgScreen} ref={msgScreenRef}>
             {totalMsg
-              .slice()
-              .reverse()
-              .map((msg, index) => (
+                .map((msg, index) => (
                 <div key={index}>
                   <MessageBox
                     senderName={msg.senderName}
