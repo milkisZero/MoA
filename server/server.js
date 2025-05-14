@@ -11,13 +11,16 @@ const cors = require('cors');
 const app = express();
 const PORT = 8080;
 const dburl =
-    '[DB_URL] origin: true, credentials: true }));
+    'DB_URL';
+
+app.use(express.json());
+app.use(cors({ origin: true, credentials: true }));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.use(
     session({
         resave: false,
         saveUninitialized: false,
-        secret: '[SECRET]',
+        secret: 'SECRET',
         cookie: {
             httpOnly: true,
             sameSite: 'Strict',

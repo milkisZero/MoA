@@ -12,7 +12,10 @@ const app = express();
 const server = createServer(app);
 const PORT = 8081;
 const dburl =
-    '[DB_URL] origin: true, credentials: true }));
+    'DB_URL';
+
+app.use(express.json());
+app.use(cors({ origin: true, credentials: true }));
 
 const io = new Server(server, {
     cors: {

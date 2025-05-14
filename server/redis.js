@@ -1,7 +1,7 @@
 const redis = require('redis');
 const { Club } = require('./model/Club');
 const redisClient = redis.createClient({
-    url: `[REDIS_URL]`,
+    url: `REDIS_URL`,
 });
 
 redisClient.on('connect', () => {

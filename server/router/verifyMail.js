@@ -6,8 +6,8 @@ const crypto = require('crypto');
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-        user: '[MAIL_ADDR]',
-        pass: '[MAIL_PW]',
+        user: 'MAIL_ADDR',
+        pass: 'MAIL_PW',
     },
 });
 
@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
 const sendVerificationMail = async (to, token) => {
     try {
         const mailOptions = {
-            from: '[MAIL_ADDR]',
+            from: 'MAIL_ADDR',
             to,
             subject: '이메일 인증 요청',
             html: `

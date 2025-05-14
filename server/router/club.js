@@ -16,8 +16,8 @@ const redisClient = require('../redis');
 const s3 = new S3Client({
     region: 'ap-northeast-2',
     credentials: {
-        accessKeyId: '[ACCESS_KEYID]',
-        secretAccessKey: '[SECRET_ACCESS_KEY]',
+        accessKeyId: 'ACCESS_KEYID',
+        secretAccessKey: 'SECRET_ACCESS_KEY',
     },
 });
 
